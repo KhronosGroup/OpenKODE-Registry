@@ -1,0 +1,36 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=us-ascii"><title>OpenKODE Core extension: KD_KHR_staticdata</title><meta name="generator" content="DocBook XSL Stylesheets V1.70.1"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="article" lang="en"><div class="titlepage"><div><div><h2 class="title"><a name="id2526289"></a>OpenKODE Core extension: KD_KHR_staticdata</h2></div></div><hr></div><div class="informaltable"><table border="1"><colgroup><col><col></colgroup><tbody><tr><td>Name</td><td>KHR_staticdata</td></tr><tr><td>Name strings</td><td>KD_KHR_staticdata</td></tr><tr><td>Contacts</td><td>The OpenKODE Working Group, Khronos Group</td></tr><tr><td>Status</td><td>Implemented</td></tr><tr><td>Version</td><td>Version 2, 2007-03-30</td></tr><tr><td>Number</td><td>Not yet allocated</td></tr><tr><td>Dependencies</td><td>
+            Requires OpenKODE Core 1.0 Provisional.
+            This extension is written based on the wording of the
+            OpenKODE Core 1.0 Provisional specification.
+          </td></tr></tbody></table></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2488601"></a>1.&#160;Overview</h2></div></div></div><p>
+        This extension states that OpenKODE Core supports non-automatic
+        (i.e. static, global and file scope) variables in its programming
+        environment.
+    </p><p>
+        It is expected that most OpenKODE Core implementations
+        will support non-automatic
+        variables, and thus express support for this extension.
+        The only anticipated exception is when an OpenKODE Core
+        application is embedded in the ROM of certain types of low-end
+        platforms. Thus, an OpenKODE programmer may use non-automatic variables
+        safe in the knowledge that only these embedded ROM platforms
+        will be excluded.
+    </p><p>
+        A programmer needs to know whether this extension is supported
+        at application writing time. Therefore, although this extension
+        is reported at run time by OpenKODE Core&#8217;s attribute querying
+        mechanism, this information is not useful.
+    </p></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2488635"></a>2.&#160;Changes to OpenKODE Core 1.0 specification</h2></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+            (2.2, <span class="emphasis"><em>C subset</em></span>)
+            Remove the word <span class="emphasis"><em>not</em></span>
+            from the following text:
+        </p><p>
+          <span class="emphasis"><em>
+            Non-automatic (i.e. static, global and file scope) variables are
+            not supported.
+          </em></span>
+        </p></li></ul></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2488667"></a>3.&#160;Revision history</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2488673"></a>3.1.&#160;Version 2, 2007-03-30</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+          Tidied extension header. No substantive changes.
+        </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2488688"></a>3.2.&#160;Version 1, 2007-02-08</h3></div></div></div><p>
+          Initial version.
+      </p></div></div></div></body></html>

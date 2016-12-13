@@ -1,0 +1,171 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=us-ascii"><title>OpenKODE Core extension: KD_KHR_crypto</title><meta name="generator" content="DocBook XSL Stylesheets V1.71.0"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="article" lang="en"><div class="titlepage"><div><div><h2 class="title"><a name="id2478086"></a>OpenKODE Core extension: KD_KHR_crypto</h2></div></div><hr></div><div class="informaltable"><table border="1"><colgroup><col><col></colgroup><tbody><tr><td>Name</td><td>KHR_crypto</td></tr><tr><td>Name strings</td><td>KD_KHR_crypto</td></tr><tr><td>Contributors</td><td>Leon Clarke, Tim Renouf</td></tr><tr><td>Contacts</td><td>The OpenKODE Working Group, Khronos</td></tr><tr><td>Status</td><td>DRAFT &#8211; DO NOT SHIP</td></tr><tr><td>Version</td><td>Version 5, 2007-10-22</td></tr><tr><td>Number</td><td>TBD</td></tr><tr><td>Dependencies</td><td>
+            Requires OpenKODE Core 1.0 Provisional.
+            This extension is written based on the wording of the
+            OpenKODE Core 1.0 Provisional specification.
+          </td></tr></tbody></table></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2480428"></a>1.&#160;Overview</h2></div></div></div><p>
+        This OpenKODE Core extension provides cryptographic functions.
+    </p></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2480440"></a>2.&#160;Header file</h2></div></div></div><p>
+        When this extension is present, its facilities are accessed by
+        including its header file:
+    </p><pre class="synopsis">#include &lt;KD/KHR_crypto.h&gt;</pre></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2480455"></a>3.&#160;New functions</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdCipherInitKHR"></a>3.1.&#160;kdCipherInitKHR</h3></div></div></div><a class="indexterm" name="id2480469"></a><p>Initializes a cipher.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2480478"></a>Synopsis</h4></div></div></div><pre class="synopsis">typedef struct KDCipherKHR KDCipherKHR;</pre><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDCipherKHR *<b class="fsfunc">kdCipherInitKHR</b>(</code></td><td>KDint &#160;</td><td><var class="pdparam">type</var>, </td></tr><tr><td>&#160;</td><td>const KDuint8 *&#160;</td><td><var class="pdparam">key</var>, </td></tr><tr><td>&#160;</td><td>KDint &#160;</td><td><var class="pdparam">keyLen</var>, </td></tr><tr><td>&#160;</td><td>const KDuint8 *&#160;</td><td><var class="pdparam">iv</var>, </td></tr><tr><td>&#160;</td><td>KDint &#160;</td><td><var class="pdparam">ivLen</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2480546"></a>Description</h4></div></div></div><p>
+        This function creates and initializes a cipher object. It fails
+        if the arguments do not make sense for the requested cipher, if
+        the cipher is not supported, or if there are
+        insufficient resources. 
+      </p><p>
+        The value of <em class="parameter"><code>type</code></em> determines the cipher type,
+        and is one of the types listed below. It
+        encodes the cipher algorithm, block
+        chaining (if relevant), the padding (if relevant) and whether it is
+        encrypting or decrypting.
+      </p><p>
+        <em class="parameter"><code>key</code></em> is a pointer to the key, and
+        <em class="parameter"><code>keyLen</code></em> is the key length.
+        <em class="parameter"><code>iv</code></em> points to the initialization vector,
+        and <em class="parameter"><code>ivLen</code></em> is its length. If no
+        initialization vector is required, <em class="parameter"><code>iv</code></em> and
+        <em class="parameter"><code>ivLen</code></em> should be <code class="literal">KD_NULL</code>
+        and <code class="literal">0</code> respectively.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2479951"></a>Cipher types</h4></div></div></div><div class="variablelist"><dl><dt><span class="term">
+            <code class="literal">KD_AES_128_CBC_SSL_ENCRYPT_KHR</code>
+          </span></dt><dd><p>Encrypt using AES with 128 bit key, CBC chaining, SSL padding. </p></dd><dt><span class="term">
+            <code class="literal">KD_AES_128_CBC_SSL_DECRYPT_KHR</code>
+          </span></dt><dd><p>Decrypt using AES with 128 bit key, CBC chaining, SSL padding. </p></dd><dt><span class="term">
+            <code class="literal">KD_AES_128_ECB_SSL_ENCRYPT_KHR</code>
+          </span></dt><dd><p>Encrypt using AES with 128 bit key, ECB chaining, SSL padding. </p></dd><dt><span class="term">
+            <code class="literal">KD_AES_128_ECB_SSL_DECRYPT_KHR</code>
+          </span></dt><dd><p>Decrypt using AES with 128 bit key, ECB chaining, SSL padding. </p></dd><dt><span class="term">
+            <code class="literal">KD_AES_128_CBC_NONE_ENCRYPT_KHR</code>
+          </span></dt><dd><p>Encrypt using AES with 128 bit key, CBC chaining, no padding. </p></dd><dt><span class="term">
+            <code class="literal">KD_AES_128_CBC_NONE_DECRYPT_KHR</code>
+          </span></dt><dd><p>Decrypt using AES with 128 bit key, CBC chaining, no padding. </p></dd><dt><span class="term">
+            <code class="literal">KD_AES_128_ECB_NONE_ENCRYPT_KHR</code>
+          </span></dt><dd><p>Encrypt using AES with 128 bit key, ECB chaining, no padding. </p></dd><dt><span class="term">
+            <code class="literal">KD_AES_128_ECB_NONE_DECRYPT_KHR</code>
+          </span></dt><dd><p>Decrypt using AES with 128 bit key, ECB chaining, no padding. </p></dd><dt><span class="term">
+            <code class="literal">KD_AES_192_CBC_SSL_ENCRYPT_KHR</code>
+          </span></dt><dd><p>Encrypt using AES with 192 bit key, CBC chaining, SSL padding. </p></dd><dt><span class="term">
+            <code class="literal">KD_AES_192_CBC_SSL_DECRYPT_KHR</code>
+          </span></dt><dd><p>Decrypt using AES with 192 bit key, CBC chaining, SSL padding. </p></dd><dt><span class="term">
+            <code class="literal">KD_AES_192_ECB_SSL_ENCRYPT_KHR</code>
+          </span></dt><dd><p>Encrypt using AES with 192 bit key, ECB chaining, SSL padding. </p></dd><dt><span class="term">
+            <code class="literal">KD_AES_192_ECB_SSL_DECRYPT_KHR</code>
+          </span></dt><dd><p>Decrypt using AES with 192 bit key, ECB chaining, SSL padding. </p></dd><dt><span class="term">
+            <code class="literal">KD_AES_192_CBC_NONE_ENCRYPT_KHR</code>
+          </span></dt><dd><p>Encrypt using AES with 192 bit key, CBC chaining, no padding. </p></dd><dt><span class="term">
+            <code class="literal">KD_AES_192_CBC_NONE_DECRYPT_KHR</code>
+          </span></dt><dd><p>Decrypt using AES with 192 bit key, CBC chaining, no padding. </p></dd><dt><span class="term">
+            <code class="literal">KD_AES_192_ECB_NONE_ENCRYPT_KHR</code>
+          </span></dt><dd><p>Encrypt using AES with 192 bit key, ECB chaining, no padding. </p></dd><dt><span class="term">
+            <code class="literal">KD_AES_192_ECB_NONE_DECRYPT_KHR</code>
+          </span></dt><dd><p>Decrypt using AES with 192 bit key, ECB chaining, no padding. </p></dd><dt><span class="term">
+            <code class="literal">KD_AES_256_CBC_SSL_ENCRYPT_KHR</code>
+          </span></dt><dd><p>Encrypt using AES with 256 bit key, CBC chaining, SSL padding. </p></dd><dt><span class="term">
+            <code class="literal">KD_AES_256_CBC_SSL_DECRYPT_KHR</code>
+          </span></dt><dd><p>Decrypt using AES with 256 bit key, CBC chaining, SSL padding. </p></dd><dt><span class="term">
+            <code class="literal">KD_AES_256_ECB_SSL_ENCRYPT_KHR</code>
+          </span></dt><dd><p>Encrypt using AES with 256 bit key, ECB chaining, SSL padding. </p></dd><dt><span class="term">
+            <code class="literal">KD_AES_256_ECB_SSL_DECRYPT_KHR</code>
+          </span></dt><dd><p>Decrypt using AES with 256 bit key, ECB chaining, SSL padding. </p></dd><dt><span class="term">
+            <code class="literal">KD_AES_256_CBC_NONE_ENCRYPT_KHR</code>
+          </span></dt><dd><p>Encrypt using AES with 256 bit key, CBC chaining, no padding. </p></dd><dt><span class="term">
+            <code class="literal">KD_AES_256_CBC_NONE_DECRYPT_KHR</code>
+          </span></dt><dd><p>Decrypt using AES with 256 bit key, CBC chaining, no padding. </p></dd><dt><span class="term">
+            <code class="literal">KD_AES_256_ECB_NONE_ENCRYPT_KHR</code>
+          </span></dt><dd><p>Encrypt using AES with 256 bit key, ECB chaining, no padding. </p></dd><dt><span class="term">
+            <code class="literal">KD_AES_256_ECB_NONE_DECRYPT_KHR</code>
+          </span></dt><dd><p>Decrypt using AES with 256 bit key, ECB chaining, no padding. </p></dd></dl></div><p>
+        Currently only the most minimal set, AES, is supported, as it is most
+        likely to be hardware accelerated.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2480900"></a>Return value</h4></div></div></div><p>
+        The function returns an initialized cipher object, or
+        <code class="literal">KD_NULL</code> if the arguments do not make sense for
+        the requested cipher, or if there are insufficient resources.
+      </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdCipherKHR"></a>3.2.&#160;kdCipherKHR</h3></div></div></div><a class="indexterm" name="id2480932"></a><p>Encrypt or decrypt data.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2480943"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdCipherKHR</b>(</code></td><td>KDCipherKHR *&#160;</td><td><var class="pdparam">c</var>, </td></tr><tr><td>&#160;</td><td>const KDuint8 *&#160;</td><td><var class="pdparam">data</var>, </td></tr><tr><td>&#160;</td><td>KDint &#160;</td><td><var class="pdparam">dataLen</var>, </td></tr><tr><td>&#160;</td><td>KDuint8 *&#160;</td><td><var class="pdparam">out</var>, </td></tr><tr><td>&#160;</td><td>KDint *&#160;</td><td><var class="pdparam">outLen</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2481006"></a>Description</h4></div></div></div><p>
+        Encrypt or decrypt data. 
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2481016"></a>Return value</h4></div></div></div><p>
+        The amount of input consumed, or -1 if there was an error.
+      </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdCipherFinalKHR"></a>3.3.&#160;kdCipherFinalKHR</h3></div></div></div><a class="indexterm" name="id2481039"></a><p>Finishes encrypting or decrypting data.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2481050"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdCipherFinalKHR</b>(</code></td><td>KDCipherKHR *&#160;</td><td><var class="pdparam">c</var>, </td></tr><tr><td>&#160;</td><td>const KDuint8 *&#160;</td><td><var class="pdparam">data</var>, </td></tr><tr><td>&#160;</td><td>KDint &#160;</td><td><var class="pdparam">dataLen</var>, </td></tr><tr><td>&#160;</td><td>KDuint8 *&#160;</td><td><var class="pdparam">out</var>, </td></tr><tr><td>&#160;</td><td>KDint *&#160;</td><td><var class="pdparam">outLen</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2527703"></a>Description</h4></div></div></div><p>
+        Finishes encrypting or decrypting data. Note that this function won't
+        actually finish if it doesn't have enough output space. It will add
+        padding if appropriate. 
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2527716"></a>Return value</h4></div></div></div><p>
+        The amount of input consumed or -1 if there was an error. If this is
+        not equal to dataLen, then the function has behaved like kdCipherKHR and
+        must be called again with enough output space to consume the remaining
+        input.
+      </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdCipherResultKHR"></a>3.4.&#160;kdCipherResultKHR</h3></div></div></div><a class="indexterm" name="id2527742"></a><p>Returns an encryption result.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2527753"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdCipherResultKHR</b>(</code></td><td>KDCipherKHR *&#160;</td><td><var class="pdparam">c</var>, </td></tr><tr><td>&#160;</td><td>const KDuint8 *&#160;</td><td><var class="pdparam">data</var>, </td></tr><tr><td>&#160;</td><td>KDint &#160;</td><td><var class="pdparam">dataLen</var>, </td></tr><tr><td>&#160;</td><td>KDuint8 *&#160;</td><td><var class="pdparam">out</var>, </td></tr><tr><td>&#160;</td><td>KDint *&#160;</td><td><var class="pdparam">outLen</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2527815"></a>Description</h4></div></div></div><p>
+        Finishes encrypting or decrypting data but leaves the cipher object to
+        be re-used for another encryption. Note that this function won't
+        actually finish if it doesn't have enough output space. It will add
+        padding if appropriate. 
+      </p><p>
+        If all input has been consumed, the cipher object is in an undefined
+        state. It must be re-initialized with kdCipherReinitKHR. 
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2527835"></a>Return value</h4></div></div></div><p>
+        The amount of input consumed or -1 if there was an error. If this is
+        not equal to dataLen, then the function has behaved like kdCipherKHR and
+        must be called again with enough output space to consume the remaining
+        input.
+      </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdCipherReinitKHR"></a>3.5.&#160;kdCipherReinitKHR</h3></div></div></div><a class="indexterm" name="id2527862"></a><p>Re-initializes a cipher.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2527872"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDCipherKHR *<b class="fsfunc">kdCipherReinitKHR</b>(</code></td><td>KDCipherKHR *&#160;</td><td><var class="pdparam">c</var>, </td></tr><tr><td>&#160;</td><td>const KDuint8 *&#160;</td><td><var class="pdparam">key</var>, </td></tr><tr><td>&#160;</td><td>KDint &#160;</td><td><var class="pdparam">keyLen</var>, </td></tr><tr><td>&#160;</td><td>const KDuint8 *&#160;</td><td><var class="pdparam">iv</var>, </td></tr><tr><td>&#160;</td><td>KDint &#160;</td><td><var class="pdparam">ivLen</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2527935"></a>Description</h4></div></div></div><p>
+        This function re-initializes an existing cipher, using the
+        same cipher type.
+      </p><p>
+        <em class="parameter"><code>key</code></em> is a pointer to the key, and
+        <em class="parameter"><code>keyLen</code></em> is the key length. A value of
+        <code class="literal">KD_NULL</code> for <em class="parameter"><code>key</code></em>
+        and <code class="literal">0</code> for <em class="parameter"><code>keyLen</code></em>
+        indicates that the previous key should be used.
+        <em class="parameter"><code>iv</code></em> points to the initialization vector,
+        and <em class="parameter"><code>ivLen</code></em> is its length. If no
+        initialization vector is required, <em class="parameter"><code>iv</code></em> and
+        <em class="parameter"><code>ivLen</code></em> should be <code class="literal">KD_NULL</code>
+        and <code class="literal">0</code> respectively.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2528023"></a>Return value</h4></div></div></div><p>
+        An initialized cipher object or KD_NULL if the re-initialization
+        fails.
+      </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdHashInitKHR"></a>3.6.&#160;kdHashInitKHR</h3></div></div></div><a class="indexterm" name="id2528048"></a><p>Initializes a hash.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2528058"></a>Synopsis</h4></div></div></div><pre class="synopsis">typedef struct KDHashKHR KDHashKHR;</pre><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDHashKHR *<b class="fsfunc">kdHashInitKHR</b>(</code></td><td>KDint &#160;</td><td><var class="pdparam">type</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2528095"></a>Description</h4></div></div></div><p>
+        This function creates and initializes a hash object.
+        <em class="parameter"><code>type</code></em> is the hash algorithm to use,
+        selected from the list below.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2528114"></a>Hash types</h4></div></div></div><div class="variablelist"><dl><dt><span class="term">
+            <code class="literal">KD_SHA1_KHR</code> (104)
+          </span></dt><dd><p>
+                Use the SHA-1 hash algorithm, which returns a 20 byte hash.
+            </p></dd></dl></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2528144"></a>Return value</h4></div></div></div><p>
+        On success, the function returns an initialized hash object.
+        If the hash type is not supported, or there are insufficient
+        resources, then the function returns <code class="literal">KD_NULL</code>.
+      </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdHashKHR"></a>3.7.&#160;kdHashKHR</h3></div></div></div><a class="indexterm" name="id2528175"></a><p>Hash data.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2528185"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">typedef KDint <b class="fsfunc">kdHashKHR</b>(</code></td><td>KDHashKHR *&#160;</td><td><var class="pdparam">c</var>, </td></tr><tr><td>&#160;</td><td>const KDuint8 *&#160;</td><td><var class="pdparam">data</var>, </td></tr><tr><td>&#160;</td><td>KDint &#160;</td><td><var class="pdparam">dataLen</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2528231"></a>Description</h4></div></div></div><p>
+        Hash data. 
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2528241"></a>Return value</h4></div></div></div><p>
+        The amount of input consumed, or -1 if there was an error. Note that
+        all input will always be consumed; returning the amount is simply for
+        consistency with kdCipherKHR
+      </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdHashFinalKHR"></a>3.8.&#160;kdHashFinalKHR</h3></div></div></div><a class="indexterm" name="id2528267"></a><p>Finishes hashing data.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2528277"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdHashFinalKHR</b>(</code></td><td>KDHashKHR *&#160;</td><td><var class="pdparam">c</var>, </td></tr><tr><td>&#160;</td><td>const KDuint8 *&#160;</td><td><var class="pdparam">data</var>, </td></tr><tr><td>&#160;</td><td>KDint &#160;</td><td><var class="pdparam">dataLen</var>, </td></tr><tr><td>&#160;</td><td>KDuint8 *&#160;</td><td><var class="pdparam">out</var>, </td></tr><tr><td>&#160;</td><td>KDint *&#160;</td><td><var class="pdparam">outLen</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2528339"></a>Description</h4></div></div></div><p>
+        Finishes hashing data and destroys the hash object.. 
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2528350"></a>Return value</h4></div></div></div><p>
+        The amount of input consumed or -1 if there was an error.
+      </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdHashResultKHR"></a>3.9.&#160;kdHashResultKHR</h3></div></div></div><a class="indexterm" name="id2528373"></a><p>
+        Finishes hashing data without deleting the hash object.
+      </p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2528385"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdHashResultKHR</b>(</code></td><td>KDHashKHR *&#160;</td><td><var class="pdparam">c</var>, </td></tr><tr><td>&#160;</td><td>const KDuint8 *&#160;</td><td><var class="pdparam">data</var>, </td></tr><tr><td>&#160;</td><td>KDint &#160;</td><td><var class="pdparam">dataLen</var>, </td></tr><tr><td>&#160;</td><td>KDuint8 *&#160;</td><td><var class="pdparam">out</var>, </td></tr><tr><td>&#160;</td><td>KDint *&#160;</td><td><var class="pdparam">outLen</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2528446"></a>Description</h4></div></div></div><p>
+        Finishes hashing data but leaves the hash object to be re-used. 
+      </p><p>
+        The hash object will have been re-initialized even if the output buffer
+        was unsuitable. 
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2528463"></a>Return value</h4></div></div></div><p>
+        The amount of input consumed or -1 if there was an error.
+      </p></div></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2528476"></a>4.&#160;Revision history</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2528482"></a>4.1.&#160;Version 5, 2007-10-22</h3></div></div></div><p>
+        Changed constants from enums to #defines. Changed functions back
+        from function pointer typedefs.
+    </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2528494"></a>4.2.&#160;Version 4, 2007-10-17</h3></div></div></div><p>
+        Constants renumbered in line with allocation from OpenKODE Core registry.
+    </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2528506"></a>4.3.&#160;Version 3, 2007-05-18</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Removed KD_CRYPTO_RANDOM_FAILURE_KHR as nothing was using it.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2528522"></a>4.4.&#160;Version 2, 2007-03-30</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Changed function declarations to be typedefs of function pointers.
+      </p></li><li><p>
+        Tidied extension header and added contributor list.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2528542"></a>4.5.&#160;Version 1, 2007-02-08</h3></div></div></div><p>
+        Initial version.
+    </p></div></div></div></body></html>

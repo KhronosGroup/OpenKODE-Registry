@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!ENTITY nbsp "&#160;">
+<!ENTITY ndash "&#8211;">
+<!ENTITY mdash "&#8212;">
+<!ENTITY rsquo "&#8217;">
+<!ENTITY ldquo "&#8220;">
+<!ENTITY rdquo "&#8221;">
+]>
+<?xml-stylesheet href="../style/tpr/browser.xsl" type="text/xsl"?>
+
+<article>
+  <title>OpenKODE Core extension: KD_ACR_system_font</title>
+
+  <synopsis role="incfileonly">/* Sample KD/ACR_system_font.h for OpenKODE Core */
+#ifndef __kd_ACR_system_font_h_
+#define __kd_ACR_system_font_h_
+#include &lt;KD/kd.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+</synopsis>
+  <informaltable>
+    <tgroup cols="2">
+
+      <tbody>
+        <row>
+          <entry>Name</entry>
+          <entry>ACR_system_font</entry>
+        </row>
+        <row>
+          <entry>Name strings</entry>
+          <entry>KD_ACR_system_font</entry>
+        </row>
+        <row>
+          <entry>Contributors</entry>
+          <entry>Masahiro Suda, Acrodea</entry>
+        </row>
+        <row>
+          <entry>Contacts</entry>
+          <entry>Acrodea</entry>
+        </row>
+        <row>
+          <entry>Status</entry>
+          <entry>Draft</entry>
+        </row>
+        <row>
+          <entry>Version</entry>
+          <!--When you up this, remember to do an entry in the revision history.-->
+          <entry>Version 1, 2011-06-14</entry>
+        </row>
+        <row>
+          <entry>Number</entry>
+          <entry>TBD</entry>
+        </row>
+        <row>
+          <entry>Dependencies</entry>
+          <entry>
+            Requires OpenKODE Core 1.0 or later.
+            This extension is written based on the wording of the
+            OpenKODE Core 1.0 specification.
+          </entry>
+        </row>
+      </tbody>
+    </tgroup>
+  </informaltable>
+
+  <sect1>
+    <title>Overview</title>
+    <para>
+        This function creates an image from system font
+    </para>
+  </sect1>
+
+  <sect1>
+    <title>Header file</title>
+    <para>
+        When this extension is present, its facilities are accessed by
+        including its header file:
+    </para>
+    <synopsis>#include &lt;KD/ACR_system_font.h></synopsis>
+  </sect1>
+
+<sect1>
+  <title>Defines</title>
+
+<!--===================================================================-->
+  <refentry id="Defines">
+    <refnamediv>
+      <refname>Defines</refname>
+      <refpurpose>SystemFont defines.</refpurpose>
+    </refnamediv>
+
+<!--===================================================================-->
+    <refsynopsisdiv>
+      <title>Synopsis</title>
+      <synopsis role="incfile">
+#define KD_SYSTEM_FONT_TYPE_SANSSERIF_ACR   0x00000000
+#define KD_SYSTEM_FONT_TYPE_MONOSPACE_ACR   0x00000001
+#define KD_SYSTEM_FONT_TYPE_SERIF_ACR       0x00000002
+
+#define KD_SYSTEM_FONT_FLAG_BOLD_ACR                0x00000001
+#define KD_SYSTEM_FONT_FLAG_ITALIC_ACR              0x00000002
+#define KD_SYSTEM_FONT_FLAG_OVERFLOW_WRAP_ACR       0x00000004
+#define KD_SYSTEM_FONT_FLAG_OVERFLOW_ELLIPSIS_ACR   0x00000008
+</synopsis>
+    </refsynopsisdiv>
+
+    <refsect1>
+      <title>Font type</title>
+      <informaltable role="constants">
+        <tgroup cols="2">
+          <thead>
+            <row>
+              <entry>type</entry>
+              <entry>usage</entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry><literal>KD_SYSTEM_FONT_TYPE_SANSSERIF_ACR</literal></entry>
+              <entry>Sans-serif font</entry>
+            </row>
+            <row>
+              <entry><literal>KD_SYSTEM_FONT_TYPE_MONOSPACE_ACR</literal></entry>
+              <entry>Monospaced font</entry>
+            </row>
+            <row>
+              <entry><literal>KD_SYSTEM_FONT_TYPE_SERIF_ACR</literal></entry>
+              <entry>Serif font</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+    </refsect1>
+
+    <refsect1>
+      <title>Font flag</title>
+      <informaltable role="constants">
+        <tgroup cols="2">
+          <thead>
+            <row>
+              <entry>flag</entry>
+              <entry>usage</entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry><literal>KD_SYSTEM_FONT_FLAG_BOLD_ACR</literal></entry>
+              <entry>BOLD font (Availability depends on a device environment.)</entry>
+            </row>
+            <row>
+              <entry><literal>KD_SYSTEM_FONT_FLAG_ITALIC_ACR</literal></entry>
+              <entry>ITALIC font (Availability depends on a device environment.)</entry>
+            </row>
+            <row>
+              <entry><literal>KD_SYSTEM_FONT_FLAG_OVERFLOW_WRAP_ACR</literal></entry>
+              <entry>It inserts line feeds in w length. (Availability depends on a device environment.)</entry>
+            </row>
+            <row>
+              <entry><literal>KD_SYSTEM_FONT_FLAG_OVERFLOW_ELLIPSIS_ACR</literal></entry>
+              <entry>It displays “…” for the part which is over w length. If KD_SYSTEM_FONT_FLAG_OVERFLOW_WRAP_ACR is also selected, KD_SYSTEM_FONT_FLAG_OVERFLOW_WRAP_ACR is available. (Availability depends on a device environment.)</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+    </refsect1>
+  </refentry>
+<!--===================================================================-->
+</sect1>
+
+<sect1>
+  <title>New function</title>
+<!--===================================================================-->
+  <refentry id="kdSystemFontGetTextSizeACR">
+    <refnamediv>
+      <refname>kdSystemFontGetTextSizeACR</refname>
+      <refpurpose>Gets system font width and height.</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <title>Synopsis</title>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>KDint <function>kdSystemFontGetTextSizeACR</function></funcdef>
+          <paramdef>KDint32 <parameter>size</parameter></paramdef>
+          <paramdef>KDint32 <parameter>locale</parameter></paramdef>
+          <paramdef>KDint32 <parameter>type</parameter></paramdef>
+          <paramdef>KDint32 <parameter>flag</parameter></paramdef>
+          <paramdef>const KDchar * <parameter>utf8string</parameter></paramdef>
+          <paramdef>KDint32 <parameter>w</parameter></paramdef>
+          <paramdef>KDint32 * <parameter>result_w</parameter></paramdef>
+          <paramdef>KDint32 * <parameter>result_h</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+
+    <refsect1>
+      <title>Description</title>
+      <para>
+        This function acquires width and height to draw by system font.
+      </para>
+
+    <refsect2>
+      <title>Parameters</title>
+      <variablelist role="parameters">
+        <varlistentry>
+          <term><parameter>size</parameter></term>
+          <listitem>
+            <para>
+              A font size.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term><parameter>locale</parameter></term>
+          <listitem>
+            <para>
+              A local information. (Unsupported)
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>type</parameter>
+          </term>
+          <listitem>
+            <para>
+              A font type.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>flag</parameter>
+          </term>
+          <listitem>
+            <para>
+              A font flag.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>utf8string</parameter>
+          </term>
+          <listitem>
+            <para>
+              A UTF-8 string to acquire.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>w</parameter>
+          </term>
+          <listitem>
+            <para>
+              A width to display. This parameter is available only for KD_SYSTEM_FONT_FLAG_OVERFLOW_WRAP_ACR and KD_SYSTEM_FONT_FLAG_OVERFLOW_ELLIPSIS_ACR.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>result_w</parameter>
+          </term>
+          <listitem>
+            <para>
+              A pointer to an area to store a width of display area.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>result_h</parameter>
+          </term>
+          <listitem>
+            <para>
+              A pointer to an area to store a height of display area.
+            </para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </refsect2>
+
+    </refsect1>
+
+    <refsect1>
+      <title>Return value</title>
+      <para>
+        On success, this function returns 0. On failure, it returns -1 and can get an error detail by <function>kdGetError</function>.
+      </para>
+    </refsect1>
+  
+    <refsect1>
+      <title>Error codes</title>
+
+      <variablelist>
+        <varlistentry>
+          <term><literal>KD_EIO</literal></term>
+          <listitem>
+            <para>
+                General I/O error.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term><literal>KD_EINVAL</literal></term>
+          <listitem>
+            <para>
+                A parameter is invalid.
+            </para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </refsect1>
+  
+  </refentry>
+
+<!--===================================================================-->
+  <refentry id="kdSystemFontRenderTextACR">
+    <refnamediv>
+      <refname>kdSystemFontRenderTextACR</refname>
+      <refpurpose>Stores a system font image to a buffer.</refpurpose>
+    </refnamediv>
+
+    <refsynopsisdiv>
+      <title>Synopsis</title>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>KDint <function>kdSystemFontRenderTextACR</function></funcdef>
+          <paramdef>KDint32 <parameter>size</parameter></paramdef>
+          <paramdef>KDint32 <parameter>locale</parameter></paramdef>
+          <paramdef>KDint32 <parameter>type</parameter></paramdef>
+          <paramdef>KDint32 <parameter>flag</parameter></paramdef>
+          <paramdef>const KDchar * <parameter>utf8string</parameter></paramdef>
+          <paramdef>KDint32 <parameter>w</parameter></paramdef>
+          <paramdef>KDint32 <parameter>h</parameter></paramdef>
+          <paramdef>KDint32 <parameter>pitch</parameter></paramdef>
+          <paramdef>void * <parameter>buffer</parameter></paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </refsynopsisdiv>
+
+
+    <refsect1>
+      <title>Description</title>
+      <para>
+        This function draws system font on a specified area. It is stored by 0-255 description of 1byte-1pixel.
+      </para>
+
+    <refsect2>
+      <title>Parameters</title>
+      <variablelist role="parameters">
+        <varlistentry>
+          <term><parameter>size</parameter></term>
+          <listitem>
+            <para>
+              A font size.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term><parameter>locale</parameter></term>
+          <listitem>
+            <para>
+              A local information.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>type</parameter>
+          </term>
+          <listitem>
+            <para>
+              A font type.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>flag</parameter>
+          </term>
+          <listitem>
+            <para>
+              A font flag.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>utf8string</parameter>
+          </term>
+          <listitem>
+            <para>
+              A UTF-8 strung to acquire.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>w</parameter>
+          </term>
+          <listitem>
+            <para>
+              A width of display area.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>h</parameter>
+          </term>
+          <listitem>
+            <para>
+              A height of display area.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>pitch</parameter>
+          </term>
+          <listitem>
+            <para>
+              A buffer pitch.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term>
+            <parameter>buffer</parameter>
+          </term>
+          <listitem>
+            <para>
+              A buffer.
+            </para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </refsect2>
+
+    </refsect1>
+
+    <refsect1>
+      <title>Return value</title>
+      <para>
+        On success, this function returns 0. On failure, it returns -1 and can get error detail by <function>kdGetError</function>.
+      </para>
+    </refsect1>
+  
+    <refsect1>
+      <title>Error codes</title>
+
+      <variablelist>
+        <varlistentry>
+          <term><literal>KD_EIO</literal></term>
+          <listitem>
+            <para>
+                General I/O error.
+            </para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term><literal>KD_EINVAL</literal></term>
+          <listitem>
+            <para>
+                A parameter is invalid.
+            </para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </refsect1>
+  
+  </refentry>
+
+</sect1>
+<sect1>
+  <title>Revision history</title>
+
+  <sect2>
+    <title>Version 1, 2011-06-14</title>
+    <para>
+        Initial version.
+    </para>
+  </sect2>
+</sect1>
+
+  <sect1 role="incfileonly">
+    <title>Dummy sect for include file epilog</title>
+    <synopsis role="incfileonly">
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* __kd_ACR_system_font_h_ */
+</synopsis>
+  </sect1>
+</article>
+
+

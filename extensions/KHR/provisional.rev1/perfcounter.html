@@ -1,0 +1,164 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=us-ascii"><title>OpenKODE Core extension: KD_KHR_perfcounter</title><meta name="generator" content="DocBook XSL Stylesheets V1.70.1"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="article" lang="en"><div class="titlepage"><div><div><h2 class="title"><a name="id2486456"></a>OpenKODE Core extension: KD_KHR_perfcounter</h2></div></div><hr></div><div class="informaltable"><table border="1"><colgroup><col><col></colgroup><tbody><tr><td>Name</td><td>KHR_perfcounter</td></tr><tr><td>Name strings</td><td>KD_KHR_perfcounter</td></tr><tr><td>Contributors</td><td>Avi Shapira</td></tr><tr><td>Contacts</td><td>OpenKODE working group, Khronos Group</td></tr><tr><td>Status</td><td>Prototype implemented</td></tr><tr><td>Version</td><td>Version 2, 2007-03-23</td></tr><tr><td>Number</td><td>TBD</td></tr><tr><td>Dependencies</td><td>
+            Requires OpenKODE Core 1.0 Provisional.
+            This extension is written based on the wording of the
+            OpenKODE Core 1.0 Provisional specification.
+          </td></tr></tbody></table></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2488765"></a>1.&#160;Overview</h2></div></div></div><p>
+        This extension provides a unified API through which
+        different performance counter suppliers expose performance counters.
+    </p><p>
+        Performance counters suppliers may be:
+    </p><div class="itemizedlist"><ul type="disc"><li><p>
+        CPU vendors - CPU utilization counters.
+      </p></li><li><p>
+        Operating systems: Counters related to memory, I/O, threads, etc.
+      </p></li><li><p>
+        Graphic system: Graphic driver utilization counters, graphic memory
+        usage counters, GPU utilization counters, FPS,
+        etc.
+      </p></li><li><p>
+        Any other program, system or service that would like to expose
+        performance counters.
+      </p></li></ul></div></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2488810"></a>2.&#160;Recommended counter names</h2></div></div></div><p>
+        Although not mandatory, it is recommended that vendors use the
+        following counter names, in order to promote interoperability.
+    </p><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2488822"></a>2.1.&#160;CPU</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p><code class="literal">"CPU X utilization"</code></p></li><li><p><code class="literal">"CPU X user mode utilization"</code></p></li><li><p><code class="literal">"CPU X kernel mode utilization"</code></p></li></ul></div><p>
+        where <em class="parameter"><code>X</code></em> is a decimal integer giving the
+        CPU number.
+      </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2488863"></a>2.2.&#160;Memory</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p><code class="literal">"Physical memory usage"</code></p></li><li><p><code class="literal">"Virtual memory usage"</code></p></li><li><p><code class="literal">"Cache pages fault / sec"</code></p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2528625"></a>2.3.&#160;I/O</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p><code class="literal">"File read bytes / sec"</code></p></li><li><p><code class="literal">"File write bytes / sec"</code></p></li><li><p><code class="literal">"I/O read bytes / sec"</code></p></li><li><p><code class="literal">"I/O write bytes / sec."</code></p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2528667"></a>2.4.&#160;Operating system</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p><code class="literal">"Processes amount"</code></p></li><li><p><code class="literal">"Threads amount"</code></p></li><li><p><code class="literal">"Context switched / sec"</code></p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2528701"></a>2.5.&#160;Graphic system</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p><code class="literal">"Graphic driver utilization"</code></p></li><li><p><code class="literal">"GPU X utilization"</code></p></li><li><p><code class="literal">"GPU X vertex processors utilization"</code></p></li><li><p><code class="literal">"GPU X fragment processors utilization"</code></p></li><li><p><code class="literal">"GPU memory usage"</code></p></li><li><p><code class="literal">"Primitive count"</code></p></li><li><p><code class="literal">"Culled primitive count"</code></p></li></ul></div><p>
+        where <em class="parameter"><code>X</code></em> is a decimal integer giving the
+        GPU number.
+      </p></div></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2492361"></a>3.&#160;New constants</h2></div></div></div><div class="variablelist"><dl><dt><a name="KD_INFINITE_COUNTER_VAL_KHR"></a><span class="term">
+          <code class="literal">KD_INFINITE_COUNTER_VAL_KHR</code>
+          <code class="literal">(KDINT64_MAX)</code>
+        </span></dt><dd><p>Defines an infinite counter value.</p></dd><dt><a name="KD_UNKNOWN_COUNTER_VAL_KHR"></a><span class="term">
+          <code class="literal">KD_UNKNOWN_COUNTER_VAL_KHR</code>
+          <code class="literal">(-1)</code>
+        </span></dt><dd><p>Represents an unknown value.</p></dd></dl></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2492532"></a>4.&#160;New types</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="KDCounterInfoKHR"></a>4.1.&#160;KDCounterInfoKHR</h3></div></div></div><a class="indexterm" name="id2492550"></a><p>Information on a single performance counter.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2492561"></a>Synopsis</h4></div></div></div><pre class="synopsis">typedef struct KDCounterInfoKHR {
+    const KDchar *st_vendorName;
+    const KDchar *st_name;
+    const KDchar *st_description;
+    KDint64 d_minValue;
+    KDint64 d_maxValue;
+    KDfloat32 d_defaultScale;
+} KDCounterInfoKHR;</pre></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2492579"></a>Description</h4></div></div></div><div class="variablelist"><dl><dt><span class="term">
+              <em class="structfield"><code>st_vendorName</code></em>
+            </span></dt><dd><p>Counter vendor name.</p></dd><dt><span class="term">
+              <em class="structfield"><code>st_name</code></em>
+            </span></dt><dd><p>Counter name (should be short).</p></dd><dt><span class="term">
+              <em class="structfield"><code>st_description</code></em>
+            </span></dt><dd><p>Counter description (as detailed as possible).</p></dd><dt><span class="term">
+              <em class="structfield"><code>d_minValue</code></em>
+            </span></dt><dd><p>Counter minimal value.</p></dd><dt><span class="term">
+              <em class="structfield"><code>d_maxValue</code></em>
+            </span></dt><dd><p>Counter maximal value (can get KD_INFINITE_COUNTER_VAL_KHR).</p></dd><dt><span class="term">
+              <em class="structfield"><code>d_defaultScale</code></em>
+            </span></dt><dd><p>Scale factor that transforms the counter value to the [0,100] range.</p><p>Use KD_UNKNOWN_COUNTER_VAL_KHR for counters to which there is no predefined default scale.</p></dd></dl></div></div></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2488247"></a>5.&#160;New functions</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdGetNumberOfCountersKHR"></a>5.1.&#160;kdGetNumberOfCountersKHR</h3></div></div></div><a class="indexterm" name="id2488265"></a><p>Return the number of performance counters.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2488276"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><p><code class="funcdef">typedef KDint (*<b class="fsfunc">PFNKDGETNUMBEROFCOUNTERSKHR</b>)(</code><code>void)</code>;</p></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2488301"></a>Description</h4></div></div></div><p>
+            This function
+            retrieves the number of performance counters
+            supported by the implementation.
+        </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2488314"></a>Return value</h4></div></div></div><p>
+            On success, the function returns the number of counters,
+            or 0 if none. On failure, the function returns -1
+            and stores
+            one of the error codes below into the error indicator
+            returned by <code class="function">kdGetError</code>.
+        </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2488334"></a>Error codes</h4></div></div></div><p>
+            To be defined.
+        </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdGetCounterInformationKHR"></a>5.2.&#160;kdGetCounterInformationKHR</h3></div></div></div><a class="indexterm" name="id2488357"></a><p>Retrieve information on a performance counter.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2488368"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><p><code class="funcdef">typedef const KDCounterInfoKHR *(*<b class="fsfunc">PFNKDGETCOUNTERINFORMATIONKHR</b>)(</code>KDint <var class="pdparam">index</var><code>)</code>;</p></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2488400"></a>Description</h4></div></div></div><p>
+            This function retrieves information on counter number
+            <em class="parameter"><code>index</code></em>. The index is 0-based.
+        </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2488417"></a>Return value</h4></div></div></div><p>
+            On success, the function returns a pointer to a
+            <span class="type">KDCounterInfoKHR</span> structure giving information
+            on the requested counter.
+            On failure, the function returns <code class="literal">KD_NULL</code>
+            and stores
+            one of the error codes below into the error indicator
+            returned by <code class="function">kdGetError</code>.
+        </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2488448"></a>Error codes</h4></div></div></div><p>
+            To be defined.
+        </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdActivateCountersKHR"></a>5.3.&#160;kdActivateCountersKHR</h3></div></div></div><a class="indexterm" name="id2488471"></a><p>Make counters active.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2488482"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><p><code class="funcdef">typedef KDint (*<b class="fsfunc">PFNKDACTIVATECOUNTERSKHR</b>)(</code>const KDint *<var class="pdparam">indexes</var>, KDint <var class="pdparam">numindexes</var><code>)</code>;</p></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2488521"></a>Description</h4></div></div></div><p>
+            This function activates the counters whose indexes appear in the
+            first <em class="parameter"><code>numindexes</code></em> elements of the array
+            <em class="parameter"><code>indexes</code></em>.  Note that activating a lot of
+            counters may reduce system performance. 
+        </p><p>
+            If <em class="parameter"><code>numindexes</code></em> is negative, or if
+            <em class="parameter"><code>indexes</code></em> is not a readable array
+            of at least <em class="parameter"><code>numindexes</code></em> <span class="type">KDint</span>
+            values,
+            then undefined behavior results.
+        </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2488574"></a>Return value</h4></div></div></div><p>
+            On success, the function returns 0.
+            On failure, it returns -1 and stores
+            one of the error codes below into the error indicator
+            returned by <code class="function">kdGetError</code>.
+        </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2488593"></a>Error codes</h4></div></div></div><p>
+            To be defined.
+        </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdDeactivateCountersKHR"></a>5.4.&#160;kdDeactivateCountersKHR</h3></div></div></div><a class="indexterm" name="id2488616"></a><p>Makes counters inactive.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2538105"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><p><code class="funcdef">typedef KDint (*<b class="fsfunc">PFNKDDEACTIVATECOUNTERSKHR</b>)(</code>const KDint *<var class="pdparam">indexes</var>, KDint <var class="pdparam">numindexes</var><code>)</code>;</p></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2538144"></a>Description</h4></div></div></div><p>
+            This function deactivates the counters whose indexes appear in the
+            first <em class="parameter"><code>numindexes</code></em> elements of the array
+            <em class="parameter"><code>indexes</code></em>.
+        </p><p>
+            If <em class="parameter"><code>numindexes</code></em> is negative, or if
+            <em class="parameter"><code>indexes</code></em> is not a readable array
+            of at least <em class="parameter"><code>numindexes</code></em> <span class="type">KDint</span>
+            values,
+            then undefined behavior results.
+        </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2538195"></a>Return value</h4></div></div></div><p>
+            On success, the function returns 0.
+            On failure, it returns -1 and stores
+            one of the error codes below into the error indicator
+            returned by <code class="function">kdGetError</code>.
+        </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2538214"></a>Error codes</h4></div></div></div><p>
+            To be defined.
+        </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdStartSamplingKHR"></a>5.5.&#160;kdStartSamplingKHR</h3></div></div></div><a class="indexterm" name="id2538237"></a><p>Start the performance counters sampling.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2538248"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><p><code class="funcdef">typedef KDint (*<b class="fsfunc">PFNKDSTARTSAMPLINGKHR</b>)(</code><code>void)</code>;</p></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2538273"></a>Description</h4></div></div></div><p>
+            This function initializes all performance counter values to 0
+            and starts the active ones sampling.
+        </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2538285"></a>Return value</h4></div></div></div><p>
+            On success, the function returns 0.
+            On failure, it returns -1 and stores
+            one of the error codes below into the error indicator
+            returned by <code class="function">kdGetError</code>.
+        </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2538304"></a>Error codes</h4></div></div></div><p>
+            To be defined.
+        </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdStopSamplingKHR"></a>5.6.&#160;kdStopSamplingKHR</h3></div></div></div><a class="indexterm" name="id2538327"></a><p>Stop the performance counters sampling.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2538338"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><p><code class="funcdef">typedef KDint (*<b class="fsfunc">PFNKDSTOPSAMPLINGKHR</b>)(</code><code>void)</code>;</p></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2538363"></a>Description</h4></div></div></div><p>
+            This function stops the active performance counters sampling. 
+        </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2538374"></a>Return value</h4></div></div></div><p>
+            On success, the function returns 0.
+            On failure, it returns -1 and stores
+            one of the error codes below into the error indicator
+            returned by <code class="function">kdGetError</code>.
+        </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2538394"></a>Error codes</h4></div></div></div><p>
+            To be defined.
+        </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdGetCounterValuesKHR"></a>5.7.&#160;kdGetCounterValuesKHR</h3></div></div></div><a class="indexterm" name="id2538417"></a><p>Retrieves list of counter values.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2538428"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><p><code class="funcdef">typedef KDint (*<b class="fsfunc">PFNKDGETCOUNTERVALUESKHR</b>)(</code>const KDint *<var class="pdparam">indexes</var>, KDint <var class="pdparam">numindexes</var>, KDint64 *<var class="pdparam">values</var><code>)</code>;</p></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2538475"></a>Description</h4></div></div></div><p>
+            This function stores counter values into the array
+            <em class="parameter"><code>value</code></em>. For each integer from 0 to
+            <em class="parameter"><code>numindexes</code></em>-1 inclusive, a
+            counter index is read out of that position in the
+            <em class="parameter"><code>indexes</code></em> array, and the current
+            value of the counter of that index is stored in the
+            corresponding position in the
+            <em class="parameter"><code>values</code></em> array.
+        </p><p>
+            If <em class="parameter"><code>numindexes</code></em> is negative, or if
+            <em class="parameter"><code>indexes</code></em> is not a readable array
+            of at least <em class="parameter"><code>numindexes</code></em> <span class="type">KDint</span>
+            values,
+            or if <em class="parameter"><code>values</code></em> is not a writable array
+            of at least <em class="parameter"><code>numindexes</code></em> <span class="type">KDint64</span>
+            elements,
+            then undefined behavior results.
+        </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2538558"></a>Return value</h4></div></div></div><p>
+            On success, the function returns 0.
+            On failure, it returns -1 and stores
+            one of the error codes below into the error indicator
+            returned by <code class="function">kdGetError</code>.
+        </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2538578"></a>Error codes</h4></div></div></div><p>
+            To be defined.
+        </p></div></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2538590"></a>6.&#160;Revision history</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2538596"></a>6.1.&#160;Version 2, 2007-03-23</h3></div></div></div><p>
+        Added contributor list and revision history.
+        Added list of recommended counter names.
+      </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2538608"></a>6.2.&#160;Version 1, 2007-01-31</h3></div></div></div><p>
+        Initial version.
+      </p></div></div></div></body></html>

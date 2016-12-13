@@ -1,0 +1,272 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=us-ascii"><title>OpenKODE Core extension: KD_ATX_socktype</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="article" lang="en"><div class="titlepage"><div><div><h2 class="title"><a name="id2477139"></a>OpenKODE Core extension: KD_ATX_socktype</h2></div></div><hr></div><div class="informaltable"><table border="1"><colgroup><col><col></colgroup><tbody><tr><td>Name</td><td>ATX_socktype</td></tr><tr><td>Name strings</td><td>KD_ATX_socktype</td></tr><tr><td>Contributors</td><td>Tim Renouf</td></tr><tr><td>Contacts</td><td>Antix Labs</td></tr><tr><td>Status</td><td>Implemented by Antix Labs</td></tr><tr><td>Version</td><td>2</td></tr><tr><td>Number</td><td>8</td></tr><tr><td>Dependencies</td><td>
+          Requires OpenKODE Core 1.0.
+          This extension is written based on the wording of the
+          OpenKODE Core 1.0 specification.
+        </td></tr></tbody></table></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2520065"></a>1.&#160;Overview</h2></div></div></div><p>
+    When drafting the Bluetooth extension, it became apparent that
+    20 Network sockets has some
+    structural deficiencies when a new socket type needs to be added.
+    The changes in this extension are intended to improve that situation,
+    without changing any semantics of OpenKODE Core (other than defining
+    a new type KDSockaddrAfInATX).
+  </p><p>
+    The changes fall into three areas:
+  </p><div class="itemizedlist"><ul type="disc"><li><p>
+        Restructure of 20 Network sockets, consisting of a new section 20.2
+        Socket type and address families, which subsumes the old 20.3 Types,
+        and a new section 20.3 TCP and UDP, which subsumes the
+        old 20.2 Network connection.
+      </p></li><li><p>
+        Function changes to allow for the growth of KDSockaddr.
+      </p></li><li><p>
+        Function changes so that whether <code class="function">kdSocketListen</code>
+        is supported depends on the socket type.
+      </p></li></ul></div></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2520120"></a>2.&#160;Header file</h2></div></div></div><p>
+    This extension does not have an associated header file.
+  </p></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2520129"></a>3.&#160;20.2. Socket types and address families</h2></div></div></div><p>
+    This is a new section. (The text of the old 20.2 Network connection
+    is subsumed into the new 20.3 TCP and UDP, below.)
+  </p><p>
+    Each socket type defined in OpenKODE core has some of the following
+    characteristics:
+  </p><p>
+    If a socket type is <em class="firstterm">connection based</em>, then any
+    communication is between two endpoints, one of which is the
+    <em class="firstterm">server</em> (it calls <code class="function">kdSocketBind</code>,
+    <code class="function">kdSocketListen</code> and
+    <code class="function">kdSocketAccept</code>), and the other is the
+    <em class="firstterm">client</em> (it calls
+    <code class="function">kdSocketConnect</code>).
+  </p><p>
+    If a socket type is <em class="firstterm">connectionless</em>, then one device
+    may send data to any other addressable device without connecting first.
+  </p><p>
+    If a socket type is <em class="firstterm">reliable</em>, then data sent arrives
+    at its destination, uncorrupted and in order,
+    otherwise an error is generated (although not
+    necessarily by the function call that sent the lost data).
+  </p><p>
+    If a socket type is <em class="firstterm">unreliable</em>, then data sent does
+    not necessarily arrive, or may arrive corrupted, or packets may arrive out
+    of order.  The application(s) must make their own arrangements to work
+    round this.
+  </p><p>
+    If a socket type is <em class="firstterm">stream oriented</em>, then data is
+    sent as a stream and the boundaries between different
+    <code class="function">kdSocketSend</code> or <code class="function">kdSocketSendTo</code>
+    calls are not preserved.
+  </p><p>
+    If a socket type is <em class="firstterm">datagram oriented</em>, then data is
+    sent as a packet. The packet of data sent by a single
+    <code class="function">kdSocketSend</code> or <code class="function">kdSocketSendTo</code>
+    call is read as a single unit by a single <code class="function">kdSocketRecv</code>
+    or <code class="function">kdSocketRecvFrom</code> call. If the receive call does not
+    provide enough buffer space for the packet, then it is truncated and the
+    truncated part is lost.
+  </p><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="KDSockaddr"></a>3.1.&#160;KDSockaddr</h3></div></div></div><a class="indexterm" name="id2525341"></a><p>Struct type for socket address.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2498389"></a>Synopsis</h4></div></div></div><pre class="synopsis">typedef struct KDSockaddr {
+    KDuint16 family;
+    union {
+        KDSockaddrAfInATX sin;
+    } data;
+} KDSockaddr;</pre></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2477371"></a>Description</h4></div></div></div><p>
+        This struct contains a socket address. The two top-level
+        members are <em class="structfield"><code>family</code></em>, which specifies
+        the address family, and <em class="structfield"><code>data</code></em>, which
+        is a union where the union member in use depends on the address
+        family.
+      </p><p>
+        See below for the address families supported by
+        OpenKODE Core.
+      </p></div></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2477399"></a>4.&#160;20.3. TCP and UDP</h2></div></div></div><p>
+      This is a new section, which also subsumes the old 20.3 Types.
+  </p><p>
+      An OpenKODE Core implementation may support neither, one or both of TCP
+      and UDP sockets. The socket type constants for use in
+      <code class="function">kdSocketCreate</code> are:
+  </p><pre class="synopsis">#define KD_SOCK_TCP 64
+#define KD_SOCK_UDP 65
+</pre><p>
+      A TCP socket is connection based, reliable and stream oriented.
+  </p><p>
+      A UDP socket is connectionless, unreliable and datagram oriented.
+  </p><p>
+      Both TCP and UDP use the IP addressing family, and contribute the
+      <em class="structfield"><code>sin</code></em> field (of the type
+      <span class="type">KDSockaddrAfInATX</span> defined here) to the
+      <span class="type">KDSockaddr</span> data union:
+  </p><pre class="synopsis">#define KD_AF_INET 70
+typedef struct KDSockaddrAfInATX {
+    KDuint16 port;
+    KDuint32 address;
+} KDSockaddrAfInATX;
+</pre><p>
+      For a <span class="type">KDSockaddr</span> <code class="literal">addr</code> where
+      <code class="literal">addr.family</code> is <code class="literal">KD_AF_INET</code>, the
+      fields are set as follows:
+  </p><div class="variablelist"><dl><dt><span class="term"><code class="literal">addr.data.sin.port</code></span></dt><dd><p>Port number in network byte order</p></dd><dt><span class="term"><code class="literal">addr.data.sin.address</code></span></dt><dd><p>IP address in network byte order</p></dd></dl></div><p>
+      Any special signficance attached to certain ranges of IP addresses is
+      implementation specific. In particular, there is no guarantee that
+      there is a loopback interface accessed with the IP address 127.0.0.1.
+  </p><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2481452"></a>4.1.&#160;Network connection</h3></div></div></div><p>
+      If a name is looked up or a socket is created and used in such a
+      way that the platform needs to establish a connection to a network
+      that it is not permanently connected to (for example over the air),
+      it is undefined at what point the connection is established.
+    </p></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2481466"></a>4.2.&#160;Network connection implementation notes</h3></div></div></div><p>
+      It is recommended that the platform should not establish a
+      connection that spends the user&#8217;s money any earlier than
+      a call to
+      <code class="function">kdNameLookup</code>
+      or a call to
+      <code class="function">kdSocketConnect</code>.
+    </p><p>
+      Where the underlying OS demands connection before the socket is
+      created, the implementation could allow creation of the
+      OpenKODE Core socket handle without creating an OS socket, and
+      then asynchronously establish the network connection when the
+      application calls
+      <code class="function">kdSocketConnect</code>.
+      The implementation does not then create the OS socket until the
+      network connection has been established, and the OpenKODE Core
+      <code class="literal">KD_EVENT_SOCKET_CONNECT_COMPLETE</code>
+      event is not generated until the network connection is
+      established, the socket has been created, and the socket has
+      been connected.
+    </p></div></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2481521"></a>5.&#160;Function changes to allow for the growth of KDSockaddr</h2></div></div></div><p>
+    Adding a new socket type could cause
+    <span class="type">KDSockaddr</span> to grow in size. This could cause problems
+    for any vendor wanting to provide binary backwards compatibility
+    between versions of its implementation.
+  </p><p>
+    To allow a vendor to implement binary backwards compatibility,
+    changes need to be made to the definition of how much of the
+    <span class="type">KDSockaddr</span> struct needs to be readable or writable in
+    any OpenKODE Core function that takes a <span class="type">KDSockaddr</span>
+    pointer as a parameter.
+  </p><p>
+    Therefore this extension specifies the following changes:
+  </p><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2481556"></a>5.1.&#160;KDSockaddr reading functions: kdSocketSendTo</h3></div></div></div><p>
+        For 20.4.10. kdSocketSendTo, this phrase at
+        the end of the Description subsection:
+      </p><div class="blockquote"><blockquote class="blockquote"><p>
+            or <em class="parameter"><code>addr</code></em> is not <code class="literal">KD_NULL</code> and
+            does not point to a readable location of
+            type <span class="type">KDSockaddr</span>, then undefined behavior results.
+      </p></blockquote></div><p>
+        is changed to
+      </p><div class="blockquote"><blockquote class="blockquote"><p>
+            then undefined behavior results. If <em class="parameter"><code>addr</code></em>
+            is not <code class="literal">KD_NULL</code> and does not
+            point to a location of type <span class="type">KDSockaddr</span>,
+            readable for at least the length required such that the
+            <em class="structfield"><code>data</code></em> union element(s) for socket type(s)
+            that use the address family specified in the
+            <em class="structfield"><code>family</code></em> field can be read,
+            then undefined behavior results.
+      </p></blockquote></div><p>
+    </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2481624"></a>5.2.&#160;Other KDSockaddr reading functions</h3></div></div></div><p>
+        For each of the following functions: 20.4.5. kdSocketBind,
+        20.4.7. kdSocketConnect, this phrase at
+        the end of the Description subsection:
+      </p><div class="blockquote"><blockquote class="blockquote"><p>
+            or <em class="parameter"><code>addr</code></em>
+            does not point to a readable location of
+            type <span class="type">KDSockaddr</span>, then undefined behavior results.
+      </p></blockquote></div><p>
+        is changed to
+      </p><div class="blockquote"><blockquote class="blockquote"><p>
+            then undefined behavior results. If <em class="parameter"><code>addr</code></em>
+            does not
+            point to a location of type <span class="type">KDSockaddr</span>,
+            readable for at least the length required such that the
+            <em class="structfield"><code>data</code></em> union element(s) for socket type(s)
+            that use the address family specified in the
+            <em class="structfield"><code>family</code></em> field can be read,
+            then undefined behavior results.
+      </p></blockquote></div><p>
+    </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2477522"></a>5.3.&#160;KDSockaddr writing functions: kdSocketRecvFrom</h3></div></div></div><p>
+        For
+        20.4.11. kdSocketRecvFrom,
+        this phrase at
+        the end of the Description subsection:
+      </p><div class="blockquote"><blockquote class="blockquote"><p>
+            or <em class="parameter"><code>addr</code></em> is not <code class="literal">KD_NULL</code> and
+            does not point to a writable location of
+            type <span class="type">KDSockaddr</span>, then undefined behavior results.
+      </p></blockquote></div><p>
+        is changed to
+      </p><div class="blockquote"><blockquote class="blockquote"><p>
+            then undefined behavior results. If <em class="parameter"><code>addr</code></em>
+            is not <code class="literal">KD_NULL</code> and
+            does not
+            point to a location of type <span class="type">KDSockaddr</span>,
+            writable for at least the length required such that the
+            <em class="structfield"><code>data</code></em> union element for the socket
+            type of <em class="parameter"><code>socket</code></em> can be written,
+            then undefined behavior results.
+      </p></blockquote></div><p>
+    </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2477591"></a>5.4.&#160;Other KDSockaddr writing functions</h3></div></div></div><p>
+        For each of the following functions:
+        20.4.6. kdSocketGetName, 20.4.9. kdSocketAccept,
+        this phrase at
+        the end of the Description subsection:
+      </p><div class="blockquote"><blockquote class="blockquote"><p>
+            or <em class="parameter"><code>addr</code></em>
+            does not point to a writable location of
+            type <span class="type">KDSockaddr</span>, then undefined behavior results.
+      </p></blockquote></div><p>
+        is changed to
+      </p><div class="blockquote"><blockquote class="blockquote"><p>
+            then undefined behavior results. If <em class="parameter"><code>addr</code></em>
+            does not
+            point to a location of type <span class="type">KDSockaddr</span>,
+            writable for at least the length required such that the
+            <em class="structfield"><code>data</code></em> union element for the socket
+            type of <em class="parameter"><code>socket</code></em> can be written,
+            then undefined behavior results.
+      </p></blockquote></div><p>
+    </p></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2477651"></a>6.&#160;Other function changes</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2477656"></a>6.1.&#160;kdSocketListen not implemented for some socket types</h3></div></div></div><p>
+        <code class="function">kdSocketListen</code> defines that an
+        implementation is allowed not to support
+        <code class="function">kdSocketListen</code>, even if the rest of socket
+        functionality is supported. In this case
+        <code class="function">kdSocketListen</code> gives an error of
+        <code class="literal">KD_ENOSYS</code>.
+    </p><p>
+        This definition does not fit well with multiple socket types.
+        Instead, whether it is allowed not to support socket listening
+        should be specified per socket type.
+    </p><p>
+        To that end, the following changes are made:
+    </p><p>
+        In 20.4.8. <code class="function">kdSocketListen</code>, Description subsection,
+        remove the paragraph:
+        </p><div class="blockquote"><blockquote class="blockquote"><p>
+            It is allowed for an OpenKODE Core implementation to support the
+            rest of the socket API but not kdSocketListen. In that case,
+            kdSocketListen always fails with an error of KD_ENOSYS.
+        </p></blockquote></div><p>
+    </p><p>
+        In 20.4.8. <code class="function">kdSocketListen</code>, Errors subsection,
+        change the description for <code class="literal">KD_ENOSYS</code> to:
+        </p><div class="blockquote"><blockquote class="blockquote"><p>
+            The socket is of a connection-based type,
+            but this implementation does not support listening for it.
+        </p></blockquote></div><p>
+    </p><p>
+        In the new 20.2.1. TCP and UDP section resulting from the earlier
+        changes in this extension specification, add to the end of the
+        &#8220;A TCP socket...&#8221; paragraph:
+        </p><div class="blockquote"><blockquote class="blockquote"><p>
+            Being connection based, a TCP socket does support
+            listening, however it is allowed for an OpenKODE Core
+            implementation not to support TCP socket listening. In this
+            case, using a TCP socket in
+            <code class="function">kdSocketListen</code> gives the error
+            <code class="literal">KD_ENOSYS</code>.
+        </p></blockquote></div><p>
+    </p></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2477776"></a>7.&#160;Revision history</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2477782"></a>7.1.&#160;Version 2, 2008-11-17</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Fixed erroneous types in KDSockaddrAfInATX, and some other typos.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2477797"></a>7.2.&#160;Version 1, 2008-10-16</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        First draft.
+      </p></li></ul></div></div></div></div></body></html>

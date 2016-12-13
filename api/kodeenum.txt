@@ -1,0 +1,305 @@
+/* kodeenum.txt contains the OpenKODE enumerant registry. The master
+ * copy is in Khronos Subversion. A read-only copy is exported to
+ * the public OpenKODE Registry at
+ *  http://www.khronos.org/registry/kode/api/kodeenum.txt
+ *
+ * It is a very important file - please do not modify it. If you need
+ * OpenKODE enumerants assigned for a vendor extension or other purpose,
+ * open a bug in Khronos Bugzilla for project "OpenKODE", component
+ * "Registry". Specify the number of enums you need and in which
+ * space they're in (I/O index or non-I/O index). Please submit the
+ * extension specification(s) using these enums are soon as possible
+ * for inclusion in the public Registry, again via Bugzilla.
+ *
+ * $Revision: 11219 $ on $Date: 2010-05-04 01:31:38 -0700 (Tue, 04 May 2010) $
+ */
+
+/***********************************************************************
+ * OpenKODE Core I/O index registry
+ ***********************************************************************/
+/*** OpenKODE Core 1.0 ***/
+
+/* KD_IOGROUP_EVENT: I/O group for OpenKODE Core system events implemented as state values. */
+#define KD_IOGROUP_EVENT 0x100
+#define KD_STATE_EVENT_USING_BATTERY	   (KD_IOGROUP_EVENT + 0)
+#define KD_STATE_EVENT_LOW_BATTERY	   (KD_IOGROUP_EVENT + 1)
+/* (range to 0x1ff reserved for extra items to be added to this group)
+
+/* KD_IOGROUP_ORIENTATION: I/O group for OpenKODE Core orientation state. */
+#define KD_IOGROUP_ORIENTATION 0x200
+#define KD_STATE_ORIENTATION_OVERALL	   (KD_IOGROUP_ORIENTATION + 0)
+#define KD_STATE_ORIENTATION_SCREEN	   (KD_IOGROUP_ORIENTATION + 1)
+#define KD_STATE_ORIENTATION_RENDERING	   (KD_IOGROUP_ORIENTATION + 2)
+#define KD_STATE_ORIENTATION_LOCKSURFACE   (KD_IOGROUP_ORIENTATION + 3)
+/* (range to 0x2ff reserved for extra items to be added to this group)
+
+/* Small block I/O group enums for vendors: 0x300-0xfff (mostly unused) */
+
+/*** Reserved to NVIDIA (bug 3318): I/O enums 0x300-0x310 ***/
+/*** Reserved to NVIDIA (bug 6072): I/O enums 0x311-0x31f ***/
+/*** Reserved to Antix (bug 4944): I/O enums 0x320-0x32f ***/
+/*** Any_vendor_future_use: I/O enums 0x330..0x31f available ***/
+
+/* KD_IOGROUP_GAMEKEYS: I/O group for game keys. */
+#define KD_IOGROUP_GAMEKEYS 0x1000
+#define KD_STATE_GAMEKEYS_AVAILABILITY	  (KD_IOGROUP_GAMEKEYS + 0)
+#define KD_INPUT_GAMEKEYS_UP		  (KD_IOGROUP_GAMEKEYS + 1)
+#define KD_INPUT_GAMEKEYS_LEFT		  (KD_IOGROUP_GAMEKEYS + 2)
+#define KD_INPUT_GAMEKEYS_RIGHT		  (KD_IOGROUP_GAMEKEYS + 3)
+#define KD_INPUT_GAMEKEYS_DOWN		  (KD_IOGROUP_GAMEKEYS + 4)
+#define KD_INPUT_GAMEKEYS_FIRE		  (KD_IOGROUP_GAMEKEYS + 5)
+#define KD_INPUT_GAMEKEYS_A		  (KD_IOGROUP_GAMEKEYS + 6)
+#define KD_INPUT_GAMEKEYS_B		  (KD_IOGROUP_GAMEKEYS + 7)
+#define KD_INPUT_GAMEKEYS_C		  (KD_IOGROUP_GAMEKEYS + 8)
+#define KD_INPUT_GAMEKEYS_D		  (KD_IOGROUP_GAMEKEYS + 9)
+/* (range to 0x10ff reserved for extra items to be added to this group)
+
+/* KD_IOGROUP_GAMEKEYSNC: I/O group for game keys, no chording. */
+#define KD_IOGROUP_GAMEKEYSNC 0x1100
+#define KD_STATE_GAMEKEYSNC_AVAILABILITY  (KD_IOGROUP_GAMEKEYSNC + 0)
+#define KD_INPUT_GAMEKEYSNC_UP		  (KD_IOGROUP_GAMEKEYSNC + 1)
+#define KD_INPUT_GAMEKEYSNC_LEFT	  (KD_IOGROUP_GAMEKEYSNC + 2)
+#define KD_INPUT_GAMEKEYSNC_RIGHT	  (KD_IOGROUP_GAMEKEYSNC + 3)
+#define KD_INPUT_GAMEKEYSNC_DOWN	  (KD_IOGROUP_GAMEKEYSNC + 4)
+#define KD_INPUT_GAMEKEYSNC_FIRE	  (KD_IOGROUP_GAMEKEYSNC + 5)
+#define KD_INPUT_GAMEKEYSNC_A		  (KD_IOGROUP_GAMEKEYSNC + 6)
+#define KD_INPUT_GAMEKEYSNC_B		  (KD_IOGROUP_GAMEKEYSNC + 7)
+#define KD_INPUT_GAMEKEYSNC_C		  (KD_IOGROUP_GAMEKEYSNC + 8)
+#define KD_INPUT_GAMEKEYSNC_D		  (KD_IOGROUP_GAMEKEYSNC + 9)
+/* (range to 0x11ff reserved for extra items to be added to this group)
+
+/*** Any_vendor_future_use: 0x1200..0x1fff available ***/
+
+/* KD_IOGROUP_PHONEKEYPAD: I/O group for phone keypad. */
+#define KD_IOGROUP_PHONEKEYPAD 0x2000
+#define KD_STATE_PHONEKEYPAD_AVAILABILITY  (KD_IOGROUP_PHONEKEYPAD + 0)
+#define KD_INPUT_PHONEKEYPAD_0		   (KD_IOGROUP_PHONEKEYPAD + 1)
+#define KD_INPUT_PHONEKEYPAD_1		   (KD_IOGROUP_PHONEKEYPAD + 2)
+#define KD_INPUT_PHONEKEYPAD_2		   (KD_IOGROUP_PHONEKEYPAD + 3)
+#define KD_INPUT_PHONEKEYPAD_3		   (KD_IOGROUP_PHONEKEYPAD + 4)
+#define KD_INPUT_PHONEKEYPAD_4		   (KD_IOGROUP_PHONEKEYPAD + 5)
+#define KD_INPUT_PHONEKEYPAD_5		   (KD_IOGROUP_PHONEKEYPAD + 6)
+#define KD_INPUT_PHONEKEYPAD_6		   (KD_IOGROUP_PHONEKEYPAD + 7)
+#define KD_INPUT_PHONEKEYPAD_7		   (KD_IOGROUP_PHONEKEYPAD + 8)
+#define KD_INPUT_PHONEKEYPAD_8		   (KD_IOGROUP_PHONEKEYPAD + 9)
+#define KD_INPUT_PHONEKEYPAD_9		   (KD_IOGROUP_PHONEKEYPAD + 10)
+#define KD_INPUT_PHONEKEYPAD_STAR	   (KD_IOGROUP_PHONEKEYPAD + 11)
+#define KD_INPUT_PHONEKEYPAD_HASH	   (KD_IOGROUP_PHONEKEYPAD + 12)
+#define KD_INPUT_PHONEKEYPAD_LEFTSOFT	   (KD_IOGROUP_PHONEKEYPAD + 13)
+#define KD_INPUT_PHONEKEYPAD_RIGHTSOFT	   (KD_IOGROUP_PHONEKEYPAD + 14)
+#define KD_STATE_PHONEKEYPAD_ORIENTATION   (KD_IOGROUP_PHONEKEYPAD + 15)
+/* (range to 0x2fff reserved for extra items to be added to this group,
+ * or for multiple instances of the same group) */
+
+/* KD_IOGROUP_VIBRATE: I/O group for vibrate. */
+#define KD_IOGROUP_VIBRATE 0x3000
+#define KD_STATE_VIBRATE_AVAILABILITY  (KD_IOGROUP_VIBRATE + 0)
+#define KD_STATE_VIBRATE_MINFREQUENCY  (KD_IOGROUP_VIBRATE + 1)
+#define KD_STATE_VIBRATE_MAXFREQUENCY  (KD_IOGROUP_VIBRATE + 2)
+#define KD_OUTPUT_VIBRATE_VOLUME	(KD_IOGROUP_VIBRATE + 3)
+#define KD_OUTPUT_VIBRATE_FREQUENCY	(KD_IOGROUP_VIBRATE + 4)
+/* (range to 0x3fff reserved for extra items to be added to this group,
+ * or for multiple instances of the same group) */
+
+/* KD_IOGROUP_POINTER: I/O group for pointer. */
+#define KD_IOGROUP_POINTER 0x4000
+#define KD_STATE_POINTER_AVAILABILITY  (KD_IOGROUP_POINTER + 0)
+#define KD_INPUT_POINTER_X	       (KD_IOGROUP_POINTER + 1)
+#define KD_INPUT_POINTER_Y	       (KD_IOGROUP_POINTER + 2)
+#define KD_INPUT_POINTER_SELECT        (KD_IOGROUP_POINTER + 3)
+/* (range to 0x4fff reserved for extra items to be added to this group,
+ * or for multiple instances of the same group) */
+
+/* KD_IOGROUP_BACKLIGHT: I/O group for backlight. */
+#define KD_IOGROUP_BACKLIGHT 0x5000
+#define KD_STATE_BACKLIGHT_AVAILABILITY (KD_IOGROUP_BACKLIGHT + 0)
+#define KD_OUTPUT_BACKLIGHT_FORCE (KD_IOGROUP_BACKLIGHT + 1)
+/* (range to 0x5fff reserved for extra items to be added to this group,
+ * or for multiple instances of the same group) */
+
+/* KD_IOGROUP_JOGDIAL: I/O group for a jog dial. */
+#define KD_IOGROUP_JOGDIAL 0x6000
+#define KD_STATE_JOGDIAL_AVAILABILITY  (KD_IOGROUP_JOGDIAL + 0)
+#define KD_INPUT_JOGDIAL_UP	       (KD_IOGROUP_JOGDIAL + 1)
+#define KD_INPUT_JOGDIAL_LEFT	       (KD_IOGROUP_JOGDIAL + 2)
+#define KD_INPUT_JOGDIAL_RIGHT	       (KD_IOGROUP_JOGDIAL + 3)
+#define KD_INPUT_JOGDIAL_DOWN	       (KD_IOGROUP_JOGDIAL + 4)
+#define KD_INPUT_JOGDIAL_SELECT        (KD_IOGROUP_JOGDIAL + 5)
+/* (range to 0x6fff reserved for extra items to be added to this group,
+ * or for multiple instances of the same group) */
+
+/* KD_IOGROUP_STICK: I/O group for joystick. */
+#define KD_IOGROUP_STICK 0x7000
+#define KD_STATE_STICK_AVAILABILITY    (KD_IOGROUP_STICK + 0)
+#define KD_INPUT_STICK_X	       (KD_IOGROUP_STICK + 1)
+#define KD_INPUT_STICK_Y	       (KD_IOGROUP_STICK + 2)
+#define KD_INPUT_STICK_Z	       (KD_IOGROUP_STICK + 3)
+#define KD_INPUT_STICK_BUTTON	       (KD_IOGROUP_STICK + 4)
+#define KD_IO_STICK_STRIDE 8
+/* (range to 0x7007 reserved for extra items to be added to this group.
+ * 0x7008..0x7fff reserved for multiple sticks on controller and multiple
+ * controllers.) */
+
+/* KD_IOGROUP_DPAD: I/O group for D-pad. */
+#define KD_IOGROUP_DPAD 0x8000
+#define KD_STATE_DPAD_AVAILABILITY     (KD_IOGROUP_DPAD + 0)
+#define KD_STATE_DPAD_COPY	       (KD_IOGROUP_DPAD + 1)
+#define KD_INPUT_DPAD_UP	       (KD_IOGROUP_DPAD + 2)
+#define KD_INPUT_DPAD_LEFT	       (KD_IOGROUP_DPAD + 3)
+#define KD_INPUT_DPAD_RIGHT	       (KD_IOGROUP_DPAD + 4)
+#define KD_INPUT_DPAD_DOWN	       (KD_IOGROUP_DPAD + 5)
+#define KD_INPUT_DPAD_SELECT	       (KD_IOGROUP_DPAD + 6)
+#define KD_IO_DPAD_STRIDE 8
+/* (range to 0x8007 reserved for extra items to be added to this group.
+ * 0x8008..0x8fff reserved for multiple dpads on controller and multiple
+ * controllers.) */
+
+/* KD_IOGROUP_BUTTONS: I/O group for buttons associated with joystick or D-pad. */
+#define KD_IOGROUP_BUTTONS 0x9000
+#define KD_STATE_BUTTONS_AVAILABILITY  (KD_IOGROUP_BUTTONS + 0)
+#define KD_INPUT_BUTTONS_0	       (KD_IOGROUP_BUTTONS + 1)
+/* 0x9002..0x9fff reserved for multiple buttons on controller and multiple
+ * controllers.) */
+
+/* Antix ATX_simpleaccel (bug 4882) */
+/* 0xA000-0xAFFF reserved to Antix */
+
+/* Acrodea (bug 5680) */
+/* 0xB000-0xDFFF reserved to Acrodea */
+
+/* Antix (bug 5775) */
+/* 0xE000-0xFFFF reserved to Antix */
+
+/*** Any_vendor_future_use: 0x10000-0x3FFFFFFF available ***/
+
+/*** User range starts here: Khronos will never allocate in this range ***/
+#define KD_IO_UNDEFINED 0x40000000
+
+/***********************************************************************
+ * OpenKODE Core non-I/O index registry
+ ***********************************************************************/
+/*** OpenKODE Core 1.0 ***/
+/* OpenKODE Core 1.0 error codes */
+#define KD_EACCES 1
+#define KD_EADDRINUSE 2
+#define KD_EADDRNOTAVAIL 3
+#define KD_EAFNOSUPPORT 4
+#define KD_EAGAIN 5
+#define KD_EALREADY 6
+#define KD_EBADF 7
+#define KD_EBUSY 8
+#define KD_ECONNREFUSED 9
+#define KD_ECONNRESET 10
+#define KD_EDEADLK 11
+#define KD_EDESTADDRREQ 12
+#define KD_EEXIST 13
+#define KD_EFBIG 14
+#define KD_EHOSTUNREACH 15
+#define KD_EHOST_NOT_FOUND 16
+#define KD_EINVAL 17
+#define KD_EIO 18
+#define KD_EILSEQ 19
+#define KD_EISCONN 20
+#define KD_EISDIR 21
+#define KD_EMFILE 22
+#define KD_ENAMETOOLONG 23
+#define KD_ENOENT 24
+#define KD_ENOMEM 25
+#define KD_ENOSPC 26
+#define KD_ENOSYS 27
+#define KD_ENOTCONN 28
+#define KD_ENO_DATA 29
+#define KD_ENO_RECOVERY 30
+#define KD_EOPNOTSUPP 31
+#define KD_EOVERFLOW 32
+#define KD_EPERM 33
+#define KD_EPIPE 34
+#define KD_ERANGE 35
+#define KD_ETIMEDOUT 36
+#define KD_ETRY_AGAIN 37
+    /* 38 unused */
+
+/* OpenKODE Core 1.0 attribute numbers */
+#define KD_ATTRIB_VENDOR 39
+#define KD_ATTRIB_VERSION 40
+#define KD_ATTRIB_PLATFORM 41
+
+/* OpenKODE Core 1.0 events. */
+#define KD_EVENT_TIMER 42
+#define KD_EVENT_QUIT 43
+#define KD_EVENT_WINDOW_CLOSE 44
+#define KD_EVENT_PAUSE 45
+#define KD_EVENT_RESUME 46
+#define KD_EVENT_WINDOWPROPERTY_CHANGE 47
+#define KD_EVENT_ORIENTATION 48
+#define KD_EVENT_SOCKET_READABLE 49
+#define KD_EVENT_SOCKET_WRITABLE 50
+#define KD_EVENT_SOCKET_CONNECT_COMPLETE 51
+#define KD_EVENT_SOCKET_INCOMING 52
+#define KD_EVENT_NAME_LOOKUP_COMPLETE 53
+#define KD_EVENT_SOCKET_ERROR 54
+#define KD_EVENT_STATE 55
+#define KD_EVENT_INPUT 56
+#define KD_EVENT_INPUT_POINTER 57
+#define KD_EVENT_INPUT_STICK 58
+#define KD_EVENT_WINDOW_REDRAW 59
+#define KD_EVENT_WINDOW_FOCUS 60
+
+/* OpenKODE Core 1.0 timer types. */
+#define KD_TIMER_ONESHOT 61
+#define KD_TIMER_PERIODIC_AVERAGE 62
+#define KD_TIMER_PERIODIC_MINIMUM 63
+
+/* OpenKODE Core 1.0 socket types. */
+#define KD_SOCK_TCP 64
+#define KD_SOCK_UDP 65
+
+/* OpenKODE Core 1.0 window properties. */
+#define KD_WINDOWPROPERTY_SIZE 66
+#define KD_WINDOWPROPERTY_VISIBILITY 67
+#define KD_WINDOWPROPERTY_FOCUS 68
+#define KD_WINDOWPROPERTY_CAPTION 69
+
+/* OpenKODE Core 1.0 socket address families. */
+#define KD_AF_INET 70
+
+
+/*** KHR_crypto extension ***/
+#define KD_AES_128_CBC_SSL_ENCRYPT_KHR 80
+#define KD_AES_128_CBC_SSL_DECRYPT_KHR 81
+#define KD_AES_128_ECB_SSL_ENCRYPT_KHR 82
+#define KD_AES_128_ECB_SSL_DECRYPT_KHR 83
+#define KD_AES_128_CBC_NONE_ENCRYPT_KHR 84
+#define KD_AES_128_CBC_NONE_DECRYPT_KHR 85
+#define KD_AES_128_ECB_NONE_ENCRYPT_KHR 86
+#define KD_AES_128_ECB_NONE_DECRYPT_KHR 87
+#define KD_AES_192_CBC_SSL_ENCRYPT_KHR 88
+#define KD_AES_192_CBC_SSL_DECRYPT_KHR 89
+#define KD_AES_192_ECB_SSL_ENCRYPT_KHR 90
+#define KD_AES_192_ECB_SSL_DECRYPT_KHR 91
+#define KD_AES_192_CBC_NONE_ENCRYPT_KHR 92
+#define KD_AES_192_CBC_NONE_DECRYPT_KHR 93
+#define KD_AES_192_ECB_NONE_ENCRYPT_KHR 94
+#define KD_AES_192_ECB_NONE_DECRYPT_KHR 95
+#define KD_AES_256_CBC_SSL_ENCRYPT_KHR 96
+#define KD_AES_256_CBC_SSL_DECRYPT_KHR 97
+#define KD_AES_256_ECB_SSL_ENCRYPT_KHR 98
+#define KD_AES_256_ECB_SSL_DECRYPT_KHR 99
+#define KD_AES_256_CBC_NONE_ENCRYPT_KHR 100
+#define KD_AES_256_CBC_NONE_DECRYPT_KHR 101
+#define KD_AES_256_ECB_NONE_ENCRYPT_KHR 102
+#define KD_AES_256_ECB_NONE_DECRYPT_KHR 103
+#define KD_SHA1_KHR 104
+/* (range 105-111 reserved for extra items to be added to this extension.) */
+
+/*** Reserved to Antix: non-I/O enums 112-191 ***/
+/*** Reserved to NVIDIA (bug 3318): non-I/O enums 192-207 ***/
+/*** Reserved to NVIDIA (bug 5351): non-I/O enums 208-463 ***/
+/*** Reserved to Antix (bug 5662): non-I/O enums 464-511 ***/
+/*** Reserved to Acrodea (bug 5680): non-I/O enums 512-599 ***/
+/*** Reserved to Acrodea (bug 6294): non-I/O enums 600-799 ***/
+/*** Reserved for future allocation: non-I/O enums 800-0x3FFFFFFF ***/
+
+/*** User range starts here: Khronos will never allocate in this range ***/
+#define KD_EVENT_USER 0x40000000
+

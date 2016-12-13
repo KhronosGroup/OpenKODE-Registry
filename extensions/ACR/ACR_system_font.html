@@ -1,0 +1,97 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=us-ascii"><title>OpenKODE Core extension: KD_ACR_system_font</title><meta name="generator" content="DocBook XSL Stylesheets V1.75.2"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="article" title="OpenKODE Core extension: KD_ACR_system_font"><div class="titlepage"><div><div><h2 class="title"><a name="id480978"></a>OpenKODE Core extension: KD_ACR_system_font</h2></div></div><hr></div><div class="informaltable"><table border="1"><colgroup><col><col></colgroup><tbody><tr><td>Name</td><td>ACR_system_font</td></tr><tr><td>Name strings</td><td>KD_ACR_system_font</td></tr><tr><td>Contributors</td><td>Masahiro Suda, Acrodea</td></tr><tr><td>Contacts</td><td>Acrodea</td></tr><tr><td>Status</td><td>Draft</td></tr><tr><td>Version</td><td>Version 1, 2011-06-14</td></tr><tr><td>Number</td><td>TBD</td></tr><tr><td>Dependencies</td><td>
+            Requires OpenKODE Core 1.0 or later.
+            This extension is written based on the wording of the
+            OpenKODE Core 1.0 specification.
+          </td></tr></tbody></table></div><div class="sect1" title="1.&#160;Overview"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id468579"></a>1.&#160;Overview</h2></div></div></div><p>
+        This function creates an image from system font
+    </p></div><div class="sect1" title="2.&#160;Header file"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id468590"></a>2.&#160;Header file</h2></div></div></div><p>
+        When this extension is present, its facilities are accessed by
+        including its header file:
+    </p><pre class="synopsis">#include &lt;KD/ACR_system_font.h&gt;</pre></div><div class="sect1" title="3.&#160;Defines"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id468608"></a>3.&#160;Defines</h2></div></div></div><div class="sect2" title="3.1.&#160;Defines"><div class="titlepage"><div><div><h3 class="title"><a name="Defines"></a>3.1.&#160;Defines</h3></div></div></div><a class="indexterm" name="id468725"></a><p>SystemFont defines.</p><div class="sect3" title="Synopsis"><div class="titlepage"><div><div><h4 class="title"><a name="id468738"></a>Synopsis</h4></div></div></div><pre class="synopsis">
+#define KD_SYSTEM_FONT_TYPE_SANSSERIF_ACR   0x00000000
+#define KD_SYSTEM_FONT_TYPE_MONOSPACE_ACR   0x00000001
+#define KD_SYSTEM_FONT_TYPE_SERIF_ACR       0x00000002
+
+#define KD_SYSTEM_FONT_FLAG_BOLD_ACR                0x00000001
+#define KD_SYSTEM_FONT_FLAG_ITALIC_ACR              0x00000002
+#define KD_SYSTEM_FONT_FLAG_OVERFLOW_WRAP_ACR       0x00000004
+#define KD_SYSTEM_FONT_FLAG_OVERFLOW_ELLIPSIS_ACR   0x00000008
+</pre></div><div class="sect3" title="Font type"><div class="titlepage"><div><div><h4 class="title"><a name="id468760"></a>Font type</h4></div></div></div><div class="informaltable"><table border="1"><colgroup><col><col></colgroup><thead><tr><th>type</th><th>usage</th></tr></thead><tbody><tr><td><a name="KD_SYSTEM_FONT_TYPE_SANSSERIF_ACR"></a><a class="indexterm" name="id468796"></a><code class="literal">KD_SYSTEM_FONT_TYPE_SANSSERIF_ACR</code></td><td>Sans-serif font</td></tr><tr><td><a name="KD_SYSTEM_FONT_TYPE_MONOSPACE_ACR"></a><a class="indexterm" name="id468819"></a><code class="literal">KD_SYSTEM_FONT_TYPE_MONOSPACE_ACR</code></td><td>Monospaced font</td></tr><tr><td><a name="KD_SYSTEM_FONT_TYPE_SERIF_ACR"></a><a class="indexterm" name="id509196"></a><code class="literal">KD_SYSTEM_FONT_TYPE_SERIF_ACR</code></td><td>Serif font</td></tr></tbody></table></div></div><div class="sect3" title="Font flag"><div class="titlepage"><div><div><h4 class="title"><a name="id509216"></a>Font flag</h4></div></div></div><div class="informaltable"><table border="1"><colgroup><col><col></colgroup><thead><tr><th>flag</th><th>usage</th></tr></thead><tbody><tr><td><a name="KD_SYSTEM_FONT_FLAG_BOLD_ACR"></a><a class="indexterm" name="id509250"></a><code class="literal">KD_SYSTEM_FONT_FLAG_BOLD_ACR</code></td><td>BOLD font (Availability depends on a device environment.)</td></tr><tr><td><a name="KD_SYSTEM_FONT_FLAG_ITALIC_ACR"></a><a class="indexterm" name="id509272"></a><code class="literal">KD_SYSTEM_FONT_FLAG_ITALIC_ACR</code></td><td>ITALIC font (Availability depends on a device environment.)</td></tr><tr><td><a name="KD_SYSTEM_FONT_FLAG_OVERFLOW_WRAP_ACR"></a><a class="indexterm" name="id509297"></a><code class="literal">KD_SYSTEM_FONT_FLAG_OVERFLOW_WRAP_ACR</code></td><td>It inserts line feeds in w length. (Availability depends on a device environment.)</td></tr><tr><td><a name="KD_SYSTEM_FONT_FLAG_OVERFLOW_ELLIPSIS_ACR"></a><a class="indexterm" name="id509322"></a><code class="literal">KD_SYSTEM_FONT_FLAG_OVERFLOW_ELLIPSIS_ACR</code></td><td>It displays &#8220;&#8230;&#8221; for the part which is over w length. If KD_SYSTEM_FONT_FLAG_OVERFLOW_WRAP_ACR is also selected, KD_SYSTEM_FONT_FLAG_OVERFLOW_WRAP_ACR is available. (Availability depends on a device environment.)</td></tr></tbody></table></div></div></div></div><div class="sect1" title="4.&#160;New function"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id509357"></a>4.&#160;New function</h2></div></div></div><div class="sect2" title="4.1.&#160;kdSystemFontGetTextSizeACR"><div class="titlepage"><div><div><h3 class="title"><a name="kdSystemFontGetTextSizeACR"></a>4.1.&#160;kdSystemFontGetTextSizeACR</h3></div></div></div><a class="indexterm" name="id509371"></a><p>Gets system font width and height.</p><div class="sect3" title="Synopsis"><div class="titlepage"><div><div><h4 class="title"><a name="id509381"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" class="funcprototype-table"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdSystemFontGetTextSizeACR</b>(</code></td><td>KDint32 <var class="pdparam">size</var>, </td></tr><tr><td>&#160;</td><td>KDint32 <var class="pdparam">locale</var>, </td></tr><tr><td>&#160;</td><td>KDint32 <var class="pdparam">type</var>, </td></tr><tr><td>&#160;</td><td>KDint32 <var class="pdparam">flag</var>, </td></tr><tr><td>&#160;</td><td>const KDchar * <var class="pdparam">utf8string</var>, </td></tr><tr><td>&#160;</td><td>KDint32 <var class="pdparam">w</var>, </td></tr><tr><td>&#160;</td><td>KDint32 * <var class="pdparam">result_w</var>, </td></tr><tr><td>&#160;</td><td>KDint32 * <var class="pdparam">result_h</var><code>)</code>;</td></tr></table><div class="funcprototype-spacer">&#160;</div></div></div><div class="sect3" title="Description"><div class="titlepage"><div><div><h4 class="title"><a name="id467711"></a>Description</h4></div></div></div><p>
+        This function acquires width and height to draw by system font.
+      </p><div class="sect4" title="Parameters"><div class="titlepage"><div><div><h5 class="title"><a name="id467721"></a>Parameters</h5></div></div></div><div class="variablelist"><dl><dt><span class="term"><em class="parameter"><code>size</code></em></span></dt><dd><p>
+              A font size.
+            </p></dd><dt><span class="term"><em class="parameter"><code>locale</code></em></span></dt><dd><p>
+              A local information. (Unsupported)
+            </p></dd><dt><span class="term">
+            <em class="parameter"><code>type</code></em>
+          </span></dt><dd><p>
+              A font type.
+            </p></dd><dt><span class="term">
+            <em class="parameter"><code>flag</code></em>
+          </span></dt><dd><p>
+              A font flag.
+            </p></dd><dt><span class="term">
+            <em class="parameter"><code>utf8string</code></em>
+          </span></dt><dd><p>
+              A UTF-8 string to acquire.
+            </p></dd><dt><span class="term">
+            <em class="parameter"><code>w</code></em>
+          </span></dt><dd><p>
+              A width to display. This parameter is available only for KD_SYSTEM_FONT_FLAG_OVERFLOW_WRAP_ACR and KD_SYSTEM_FONT_FLAG_OVERFLOW_ELLIPSIS_ACR.
+            </p></dd><dt><span class="term">
+            <em class="parameter"><code>result_w</code></em>
+          </span></dt><dd><p>
+              A pointer to an area to store a width of display area.
+            </p></dd><dt><span class="term">
+            <em class="parameter"><code>result_h</code></em>
+          </span></dt><dd><p>
+              A pointer to an area to store a height of display area.
+            </p></dd></dl></div></div></div><div class="sect3" title="Return value"><div class="titlepage"><div><div><h4 class="title"><a name="id467889"></a>Return value</h4></div></div></div><p>
+        On success, this function returns 0. On failure, it returns -1 and can get an error detail by <code class="function">kdGetError</code>.
+      </p></div><div class="sect3" title="Error codes"><div class="titlepage"><div><div><h4 class="title"><a name="id467906"></a>Error codes</h4></div></div></div><div class="variablelist"><dl><dt><span class="term"><code class="literal">KD_EIO</code></span></dt><dd><p>
+                General I/O error.
+            </p></dd><dt><span class="term"><code class="literal">KD_EINVAL</code></span></dt><dd><p>
+                A parameter is invalid.
+            </p></dd></dl></div></div></div><div class="sect2" title="4.2.&#160;kdSystemFontRenderTextACR"><div class="titlepage"><div><div><h3 class="title"><a name="kdSystemFontRenderTextACR"></a>4.2.&#160;kdSystemFontRenderTextACR</h3></div></div></div><a class="indexterm" name="id467961"></a><p>Stores a system font image to a buffer.</p><div class="sect3" title="Synopsis"><div class="titlepage"><div><div><h4 class="title"><a name="id467972"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" class="funcprototype-table"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdSystemFontRenderTextACR</b>(</code></td><td>KDint32 <var class="pdparam">size</var>, </td></tr><tr><td>&#160;</td><td>KDint32 <var class="pdparam">locale</var>, </td></tr><tr><td>&#160;</td><td>KDint32 <var class="pdparam">type</var>, </td></tr><tr><td>&#160;</td><td>KDint32 <var class="pdparam">flag</var>, </td></tr><tr><td>&#160;</td><td>const KDchar * <var class="pdparam">utf8string</var>, </td></tr><tr><td>&#160;</td><td>KDint32 <var class="pdparam">w</var>, </td></tr><tr><td>&#160;</td><td>KDint32 <var class="pdparam">h</var>, </td></tr><tr><td>&#160;</td><td>KDint32 <var class="pdparam">pitch</var>, </td></tr><tr><td>&#160;</td><td>void * <var class="pdparam">buffer</var><code>)</code>;</td></tr></table><div class="funcprototype-spacer">&#160;</div></div></div><div class="sect3" title="Description"><div class="titlepage"><div><div><h4 class="title"><a name="id468065"></a>Description</h4></div></div></div><p>
+        This function draws system font on a specified area. It is stored by 0-255 description of 1byte-1pixel.
+      </p><div class="sect4" title="Parameters"><div class="titlepage"><div><div><h5 class="title"><a name="id468076"></a>Parameters</h5></div></div></div><div class="variablelist"><dl><dt><span class="term"><em class="parameter"><code>size</code></em></span></dt><dd><p>
+              A font size.
+            </p></dd><dt><span class="term"><em class="parameter"><code>locale</code></em></span></dt><dd><p>
+              A local information.
+            </p></dd><dt><span class="term">
+            <em class="parameter"><code>type</code></em>
+          </span></dt><dd><p>
+              A font type.
+            </p></dd><dt><span class="term">
+            <em class="parameter"><code>flag</code></em>
+          </span></dt><dd><p>
+              A font flag.
+            </p></dd><dt><span class="term">
+            <em class="parameter"><code>utf8string</code></em>
+          </span></dt><dd><p>
+              A UTF-8 strung to acquire.
+            </p></dd><dt><span class="term">
+            <em class="parameter"><code>w</code></em>
+          </span></dt><dd><p>
+              A width of display area.
+            </p></dd><dt><span class="term">
+            <em class="parameter"><code>h</code></em>
+          </span></dt><dd><p>
+              A height of display area.
+            </p></dd><dt><span class="term">
+            <em class="parameter"><code>pitch</code></em>
+          </span></dt><dd><p>
+              A buffer pitch.
+            </p></dd><dt><span class="term">
+            <em class="parameter"><code>buffer</code></em>
+          </span></dt><dd><p>
+              A buffer.
+            </p></dd></dl></div></div></div><div class="sect3" title="Return value"><div class="titlepage"><div><div><h4 class="title"><a name="id468259"></a>Return value</h4></div></div></div><p>
+        On success, this function returns 0. On failure, it returns -1 and can get error detail by <code class="function">kdGetError</code>.
+      </p></div><div class="sect3" title="Error codes"><div class="titlepage"><div><div><h4 class="title"><a name="id468277"></a>Error codes</h4></div></div></div><div class="variablelist"><dl><dt><span class="term"><code class="literal">KD_EIO</code></span></dt><dd><p>
+                General I/O error.
+            </p></dd><dt><span class="term"><code class="literal">KD_EINVAL</code></span></dt><dd><p>
+                A parameter is invalid.
+            </p></dd></dl></div></div></div></div><div class="sect1" title="5.&#160;Revision history"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id468323"></a>5.&#160;Revision history</h2></div></div></div><div class="sect2" title="5.1.&#160;Version 1, 2011-06-14"><div class="titlepage"><div><div><h3 class="title"><a name="id468329"></a>5.1.&#160;Version 1, 2011-06-14</h3></div></div></div><p>
+        Initial version.
+    </p></div></div></div></body></html>

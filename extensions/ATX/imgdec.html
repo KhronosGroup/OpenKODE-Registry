@@ -1,0 +1,445 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=us-ascii"><title>OpenKODE Core extension: KD_ATX_imgdec</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="article" lang="en"><div class="titlepage"><div><div><h2 class="title"><a name="id2477139"></a>OpenKODE Core extension: KD_ATX_imgdec</h2></div></div><hr></div><div class="informaltable"><table border="1"><colgroup><col><col></colgroup><tbody><tr><td>Name</td><td>ATX_imgdec</td></tr><tr><td>Name strings</td><td>KD_ATX_imgdec</td></tr><tr><td>Contributors</td><td>Russell Wood, Phil Huxley, Elizabeth Wootten, Tim Renouf</td></tr><tr><td>Contacts</td><td>Antix Labs Limited</td></tr><tr><td>Status</td><td>Implemented by Antix Labs</td></tr><tr><td>Version</td><td>Version 5, 2009-02-04</td></tr><tr><td>Number</td><td>10</td></tr><tr><td>Dependencies</td><td>
+            Requires OpenKODE Core 1.0.
+            This extension is written based on the wording of the
+            OpenKODE Core 1.0 specification.
+          </td></tr></tbody></table></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2520065"></a>1.&#160;Overview</h2></div></div></div><p>
+        This OpenKODE Core extension provides functions for decoding
+        an image that is stored in a file.
+    </p><p>
+        Functions are provided to decode enough of an image file to
+        obtain information on the image, and to decode the whole image
+        file. The result of both types of function is a
+        <span class="type">KDImageATX</span> handle to an image object.
+        Other functions are then used to retrieve the image information,
+        including a pointer to the decoded image buffer.
+    </p><p>
+        When decoding an image, the caller specifies an
+        <em class="firstterm">output format</em>. This extension introduces
+        the notion of <em class="firstterm">compressed</em> versus
+        <em class="firstterm">uncompressed</em> output formats, however all
+        the output formats defined in this extension are uncompressed.
+    </p><p>
+        This extension does not provide support for any particular input image
+        formats, so by itself cannot actually decode an image.
+        Further extensions define the support for particular input image
+        formats. Some of these may also add further output formats. Not
+        all combinations of input format and output format can be used.
+    </p></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2520117"></a>2.&#160;Header file</h2></div></div></div><p>
+        When this extension is present, its facilities are accessed by
+        including its header file:
+    </p><pre class="synopsis">#include &lt;KD/ATX_imgdec.h&gt;</pre></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2520135"></a>3.&#160;New types</h2></div></div></div><div class="informaltable"><table border="1"><colgroup><col><col></colgroup><thead><tr><th>type</th><th>description</th></tr></thead><tbody><tr><td><a class="indexterm" name="id2520178"></a><code class="literal">KDImageATX</code></td><td>
+              
+              <p>
+                The opaque representation of a decoded image or image
+                information object, used as a handle in image decoder function
+                calls.
+              </p>
+            </td></tr></tbody></table></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2520205"></a>4.&#160;New functions</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdGetImageInfoATX"></a>4.1.&#160;
+        kdGetImageInfoATX,
+        kdGetImageInfoFromStreamATX
+      </h3></div></div></div><a class="indexterm" name="id2525341"></a><a class="indexterm" name="id2506786"></a><p>
+        Construct an informational image object based on an image
+        in a file or stream.
+      </p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2477311"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDimageATX <b class="fsfunc">kdGetImageInfoATX</b>(</code></td><td>const KDchar *&#160;</td><td><var class="pdparam">pathname</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDimageATX <b class="fsfunc">kdGetImageInfoFromStreamATX</b>(</code></td><td>KDFile *&#160;</td><td><var class="pdparam">file</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2477360"></a>Description</h4></div></div></div><p>
+        These functions read and decode enough of an image file,
+        to obtain information on the image without loading the
+        image data itself. The functions return a <span class="type">KDImageATX</span>
+        object containing only information on the image; this is known as
+        an <em class="firstterm">informational image object</em>.
+      </p><p>
+        For
+        <code class="function">kdGetImageInfoATX</code>,
+        the function reads the image from a file whose name is
+        <em class="parameter"><code>pathname</code></em>. The function opens the file
+        as if by
+        <code class="function">kdFopen</code> with a mode of <code class="literal">rb</code>,
+        and, before returning, closes it again as if by
+        <code class="function">kdFclose</code>.
+      </p><p>
+        For
+        <code class="function">kdGetImageInfoFromStreamATX</code>,
+        the function uses an already-open file handle
+        <em class="parameter"><code>file</code></em>, which must be open for reading and
+        (if it makes any difference on the implementation) in binary mode,
+        and must be positioned at the start of the image file. On return,
+        the file handle will be positioned at the same point, with the
+        file error indicator cleared.
+      </p><p>
+        The implementation supports a list of image file formats, each with
+        an associated file extension. For
+        <code class="function">kdGetImageInfoATX</code>,
+        where
+        <em class="parameter"><code>pathname</code></em> has one of those extensions,
+        the function tries the decoder for the format associated
+        with that extension first, and then all other file formats
+        (in an undefined order),
+        until one succeeds. Otherwise, and in any case for
+        <code class="function">kdGetImageInfoFromStreamATX</code>,
+        the function tries all file
+        formats until one succeeds (in an undefined order).
+      </p><p>
+        This extension does not itself define any image file formats.
+        They are defined by other extensions that depend on this one.
+      </p><p>
+        If <em class="parameter"><code>pathname</code></em> is not a readable null-terminated
+        string, or <em class="parameter"><code>file</code></em> is not an open file,
+        then undefined behavior results.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2481414"></a>Return Value</h4></div></div></div><p>
+        On success, the functions return a handle to the informational image
+        object, but with no image data attached to it.
+        On failure they return <code class="literal">KD_NULL</code> and stores
+        one of the error codes below into the error indicator returned by
+        <code class="function">kdGetError</code>.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2481440"></a>Error codes</h4></div></div></div><p>
+        <code class="function">kdGetImageInfoATX</code>
+        can give any error that can be given by
+        <code class="function">kdFopen</code> and
+        <code class="function">kdFclose</code>,
+        except <code class="literal">KD_EINVAL</code> and <code class="literal">KD_ENOSPC</code>.
+        Both functions can give these errors:
+      </p><div class="variablelist"><dl><dt><span class="term"><code class="literal">KD_EILSEQ</code></span></dt><dd><p>
+            The image file was invalid, or of an unsupported
+            type.
+          </p></dd><dt><span class="term"><code class="literal">KD_EIO</code></span></dt><dd><p>
+            I/O error.
+          </p></dd><dt><span class="term"><code class="literal">KD_ENOMEM</code></span></dt><dd><p>
+            The operation failed due to insufficient memory.
+          </p></dd></dl></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdGetImageATX"></a>4.2.&#160;
+        kdGetImageATX,
+        kdGetImageFromStreamATX,
+      </h3></div></div></div><a class="indexterm" name="id2481539"></a><a class="indexterm" name="id2481545"></a><p>
+        Read and decode an image from a file or stream, returning
+        a decoded image object.
+      </p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2481556"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDimageATX <b class="fsfunc">kdGetImageATX</b>(</code></td><td>const KDchar *&#160;</td><td><var class="pdparam">pathname</var>, </td></tr><tr><td>&#160;</td><td>KDint &#160;</td><td><var class="pdparam">format</var>, </td></tr><tr><td>&#160;</td><td>KDint &#160;</td><td><var class="pdparam">flags</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDimageATX <b class="fsfunc">kdGetImageFromStreamATX</b>(</code></td><td>KDFile *&#160;</td><td><var class="pdparam">file</var>, </td></tr><tr><td>&#160;</td><td>KDint &#160;</td><td><var class="pdparam">format</var>, </td></tr><tr><td>&#160;</td><td>KDint &#160;</td><td><var class="pdparam">flags</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2481638"></a>Description</h4></div></div></div><p>
+        These functions read and decode an image from a file, creating
+        a <span class="type">KDImageATX</span> object with image data attached. This
+        is known as a <em class="firstterm">decoded image object</em>.
+      </p><p>
+        For
+        <code class="function">kdGetImageATX</code>,
+        the function reads the image from a file whose name is
+        <em class="parameter"><code>pathname</code></em>. The function opens the file
+        as if by
+        <code class="function">kdFopen</code> with a mode of <code class="literal">rb</code>,
+        and, before returning, closes it again as if by
+        <code class="function">kdFclose</code>.
+      </p><p>
+        For
+        <code class="function">kdGetImageFromStreamATX</code>,
+        the function uses an already-open file handle
+        <em class="parameter"><code>file</code></em>, which must be open for reading and
+        (if it makes any difference on the implementation) in binary mode,
+        and must be positioned at the start of the image file. On return,
+        the file handle will be positioned at the same point, with the
+        file error indicator cleared.
+      </p><p>
+        The implementation supports a list of image file formats, each with
+        an associated file extension.
+        For
+        <code class="function">kdGetImageATX</code>,
+        where
+        <em class="parameter"><code>pathname</code></em> has one of those extensions,
+        the function tries the decoder for the format associated
+        with that extension first, and then all other file formats
+        (in an undefined order),
+        until one succeeds. Otherwise, and in any case for
+        <code class="function">kdGetImageFromStreamATX</code>,
+        the function tries all file
+        formats until one succeeds (in an undefined order).
+      </p><p>
+        This extension does not itself define any image file formats.
+        They are defined by other extensions that depend on this one.
+      </p><p>
+        On entry, <em class="parameter"><code>format</code></em> gives the image format that
+        the image is to be decoded to, one of the following values.
+        An output format is either <em class="firstterm">compressed</em>
+        or <em class="firstterm">uncompressed</em>.
+        Note that not all input format and output format combinations
+        are supported; the specification of an input format details what
+        output formats are allowed with it.
+      </p><div class="variablelist"><dl><dt><span class="term"><code class="literal">KD_IMAGE_FORMAT_RGBA8888_ATX </code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_FORMAT_RGBA8888_ATX 121</pre><p>
+                This uncompressed format stores 4 components in increasing
+                addresses in the order: 8-bit red, 8-bit green, 8-bit blue, and
+                8-bit alpha.
+            </p><p>
+                Alignment of buffers for all levels is 4 byte.
+            </p></dd><dt><span class="term"><code class="literal">KD_IMAGE_FORMAT_RGB888_ATX</code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_FORMAT_RGB888_ATX 128</pre><p>
+                This uncompressed format stores 3 components in increasing
+                addresses in the order: 8-bit red, 8-bit green, and 8-bit blue.
+            </p><p>
+                Alignment of buffers for all levels is 1 byte.
+            </p></dd><dt><span class="term"><code class="literal">KD_IMAGE_FORMAT_RGB565_ATX</code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_FORMAT_RGB565_ATX 129</pre><p>
+                This uncompressed format specifies <span class="type">KDuint16</span>
+                pixels, starting from the most significant bits consists of the
+                following components: 5-bit red, 6-bit green, and 5-bit blue.
+            </p><p>
+                Alignment of buffers for all levels is 2 byte.
+            </p></dd><dt><span class="term"><code class="literal">KD_IMAGE_FORMAT_RGBA5551_ATX</code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_FORMAT_RGB5551_ATX 130</pre><p>
+                This uncompressed format specifies <span class="type">KDuint16</span>
+                pixels, starting from the most significant bits consists of the
+                following components: 5-bit red, 5-bit green, 5-bit blue, and
+                1-bit alpha.
+            </p><p>
+                Alignment of buffers for all levels is 2 byte.
+            </p></dd><dt><span class="term"><code class="literal">KD_IMAGE_FORMAT_RGBA4444_ATX</code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_FORMAT_RGBA4444_ATX 131</pre><p>
+                This uncompressed format specifies <span class="type">KDuint16</span>
+                pixels, starting from the most significant bits consists of the
+                following components: 4-bit red, 4-bit green, 4-bit blue, and
+                4-bit alpha.
+            </p><p>
+                Alignment of buffers for all levels is 2 byte.
+            </p></dd><dt><span class="term"><code class="literal">KD_IMAGE_FORMAT_BGRA8888_ATX</code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_FORMAT_BGRA8888_ATX 132</pre><p>
+                This uncompressed format stores 4 components in increasing
+                addresses in the order:  8-bit blue, 8-bit green, 8-bit red,
+                and 8-bit alpha.
+            </p><p>
+                Alignment of buffers for all levels is 4 byte.
+            </p></dd><dt><span class="term"><code class="literal">KD_IMAGE_FORMAT_ALPHA8_ATX</code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_FORMAT_ALPHA8_ATX 133</pre><p>
+                This uncompressed format consists of the following components:
+                8-bit alpha.
+            </p><p>
+                Alignment of buffers for all levels is 1 byte.
+            </p></dd><dt><span class="term"><code class="literal">KD_IMAGE_FORMAT_LUM8_ATX</code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_FORMAT_LUM8_ATX 134</pre><p>
+                This uncompressed format consists of the following components:
+                8-bit luminance.
+            </p><p>
+                Alignment of buffers for all levels is 1 byte.
+            </p></dd><dt><span class="term"><code class="literal">KD_IMAGE_FORMAT_LUMALPHA88_ATX</code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_FORMAT_LUMALPHA88_ATX 135</pre><p>
+                This uncompressed format stores 2 components in increasing
+                addresses in the order:  8-bit luminance, 8-bit alpha.
+            </p><p>
+                Alignment of buffers for all levels is 2 byte.
+            </p></dd><dt><span class="term"><code class="literal">KD_IMAGE_FORMAT_COMPRESSED_ATX </code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_FORMAT_COMPRESSED_ATX 122</pre><p>
+                This value of <em class="parameter"><code>format</code></em> instructs
+                the function to use the appropriate compressed output
+                format that matches the input format, as defined for the
+                input format.
+            </p><p>
+                Alignment of buffers and whether the
+                <code class="literal"> KD_IMAGE_FLAG_FLIP_X_ATX</code> and
+                <code class="literal"> KD_IMAGE_FLAG_FLIP_Y_ATX</code>
+                flags are ignored
+                are as defined by the particular compressed output format
+                that is used.
+                The value of the resulting
+                image&#8217;s
+                <code class="literal">KD_IMAGE_FORMAT_ATX</code>
+                attribute (as retrieved by
+                <a class="link" href="#kdGetImageIntATX" title="4.5.&#160;kdGetImageIntATX, kdGetImageLevelIntATX"><code class="function">kdGetImageIntATX</code></a>)
+                reflects the (compressed) output format actually used.
+            </p></dd></dl></div><p>
+        On entry, <em class="parameter"><code>flags</code></em> is a combination of zero
+        or more of the following:
+      </p><div class="variablelist"><dl><dt><span class="term"><code class="literal">KD_IMAGE_FLAG_FLIP_X_ATX</code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_FLAG_FLIP_X_ATX 1</pre><p>
+                Indicates that the order of image pixels in each line should be
+                reversed.
+                This flag has the stated effect for an uncompressed
+                output format; for a compressed output format,
+                whether this flag has an effect is defined with the
+                output format.
+            </p></dd><dt><span class="term"><code class="literal">KD_IMAGE_FLAG_FLIP_Y_ATX</code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_FLAG_FLIP_Y_ATX 2</pre><p>
+                Indicates that the order of image lines should be reversed top
+                to bottom.
+                This flag has the stated effect for an uncompressed
+                output format; for a compressed output format,
+                whether this flag has an effect is defined with the
+                output format.
+            </p></dd></dl></div><p>
+        The created <span class="type">KDImageATX</span> object has a
+        <code class="literal">KD_IMAGE_FORMAT_ATX</code> attribute whose value
+        (retrievable using
+        <a class="link" href="#kdGetImageIntATX" title="4.5.&#160;kdGetImageIntATX, kdGetImageLevelIntATX"><code class="function">kdGetImageIntATX</code></a>)
+        is the requested <em class="parameter"><code>format</code></em>, unless specified
+        otherwise for the particular image format decoder used.
+      </p><p>
+        If <em class="parameter"><code>pathname</code></em> is not a readable null-terminated
+        string, or <em class="parameter"><code>file</code></em> is not an open file,
+        then undefined behavior results.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2530227"></a>Return Value</h4></div></div></div><p>
+        On success, the functions return a handle to the decoded image
+        object.
+        On failure they return <code class="literal">KD_NULL</code> and store
+        one of the error codes below into the error indicator returned by
+        <code class="function">kdGetError</code>.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2530251"></a>Error codes</h4></div></div></div><p>
+        <code class="function">kdGetImageATX</code>
+        can give any error that can be given by
+        <code class="function">kdFopen</code> and
+        <code class="function">kdFclose</code>,
+        except <code class="literal">KD_EINVAL</code> and <code class="literal">KD_ENOSPC</code>.
+        Both functions can give these errors:
+      </p><div class="variablelist"><dl><dt><span class="term"><code class="literal">KD_EILSEQ</code></span></dt><dd><p>
+            The image file was invalid, or of an unsupported
+            type.
+          </p></dd><dt><span class="term"><code class="literal">KD_EINVAL</code></span></dt><dd><p>
+            <em class="parameter"><code>format</code></em> is not a recognized output format.
+          </p></dd><dt><span class="term"><code class="literal">KD_EIO</code></span></dt><dd><p>
+            I/O error.
+          </p></dd><dt><span class="term"><code class="literal">KD_ENOMEM</code></span></dt><dd><p>
+            The operation failed due to insufficient memory.
+          </p></dd></dl></div></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2530352"></a>Rationale: uncompressed output formats</h4></div></div></div><p>
+        The uncompressed output formats specified above correspond to formats
+        used in OpenGL ES and in the EGL_KHR_lock_surface extension as follows:
+      </p><div class="informaltable"><table border="1"><colgroup><col><col><col><col></colgroup><tbody><tr><td>KD_ATX_imgdec format</td><td>OpenGL ES format</td><td>OpenGL ES type</td><td>EGL_KHR_lock_surface format</td></tr><tr><td>KD_IMAGE_FORMAT_RGBA8888_ATX</td><td>GL_RGBA</td><td>GL_UNSIGNED_BYTE</td><td>&#160;</td></tr><tr><td>KD_IMAGE_FORMAT_BGRA8888_ATX</td><td>GL_BGRA_EXT</td><td>GL_UNSIGNED_BYTE</td><td>EGL_FORMAT_RGBA_8888_EXACT_KHR</td></tr><tr><td>KD_IMAGE_FORMAT_RGBA4444_ATX</td><td>GL_RGBA</td><td>GL_UNSIGNED_SHORT_4_4_4_4</td><td>&#160;</td></tr><tr><td>KD_IMAGE_FORMAT_RGBA5551_ATX</td><td>GL_RGBA</td><td>GL_UNSIGNED_SHORT_5_5_5_1</td><td>&#160;</td></tr><tr><td>KD_IMAGE_FORMAT_RGB888_ATX</td><td>GL_RGB</td><td>GL_UNSIGNED_BYTE</td><td>&#160;</td></tr><tr><td>KD_IMAGE_FORMAT_RGB565_ATX</td><td>GL_RGB</td><td>GL_UNSIGNED_SHORT_5_6_5</td><td>EGL_FORMAT_RGB_565_EXACT_KHR</td></tr><tr><td>KD_IMAGE_FORMAT_LUM8_ATX</td><td>GL_LUMINANCE</td><td>GL_UNSIGNED_BYTE</td><td>&#160;</td></tr><tr><td>KD_IMAGE_FORMAT_LUMALPHA88_ATX</td><td>GL_LUMINANCE_ALPHA</td><td>GL_UNSIGNED_BYTE</td><td>&#160;</td></tr><tr><td>KD_IMAGE_FORMAT_ALPHA8_ATX</td><td>GL_ALPHA</td><td>GL_UNSIGNED_BYTE</td><td>&#160;</td></tr></tbody></table></div></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdImageFreeATX"></a>4.3.&#160;kdFreeImageATX</h3></div></div></div><a class="indexterm" name="id2530547"></a><p>Free image object.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2530556"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">void <b class="fsfunc">kdFreeImageATX</b>(</code></td><td>KDImageATX &#160;</td><td><var class="pdparam">image</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2530584"></a>Description</h4></div></div></div><p>
+        This function releases all resources associated with the image whose
+        handle is <em class="parameter"><code>image</code></em>. The image object is no
+        longer valid and cannot be used
+        in any other function calls after this function call has started. Users
+        should endeavor to free up the image as soon as it is no longer
+        required.
+      </p><p>
+        If <em class="parameter"><code>image</code></em> is not a valid image object handle,
+        then undefined behavior results.
+      </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdGetImagePointerATX"></a>4.4.&#160;kdGetImagePointerATX</h3></div></div></div><a class="indexterm" name="id2530624"></a><p>Get the value of an image pointer attribute.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2530635"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">void *<b class="fsfunc">kdGetImagePointerATX</b>(</code></td><td>KDImageATX &#160;</td><td><var class="pdparam">image</var>, </td></tr><tr><td>&#160;</td><td>KDint &#160;</td><td><var class="pdparam">attr</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2530669"></a>Description</h4></div></div></div><p>
+        This function retrieves a pointer attribute for
+        the image object whose handle is <em class="parameter"><code>image</code></em>.
+        <em class="parameter"><code>attr</code></em> identifies the attribute to
+        retrieve, one of:
+      </p><div class="variablelist"><dl><dt><span class="term"><code class="literal">KD_IMAGE_POINTER_BUFFER_ATX</code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_POINTER_BUFFER_ATX 112</pre><p>
+                For a decoded image object,
+                the returned value is a pointer to the first byte of the
+                buffer containing the image, which remains valid until the
+                image object is destroyed.
+            </p><p>
+                For an informational image object,
+                the returned value is <code class="literal">KD_NULL</code>.
+                This is not an error.
+            </p></dd></dl></div><p>
+        If <em class="parameter"><code>image</code></em> is not a valid image object handle,
+        then undefined behavior results.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2530744"></a>Return Value</h4></div></div></div><p>
+        On success, the function returns the value of the attribute.
+        On failure it returns <code class="literal">KD_NULL</code> and stores
+        one of the error codes below into the error indicator returned by
+        <code class="function">kdGetError</code>.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2530767"></a>Error codes</h4></div></div></div><div class="variablelist"><dl><dt><span class="term"><code class="literal">KD_EINVAL</code></span></dt><dd><p>
+            <em class="parameter"><code>attr</code></em> is not a valid pointer attribute.
+          </p></dd></dl></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdGetImageIntATX"></a>4.5.&#160;kdGetImageIntATX, kdGetImageLevelIntATX</h3></div></div></div><a class="indexterm" name="id2530808"></a><a class="indexterm" name="id2530813"></a><p>Get the value of an image integer attribute.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2530824"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdGetImageIntATX</b>(</code></td><td>KDImageATX &#160;</td><td><var class="pdparam">image</var>, </td></tr><tr><td>&#160;</td><td>KDint &#160;</td><td><var class="pdparam">attr</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdGetImageLevelIntATX</b>(</code></td><td>KDImageATX &#160;</td><td><var class="pdparam">image</var>, </td></tr><tr><td>&#160;</td><td>KDint &#160;</td><td><var class="pdparam">attr</var>, </td></tr><tr><td>&#160;</td><td>KDint &#160;</td><td><var class="pdparam">level</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2530891"></a>Description</h4></div></div></div><p>
+        These functions retrieve an integer attribute for
+        the image object whose handle is <em class="parameter"><code>image</code></em>.
+      </p><p>
+        <code class="function">kdGetImageIntATX</code>
+        retrieves the value of an attribute associated with the whole
+        image file.
+      </p><p>
+        <code class="function">kdGetImageLevelIntATX</code> retrieves the value of an
+        attribute associated with a particular mipmap level.  The
+        <em class="parameter"><code>level</code></em> parameter specifies which mipmap level: 0
+        indicates the top-level image, and <em class="parameter"><code>n</code></em> indicates
+        the <em class="parameter"><code>n</code></em>th following mipmap.
+      </p><p>
+        <em class="parameter"><code>attr</code></em> identifies the attribute to
+        retrieve, one of:
+      </p><div class="variablelist"><dl><dt><span class="term"><code class="literal">KD_IMAGE_WIDTH_ATX</code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_WIDTH_ATX 113</pre><p>
+                Width of image, in pixels.
+            </p></dd><dt><span class="term"><code class="literal">KD_IMAGE_HEIGHT_ATX</code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_HEIGHT_ATX 114</pre><p>
+                Height of image, in pixels.
+            </p></dd><dt><span class="term"><code class="literal">KD_IMAGE_FORMAT_ATX</code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_FORMAT_ATX 115</pre><p>
+                Pixel format of the image.
+            </p><p>
+                For a decoded image object,
+                the value of this attribute is the requested
+                <em class="parameter"><code>format</code></em>, except as otherwise
+                noted where the output format is defined.
+            </p><p>
+                For an informational image object,
+                the value of this attribute is one of:
+            </p><div class="variablelist"><dl><dt><span class="term"><code class="literal">KD_IMAGE_FORMAT_RGB_ATX</code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_FORMAT_RGB_ATX 136</pre><p>
+                    Undecoded image contains only red, green and blue
+                    information.
+                    Such an image file can be decoded by
+                    <a class="link" href="#kdGetImageATX" title="4.2.&#160; kdGetImageATX, kdGetImageFromStreamATX,"><code class="function">kdGetImageATX</code></a> or
+                    <a class="link" href="#kdGetImageATX" title="4.2.&#160; kdGetImageATX, kdGetImageFromStreamATX,"><code class="function">kdGetImageFromStreamATX</code></a>
+                    to any uncompressed output format.
+                  </p></dd><dt><span class="term"><code class="literal">KD_IMAGE_FORMAT_RGBA_ATX</code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_FORMAT_RGBA_ATX 137</pre><p>
+                    Undecoded image contains red, green, blue and alpha
+                    information.
+                    Such an image file can be decoded by
+                    <a class="link" href="#kdGetImageATX" title="4.2.&#160; kdGetImageATX, kdGetImageFromStreamATX,"><code class="function">kdGetImageATX</code></a> or
+                    <a class="link" href="#kdGetImageATX" title="4.2.&#160; kdGetImageATX, kdGetImageFromStreamATX,"><code class="function">kdGetImageFromStreamATX</code></a>
+                    to any uncompressed output format.
+                  </p></dd><dt><span class="term"><code class="literal">KD_IMAGE_FORMAT_PALETTED_ATX</code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_FORMAT_PALETTED_ATX 138</pre><p>
+                    Undecoded image contains indexed palette pixels.
+                    Such an image file can be decoded by
+                    <a class="link" href="#kdGetImageATX" title="4.2.&#160; kdGetImageATX, kdGetImageFromStreamATX,"><code class="function">kdGetImageATX</code></a> or
+                    <a class="link" href="#kdGetImageATX" title="4.2.&#160; kdGetImageATX, kdGetImageFromStreamATX,"><code class="function">kdGetImageFromStreamATX</code></a>
+                    to any uncompressed output format.
+                  </p></dd><dt><span class="term"><code class="literal">KD_IMAGE_FORMAT_LUMINANCE_ATX</code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_FORMAT_LUMINANCE_ATX 139</pre><p>
+                    Undecoded image contains grayscale pixels.
+                    Such an image file can be decoded by
+                    <a class="link" href="#kdGetImageATX" title="4.2.&#160; kdGetImageATX, kdGetImageFromStreamATX,"><code class="function">kdGetImageATX</code></a> or
+                    <a class="link" href="#kdGetImageATX" title="4.2.&#160; kdGetImageATX, kdGetImageFromStreamATX,"><code class="function">kdGetImageFromStreamATX</code></a>
+                    to any uncompressed output format.
+                  </p></dd><dt><span class="term"><code class="literal">KD_IMAGE_FORMAT_LUMALPHA_ATX</code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_FORMAT_LUMALPHA_ATX 140</pre><p>
+                    Undecoded image contains grayscale and alpha pixels.
+                    Such an image file can be decoded by
+                    <a class="link" href="#kdGetImageATX" title="4.2.&#160; kdGetImageATX, kdGetImageFromStreamATX,"><code class="function">kdGetImageATX</code></a> or
+                    <a class="link" href="#kdGetImageATX" title="4.2.&#160; kdGetImageATX, kdGetImageFromStreamATX,"><code class="function">kdGetImageFromStreamATX</code></a>
+                    to any uncompressed output format.
+                  </p></dd></dl></div></dd><dt><span class="term"><code class="literal">KD_IMAGE_STRIDE_ATX</code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_STRIDE_ATX 116</pre><p>
+                Stride of image, in bytes. Zero is returned for a compressed
+                output format or for an informational image object.
+            </p></dd><dt><span class="term"><code class="literal">KD_IMAGE_BITSPERPIXEL_ATX</code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_BITSPERPIXEL_ATX 117</pre><p>
+                Size of one pixel of image, in bits. Zero is returned for
+                a compressed output format.
+            </p></dd><dt><span class="term"><code class="literal">KD_IMAGE_LEVELS_ATX</code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_LEVELS_ATX 118</pre><p>
+                This number is zero if only the top-level image is stored. If
+                <em class="parameter"><code>n</code></em>
+                mipmaps follow the top-level image then the value of this
+                attribute is
+                <em class="parameter"><code>n</code></em>.
+            </p></dd><dt><span class="term"><code class="literal">KD_IMAGE_DATASIZE_ATX</code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_DATASIZE_ATX 119</pre><p>
+                For a decoded image object,
+                the value of this attribute is the size in bytes of the
+                entire image buffer including any mipmaps.
+            </p><p>
+                For an informational image object,
+                the value of this attribute is the size in bytes of the
+                undecoded file or stream.
+            </p></dd><dt><span class="term"><code class="literal">KD_IMAGE_BUFFEROFFSET_ATX</code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_BUFFEROFFSET_ATX 120</pre><p>
+                For a decoded image object,
+                the value of this attribute is the offset in bytes of
+                the image data for mipmap level <em class="parameter"><code>level</code></em>
+                in the image buffer. This is zero if
+                <em class="parameter"><code>level</code></em> is zero or if
+                <code class="function">kdGetImageInt</code> is used.
+            </p><p>
+                For an informational image object,
+                the value of this attribute is zero.
+            </p></dd><dt><span class="term"><code class="literal">KD_IMAGE_ALPHA_ATX</code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_ALPHA_ATX 141</pre><p>
+                For a decoded image object,
+                the value of this attribute is non-zero if and only if the
+                output format contains an alpha channel.
+            </p><p>
+                For an informational image object,
+                the value is non-zero if and only if the undecoded image
+                has alpha information.
+            </p></dd></dl></div><p>
+        If <em class="parameter"><code>image</code></em> is not a valid image object handle,
+        then undefined behavior results.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2531495"></a>Return Value</h4></div></div></div><p>
+        On success, the functions return the value of the attribute.
+        On failure they return <code class="literal">0</code> and stores
+        one of the error codes below into the error indicator returned by
+        <code class="function">kdGetError</code>.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2531519"></a>Error codes</h4></div></div></div><div class="variablelist"><dl><dt><span class="term"><code class="literal">KD_EINVAL</code></span></dt><dd><p>
+            <em class="parameter"><code>attr</code></em> is not a valid integer attribute,
+            or <em class="parameter"><code>level</code></em> is not a valid mipmap level number
+            for the image.
+          </p></dd></dl></div></div></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2531561"></a>5.&#160;New image file formats</h2></div></div></div><p>
+    This extension adds a new section <span class="emphasis"><em>Image file formats</em></span>
+    to the OpenKODE Core specification, but leaves it empty for further
+    extensions to add to, other than the following text:
+  </p><p>
+    There follows a list of image file formats supported by
+    <a class="link" href="#kdGetImageATX" title="4.2.&#160; kdGetImageATX, kdGetImageFromStreamATX,"><code class="function">kdGetImageATX</code></a>,
+    <a class="link" href="#kdGetImageATX" title="4.2.&#160; kdGetImageATX, kdGetImageFromStreamATX,"><code class="function">kdGetImageFromStreamATX</code></a>,
+    <a class="link" href="#kdGetImageInfoATX" title="4.1.&#160; kdGetImageInfoATX, kdGetImageInfoFromStreamATX"><code class="function">kdGetImageInfoATX</code></a> and
+    <a class="link" href="#kdGetImageInfoATX" title="4.1.&#160; kdGetImageInfoATX, kdGetImageInfoFromStreamATX"><code class="function">kdGetImageInfoFromStreamATX</code></a>.
+  </p></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2531618"></a>6.&#160;Revision history</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2531624"></a>6.1.&#160;Version 5, 2009-02-04</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Allocated extension number 10.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2531638"></a>6.2.&#160;Version 4, 2008-09-16</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Allocated extension number 8.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2531653"></a>6.3.&#160;Version 3, 2008-06-20</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Draft of version prepared to release to OpenKODE WG.
+      </p></li></ul></div></div></div></div></body></html>

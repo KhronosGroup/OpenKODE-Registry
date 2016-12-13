@@ -1,0 +1,816 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=us-ascii"><title>OpenKODE Core extension: KD_KHR_formatted</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="article" lang="en"><div class="titlepage"><div><div><h2 class="title"><a name="id2749616"></a>OpenKODE Core extension: KD_KHR_formatted</h2></div></div><hr></div><div class="informaltable"><table border="1"><colgroup><col><col></colgroup><tbody><tr><td>Name</td><td>KHR_formatted</td></tr><tr><td>Name strings</td><td>KD_KHR_formatted</td></tr><tr><td>Contributors</td><td>Tim Renouf, Phil Huxley</td></tr><tr><td>Contacts</td><td>Khronos OpenKODE working group</td></tr><tr><td>Status</td><td>Approved by OpenKODE working group February 2008</td></tr><tr><td>Version</td><td>Version 10, 2009-04-02</td></tr><tr><td>Number</td><td>5</td></tr><tr><td>Dependencies</td><td>
+            Requires OpenKODE Core 1.0.
+            This extension is written based on the wording of the
+            OpenKODE Core 1.0 specification.
+            This extension also extends the KD_KHR_float64 extension
+            when present, and is written based on the wording of
+            version 6 of that extension.
+          </td></tr></tbody></table></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2709678"></a>1.&#160;Overview</h2></div></div></div><p>
+        This OpenKODE Core extension provides formatted input and output
+        functions.
+    </p></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2709690"></a>2.&#160;Rationale</h2></div></div></div><p>
+        Many applications use formatted string processing for a variety of
+        reasons: saving and restoring state, file loading, and formatting for
+        use in output, for example in a game console window. The purpose of
+        this extension is to reduce the time and risk of introducing errors
+        when porting an existing game to OpenKODE, as well as providing highly
+        useful functionality.
+	</p><p>
+        This extension also specifies OpenKODE equivalents of the
+        C89 variable argument type <code class="literal">va_list</code>
+        and macros <code class="literal">va_start</code> and <code class="literal">va_end</code>.
+        This is enough to allow an application to implement its own
+        printf-like function that uses <code class="literal">va_start</code> and
+        passes the <code class="literal">va_list</code> into
+        <code class="function">kdVsnprintf</code>.
+    </p><p>
+        This extension is specified such that it can be implemented using
+        the existing OpenKODE Core function <code class="function">kdFtostr</code>
+        for its floating point conversion, avoiding the need for additional
+        floating point conversion code.
+    </p></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2709759"></a>3.&#160;Header file</h2></div></div></div><p>
+        When this extension is present, its facilities are accessed by
+        including its header file:
+    </p><pre class="synopsis">#include &lt;KD/KHR_formatted.h&gt;</pre></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2709778"></a>4.&#160;New types</h2></div></div></div><div class="informaltable"><table border="1"><colgroup><col><col></colgroup><thead><tr><th>type</th><th>description</th></tr></thead><tbody><tr><td><a class="indexterm" name="id2709823"></a><code class="literal">KDVaListKHR</code></td><td>
+              
+              <p>
+                A list of variable arguments.
+              </p>
+            </td></tr></tbody></table></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2709847"></a>5.&#160;New macros</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="KD_VA_START_KHR"></a>5.1.&#160;KD_VA_START_KHR</h3></div></div></div><a class="indexterm" name="id2754874"></a><p>Initialize a variable argument list.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2745947"></a>Synopsis</h4></div></div></div><pre class="synopsis">KD_VA_START_KHR(ap, parmN)</pre></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2709972"></a>Description</h4></div></div></div><p>
+        This macro initializes the variable argument list
+        <em class="parameter"><code>ap</code></em> so that it contains the variable
+        arguments of unknown number and type passed to the containing
+        function. <em class="parameter"><code>parmN</code></em> is the last formal
+        parameter of the function, before the <code class="literal">...</code>
+        syntax that indicates that the function accepts variable
+        arguments.
+      </p><p>
+        <code class="literal">KD_VA_START_KHR</code> is a macro, which means that
+        it is undefined how many times each of its arguments is referenced.
+      </p><p>
+        After using this macro, if the containing function returns
+        without
+        <a class="link" href="#KD_VA_END_KHR" title="5.3.&#160;KD_VA_END_KHR"><code class="literal">KD_VA_END_KHR</code></a> being
+        used on <em class="parameter"><code>ap</code></em> first, then undefined behavior
+        results.
+      </p></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2710036"></a>Rationale</h4></div></div></div><p>
+        <code class="literal">KD_VA_START_KHR</code> is based on C89
+        <code class="literal">va_start</code>.
+      </p></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="KD_VA_ARG_KHR"></a>5.2.&#160;
+        KD_VA_ARG_INT32_KHR, KD_VA_ARG_INT_KHR, KD_VA_ARG_INT64_KHR,
+        KD_VA_ARG_FLOAT32_KHR, KD_VA_ARG_PTR_KHR
+      </h3></div></div></div><a class="indexterm" name="id2710075"></a><a class="indexterm" name="id2710080"></a><a class="indexterm" name="id2710086"></a><a class="indexterm" name="id2710092"></a><a class="indexterm" name="id2710097"></a><p>Get the next argument from a variable argument list.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2708929"></a>Synopsis</h4></div></div></div><pre class="synopsis">KD_VA_ARG_INT32_KHR(<em class="parameter"><code>ap</code></em>)
+KD_VA_ARG_INT_KHR(<em class="parameter"><code>ap</code></em>)
+KD_VA_ARG_INT64_KHR(<em class="parameter"><code>ap</code></em>)
+KD_VA_ARG_FLOAT32_KHR(<em class="parameter"><code>ap</code></em>)
+KD_VA_ARG_PTR_KHR(<em class="parameter"><code>ap</code></em>)</pre></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2708969"></a>Description</h4></div></div></div><p>
+        Each of these macros reads the next argument from the variable
+        argument list <em class="parameter"><code>ap</code></em>, updating
+        <em class="parameter"><code>ap</code></em> to step it beyond that argument.
+      </p><p>
+        <code class="literal">KD_VA_ARG_INT32_KHR</code>,
+        <code class="literal">KD_VA_ARG_INT_KHR</code>,
+        <code class="literal">KD_VA_ARG_INT64_KHR</code>,
+        <code class="literal">KD_VA_ARG_FLOAT32_KHR</code> or
+        <code class="literal">KD_VA_ARG_PTR_KHR</code>
+        is used for an argument of type
+        <span class="type">KDint32</span>,
+        <span class="type">KDint</span>,
+        <span class="type">KDint64</span>,
+        <span class="type">KDfloat32</span> or any pointer type, respectively.
+        Using the wrong macro variant for the type of the argument,
+        or using one of these macros when there are no more arguments
+        to read, results in undefined behavior.
+      </p></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2709045"></a>Rationale</h4></div></div></div><p>
+        The <code class="literal">KD_VA_ARG_*_KHR</code> macros are based on C89
+        <code class="literal">va_arg</code>. <code class="literal">va_arg</code> takes the
+        type of the argument; this is not done in OpenKODE Core as
+        there is no portable way of knowing what each type is promoted to
+        in a C variable argument function call. This is a particular issue
+        with <span class="type">KDfloat32</span>, which is likely to be promoted to
+        <span class="type">double</span>, which does not have an equivalent
+        OpenKODE Core type.
+      </p></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="KD_VA_END_KHR"></a>5.3.&#160;KD_VA_END_KHR</h3></div></div></div><a class="indexterm" name="id2709100"></a><p>Finish using a variable argument list.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2709111"></a>Synopsis</h4></div></div></div><pre class="synopsis">KD_VA_END_KHR(ap)</pre></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2709124"></a>Description</h4></div></div></div><p>
+        This macro indicates that the application has finished using
+        the variable argument list <em class="parameter"><code>ap</code></em>
+        set up by
+        <a class="link" href="#KD_VA_START_KHR" title="5.1.&#160;KD_VA_START_KHR"><code class="literal">KD_VA_START_KHR</code></a>.
+      </p><p>
+        If <em class="parameter"><code>ap</code></em> is not a variable argument list
+        that has been initialized in this function invocation with
+        <a class="link" href="#KD_VA_START_KHR" title="5.1.&#160;KD_VA_START_KHR"><code class="literal">KD_VA_START_KHR</code></a>
+        and has not already been the subject of a
+        <code class="literal">KD_VA_END_KHR</code>, then undefined behavior
+        results.
+      </p></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2709181"></a>Rationale</h4></div></div></div><p>
+        <code class="literal">KD_VA_END_KHR</code> is based on C89
+        <code class="literal">va_end</code>.
+      </p></div></div></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2709207"></a>6.&#160;New functions</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdSnprintfKHR"></a>6.1.&#160;kdSnprintfKHR, kdVsnprintfKHR,
+        kdSprintfKHR, kdVsprintfKHR</h3></div></div></div><a class="indexterm" name="id2709224"></a><a class="indexterm" name="id2709229"></a><a class="indexterm" name="id2709235"></a><a class="indexterm" name="id2709241"></a><p>Formatted output to a buffer.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2709251"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdSnprintfKHR</b>(</code></td><td>KDchar *&#160;</td><td><var class="pdparam">buf</var>, </td></tr><tr><td>&#160;</td><td>KDsize &#160;</td><td><var class="pdparam">bufsize</var>, </td></tr><tr><td>&#160;</td><td>const KDchar *&#160;</td><td><var class="pdparam">format</var>, </td></tr><tr><td>&#160;</td><td>&#160;</td><td><var class="pdparam">...</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdVsnprintfKHR</b>(</code></td><td>KDchar *&#160;</td><td><var class="pdparam">buf</var>, </td></tr><tr><td>&#160;</td><td>KDsize &#160;</td><td><var class="pdparam">bufsize</var>, </td></tr><tr><td>&#160;</td><td>const KDchar *&#160;</td><td><var class="pdparam">format</var>, </td></tr><tr><td>&#160;</td><td>KDVaListKHR &#160;</td><td><var class="pdparam">ap</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdSprintfKHR</b>(</code></td><td>KDchar *&#160;</td><td><var class="pdparam">buf</var>, </td></tr><tr><td>&#160;</td><td>const KDchar *&#160;</td><td><var class="pdparam">format</var>, </td></tr><tr><td>&#160;</td><td>&#160;</td><td><var class="pdparam">...</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdVsprintfKHR</b>(</code></td><td>KDchar *&#160;</td><td><var class="pdparam">buf</var>, </td></tr><tr><td>&#160;</td><td>const KDchar *&#160;</td><td><var class="pdparam">format</var>, </td></tr><tr><td>&#160;</td><td>KDVaListKHR &#160;</td><td><var class="pdparam">ap</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2759384"></a>Description</h4></div></div></div><p>
+        These functions write a null-terminated formatted string based on the
+        null-terminated string <em class="parameter"><code>format</code></em>, with certain
+        sequences substituted by values of further arguments, into the buffer
+        <em class="parameter"><code>buf</code></em>.
+      </p><p>
+        <code class="function">kdSnprintfKHR</code> and
+        <code class="function">kdSprintfKHR</code>
+        take the arguments to be
+        formatted as a variable argument list.
+        <code class="function">kdVsnprintfKHR</code> and
+        <code class="function">kdVsprintfKHR</code>
+        take the arguments as a single
+        <span class="type">KDVaListKHR</span> value, from which the arguments are retrieved.
+        The function does not call <span class="type">KD_VA_END_KHR</span> before returning.
+      </p><p>
+        The output is written as a null-terminated string
+        into the buffer pointed to by <em class="parameter"><code>buf</code></em>. For
+        <code class="function">kdSnprintfKHR</code> and
+        <code class="function">kdVsnprintfKHR</code>, <em class="parameter"><code>bufsize</code></em>
+        is the size of the buffer, and the functions never write beyond
+        that size.
+      </p><p>
+        If <em class="parameter"><code>buf</code></em> does not point to writable memory
+        long enough for the shorter of the requested output or the
+        supplied <em class="parameter"><code>bufsize</code></em> (as applicable), or if
+        <em class="parameter"><code>format</code></em> is not a readable null-terminated
+        string, then undefined behavior results.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2759492"></a>Return value</h4></div></div></div><p>
+        On success, the functions return the length of the written
+        string without its null termination.
+        For <code class="function">kdSnprintfKHR</code> and
+        <code class="function">kdVsnprintfKHR</code>,
+        if the output (with null termination) would not fit
+        into <em class="parameter"><code>bufsize</code></em>
+        bytes, then the function returns what the length would have been
+        if the buffer had been large enough, and null terminates the
+        output so it just fits in the buffer.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2759525"></a>The format string</h4></div></div></div><p>
+        The null-terminated format string consists of zero or more directives.
+        A single character other than <code class="literal">%</code> is a directive
+        that causes that character to be written unchanged to the output.
+        A pair of percent signs <code class="literal">%%</code> is a directive
+        that causes a single percent sign to be written to the output.
+      </p><p>
+        A percent sign <code class="literal">%</code> otherwise starts a conversion
+        specification, ending with a conversion character. A conversion
+        specification causes one or more of the further arguments to be
+        used up, typically to convert one to string format and output it.
+      </p><p>
+        A percent sign followed by characters not forming a valid
+        conversion specification causes undefined behavior.
+      </p><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><p class="descriptive">
+        If the conversion specifier is invalid, allowing undefined
+        behavior, an implementation is recommended to terminate the
+        application in some way, rather than outputting nothing or
+        something and appearing to succeed. This reduces the danger
+        of the application programmer accidentally relying on non-portable
+        behavior of the format string.
+      </p></div><p>
+        A conversion specification consists, in this order, of:
+      </p><div class="itemizedlist"><ul type="disc"><li><p>
+            the initial <code class="literal">%</code> character;
+        </p></li><li><p>
+            zero or more flags;
+        </p></li><li><p>
+            optional field width;
+        </p></li><li><p>
+            optional precision;
+        </p></li><li><p>
+            optional length modifier;
+        </p></li><li><p>
+            conversion character.
+        </p></li></ul></div><div class="sect4" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="id2759622"></a>Flags</h5></div></div></div><p>
+            The flags can be, in any order:
+        </p><div class="itemizedlist"><ul type="disc"><li><p>
+            <code class="literal">-</code> (minus sign) specifies that the
+            converted argument is left justified in its field.
+          </p></li><li><p>
+            <code class="literal">+</code> (plus sign) specifies that a converted
+            signed number is always printed with a sign.
+          </p></li><li><p>
+            Space character specifies that if the first character of
+            a converted signed number is not a sign, a space character is
+            prefixed.
+          </p></li><li><p>
+            <code class="literal">0</code> (zero character) specifies that a
+            converted number is padded to the field width with zero
+            characters. <code class="literal">0</code> is ignored if the
+            <code class="literal">-</code> flag is also present.
+            For integer conversions, <code class="literal">0</code> is ignored if
+            a precision is also specified. For floating point conversions,
+            specifying both <code class="literal">0</code> and a precision causes
+            undefined behavior.
+          </p></li><li><p>
+            <code class="literal">#</code> alters certain conversions: a number
+            converted to octal always starts with a zero digit;
+            a number converted to hexadecimal has <code class="literal">0x</code>
+            or <code class="literal">0X</code> (respectively, for conversion
+            characters <code class="literal">x</code> and <code class="literal">X</code>)
+            prefixed; a converted floating-point number always has
+            a decimal point, even if there are no digits after it;
+            for <code class="literal">g</code> and <code class="literal">G</code> conversions,
+            trailing zeros are not removed.
+          </p></li></ul></div></div><div class="sect4" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="id2759752"></a>Field width</h5></div></div></div><p>
+            When present, the field width specifies the minimum width of
+            the field into which the argument will be converted. The
+            field width is specified either as a non-negative decimal
+            integer, or as a <code class="literal">*</code> character, which causes
+            the next argument (which must be a <code class="literal">AKDint</code>)
+            to be read and used as the minimum field width. Even in the
+            <code class="literal">*</code> case, a negative field width is taken to be
+            a field width of its absolute value, together with a
+            <code class="literal">-</code> flag.
+        </p><p>
+            Note that a (constant) field width never starts with
+            <code class="literal">0</code>; any <code class="literal">0</code> character
+            is treated as a flag rather than part of the field width.
+        </p></div><div class="sect4" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="id2759808"></a>Precision</h5></div></div></div><p>
+            When present, the precision specifies the maximum number of
+            characters to use from a string, or the minimum number of
+            digits in an integer conversion (leading zeros are added
+            to make up the minimum; an explicit precision of 0 used on a
+            value of 0 prints no digits at all; the default precision is 1),
+            or the exact number of digits after
+            the decimal point in a
+            <code class="literal">e</code>, <code class="literal">E</code>, <code class="literal">f</code>
+            or <code class="literal">F</code> conversion, or the maximum number
+            of significant digits in a <code class="literal">g</code> or
+            <code class="literal">G</code> conversion.
+            The precision is specified as a
+            period character, then nothing (giving a precision of 0),
+            or a decimal integer, or a <code class="literal">*</code> character,
+            causing the next argument (which must be a
+            <code class="literal">AKDint</code>) to be read and used as the
+            precision. A negative precision is treated the same as no
+            precision specification at all.
+        </p></div><div class="sect4" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="id2759875"></a>Length modifier</h5></div></div></div><p>
+            The optional length modifier is one of:
+        </p><div class="itemizedlist"><ul type="disc"><li><p>
+            <code class="literal">h</code> specifies that an integer conversion
+            has a <span class="type">KDint16</span> or <span class="type">KDuint16</span>
+            argument, or an <code class="literal">n</code> conversion character
+            has a <span class="type">KDint16 *</span> argument;
+          </p></li><li><p>
+            <code class="literal">l</code> (one lower-case letter L) is ignored
+            for an integer conversion;
+          </p></li><li><p>
+            <code class="literal">ll</code> (two lower-case letter Ls) specifies that
+            an integer conversion has a <code class="literal">KDint64</code> or
+            <span class="type">KDuint64</span> argument.
+          </p></li></ul></div><p>
+            Attempting to use a length modifier and conversion character
+            combination not specified above makes the conversion specification
+            invalid.
+        </p></div><div class="sect4" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="id2759952"></a>Conversion character</h5></div></div></div><p>
+            The conversion character is one of:
+        </p><div class="itemizedlist"><ul type="disc"><li><p>
+            <code class="literal">d</code> or <code class="literal">i</code> reads the next
+            argument, which must be <span class="type">KDint</span> or <span class="type">KDuint</span>,
+            or as specified by any length modifier, and outputs in
+            signed decimal notation;
+          </p></li><li><p>
+            <code class="literal">o</code> reads the next
+            argument, which must be <span class="type">KDint</span> or <span class="type">KDuint</span>,
+            or as specified by any length modifier, and outputs in
+            unsigned octal notation;
+          </p></li><li><p>
+            <code class="literal">x</code> or <code class="literal">X</code> reads the next
+            argument, which must be <span class="type">KDint</span> or <span class="type">KDuint</span>,
+            or as specified by any length modifier, and outputs in
+            unsigned hexadecimal notation, with non-decimal digits in the
+            same case as the conversion character;
+          </p></li><li><p>
+            <code class="literal">u</code> reads the next
+            argument, which must be <span class="type">KDint</span> or <span class="type">KDuint</span>,
+            or as specified by any length modifier, and outputs in
+            unsigned decimal notation;
+          </p></li><li><p>
+            <code class="literal">c</code> reads the next
+            argument, which must be <span class="type">KDchar</span> or <span class="type">KDint8</span>
+            or <span class="type">KDuint8</span>,
+            and outputs the single character;
+          </p></li><li><p>
+            <code class="literal">s</code> reads the next
+            argument, which must be a
+            <span class="type">const KDchar *</span> value that either points to
+            a null-terminated string or is <code class="literal">KD_NULL</code>
+            and outputs the string (truncated by any precision specification),
+            or an implementation-defined representation of
+            <code class="literal">KD_NULL</code>;
+          </p></li><li><p>
+                <code class="literal">e</code> or <code class="literal">E</code> reads the next
+                argument, which must be <span class="type">KDfloat32</span>,
+                or <span class="type">KDfloat64KHR</span> (when the KD_KHR_float64
+                extension is also present),
+                and outputs a
+                rounded representation: a minus sign if applicable, then a
+                single digit (non-zero if the value is non-zero), then the
+                decimal point, then the number of digits specified by the
+                precision (6 if not specified), then a <code class="literal">e</code> or
+                <code class="literal">E</code> character (respectively for the two
+                conversion characters), then a plus or minus sign, then
+                two or more digits of exponent (with no leading zeros unless
+                a two digit exponent). If the precision is zero and there is
+                no <code class="literal">#</code> flag, the decimal point is omitted. If
+                the value is zero the exponent is zero.
+            </p><p>
+                The converted output for a <span class="type">KDfloat32</span>
+                is allowed to be up to one out in its ninth significant digit.
+                Thus digits beyond the ninth have undefined values.
+            </p><p>
+                The converted output for a <span class="type">KDfloat64</span> is allowed to
+                be up to one out in its seventeenth significant digit.  Thus
+                digits beyond the seventeenth have undefined values.
+            </p><p>
+                An argument representing an infinity or
+                not-a-number is converted as if by
+                <code class="function">kdFtostr</code>, in the same case
+                (upper or lower) as the conversion character.
+                The specification of <code class="function">kdFtostr</code>
+                regarding infinity and not-a-number was tightened in
+                OpenKODE Core 1.0.1, so the exact semantics depend on the
+                version of OpenKODE Core being implemented.
+            </p></li><li><p>
+                <code class="literal">f</code> or <code class="literal">F</code>
+                reads the next argument, which must be <span class="type">KDfloat32</span>,
+                or <span class="type">KDfloat64KHR</span> (when the KD_KHR_float64
+                extension is also present),
+                and outputs a rounded representation:
+                a minus sign if applicable, then at least one digit,
+                then the decimal point, then the number of digits specified
+                by the precision (6 if not specified).
+                If the precision is zero
+                and there is no <code class="literal">#</code> flag, the decimal point
+                is omitted.
+            </p><p>
+                The converted output for a <span class="type">KDfloat32</span>
+                is allowed to be up to one out in its ninth significant digit.
+                Thus digits beyond the ninth have undefined values.
+            </p><p>
+                The converted output for a <span class="type">KDfloat64</span> is allowed to
+                be up to one out in its seventeenth significant digit.  Thus
+                digits beyond the seventeenth have undefined values.
+            </p><p>
+                An argument representing an infinity or not-a-number
+                is converted in the same way as for
+                <code class="literal">e</code> or <code class="literal">E</code>.
+            </p></li><li><p>
+                <code class="literal">g</code> or <code class="literal">G</code>
+                reads the next argument, which must be <span class="type">KDfloat32</span>,
+                or <span class="type">KDfloat64KHR</span> (when the KD_KHR_float64
+                extension is also present),
+                and outputs a rounded representation in one of these
+                forms:
+            </p><div class="itemizedlist"><ul type="circle"><li><p>
+                as per
+                <code class="literal">e</code> or <code class="literal">E</code>
+                (for <code class="literal">g</code> or <code class="literal">G</code>
+                respectively)
+                if the exponent is
+                more than or equal to the specified precision and not zero,
+                or the exponent is less than -4;
+              </p></li><li><p>
+                otherwise, as per
+                <code class="literal">f</code> or <code class="literal">F</code>
+                (for <code class="literal">g</code> or <code class="literal">G</code>
+                respectively).
+              </p></li></ul></div><p>
+                In either case, the precision (6 if not specified, 1 if
+                specified as 0) determines the number of significant digits
+                in the mantissa.
+            </p></li><li><p>
+            <code class="literal">p</code> reads the next
+            argument, which must be of some pointer type, and outputs
+            an implementation-defined representation of the pointer;
+          </p></li><li><p>
+            <code class="literal">n</code> reads the next
+            argument, which must be <span class="type">KDint *</span>, or as modified by
+            any length specifier, and writes the number of characters
+            output so far in this call into the location pointed to by the
+            value. Nothing is output.
+          </p></li></ul></div><p>
+            If an argument is not of the type expected by the conversion
+            specification, then undefined behavior results. However, certain
+            discrepancies are allowed:
+        </p><div class="itemizedlist"><ul type="disc"><li><p>
+            <span class="type">KDint64</span> and <span class="type">KDuint64</span> may be used
+            interchangeably;
+          </p></li><li><p>
+            <span class="type">KDint</span> and <span class="type">KDuint</span> may be used
+            interchangeably;
+          </p></li><li><p>
+            <span class="type">KDint32</span>, <span class="type">KDuint32</span>,
+            <span class="type">KDint16</span>, <span class="type">KDuint16</span>,
+            <span class="type">KDint8</span>, <span class="type">KDuint8</span> and
+            <span class="type">KDchar</span> may be used interchangeably;
+          </p></li><li><p>
+            <span class="type">KDint *</span> and <span class="type">KDuint *</span> may be used
+            interchangeably;
+          </p></li><li><p>
+            <span class="type">KDint16 *</span> and <span class="type">KDuint16 *</span> may be used
+            interchangeably.
+          </p></li></ul></div></div></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2760485"></a>Rationale</h4></div></div></div><p>
+        <code class="function">kdSprintfKHR</code>
+        and <code class="function">kdVsprintfKHR</code>
+        are based on the C89 functions
+        <code class="function">sprintf<a class="indexterm" name="id2760510"></a></code> and <code class="function">vsprintf<a class="indexterm" name="id2760520"></a></code>.
+        <code class="function">kdSnprintfKHR</code>
+        and <code class="function">kdVsnprintfKHR</code> have an API specification based
+        on C99 <code class="function">snprintf<a class="indexterm" name="id2760542"></a></code> and <code class="function">vsnprintf<a class="indexterm" name="id2760552"></a></code>
+        (which differs in return value
+        from SUSv2 in the case that the output does not fit in the buffer).
+      </p><p>
+        The format conversions are those in C89,
+        except for the addition of
+        the C99 <code class="literal">ll</code>
+        length modifier to convert 64-bit integer values.
+      </p><p>
+        The statement that a floating-point conversion can be up to one
+        out in its ninth significant digit is intended to match
+        <code class="function">kdFtostr</code>, so that
+        this function can be implemented in terms of that one, or
+        vice versa.
+      </p><p>
+        Further differences from C standards concern the argument types.
+        OpenKODE Core uses
+        <span class="type">KDint16</span> or <span class="type">KDuint16</span>
+        instead of <span class="type">short</span> or <span class="type">unsigned short</span>,
+        and
+        <span class="type">KDint</span> or <span class="type">KDuint</span>
+        instead of <span class="type">int</span> or <span class="type">unsigned int</span>,
+        and (for the C99-like <code class="literal">ll</code> length modifier)
+        <span class="type">KDint64</span> or <span class="type">KDuint64</span>
+        instead of <span class="type">long long</span> or <span class="type">unsigned long long</span>.
+      </p></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdFprintfKHR"></a>6.2.&#160;kdFprintfKHR, kdVfprintfKHR</h3></div></div></div><a class="indexterm" name="id2760646"></a><a class="indexterm" name="id2760652"></a><p>Formatted output to an open file.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2760661"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdFprintfKHR</b>(</code></td><td>KDFile *&#160;</td><td><var class="pdparam">file</var>, </td></tr><tr><td>&#160;</td><td>const KDchar *&#160;</td><td><var class="pdparam">format</var>, </td></tr><tr><td>&#160;</td><td>&#160;</td><td><var class="pdparam">...</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdVfprintfKHR</b>(</code></td><td>KDFile *&#160;</td><td><var class="pdparam">file</var>, </td></tr><tr><td>&#160;</td><td>const KDchar *&#160;</td><td><var class="pdparam">format</var>, </td></tr><tr><td>&#160;</td><td>KDVaListKHR &#160;</td><td><var class="pdparam">ap</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2760735"></a>Description</h4></div></div></div><p>
+        These functions write a formatted string based on the
+        null-terminated string <em class="parameter"><code>format</code></em>, with certain
+        sequences substituted by values of further arguments,
+        to the open-for-writing file <em class="parameter"><code>file</code></em>.
+      </p><p>
+        <code class="function">kdFprintfKHR</code> takes the arguments to be
+        formatted as a variable argument list.
+        <code class="function">kdVfprintfKHR</code> takes the arguments as a single
+        <span class="type">KDVaListKHR</span> value, from which the arguments are retrieved.
+        The function does not call <span class="type">KD_VA_END_KHR</span> before returning.
+      </p><p>
+        Formatting occurs in the same way as in
+        <a class="link" href="#kdSnprintfKHR" title="6.1.&#160;kdSnprintfKHR, kdVsnprintfKHR, kdSprintfKHR, kdVsprintfKHR"><code class="function">kdSnprintfKHR</code></a>.
+      </p><p>
+        If <em class="parameter"><code>file</code></em> is not an open file,
+        or if
+        <em class="parameter"><code>format</code></em> is not a readable null-terminated
+        string, then undefined behavior results.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2760810"></a>Return value</h4></div></div></div><p>
+        On success, the function returns the number of characters
+        written (excluding the null termination).
+        On failure, it returns -1, sets the 
+        file&#8217;s error indicator (as returned by
+        <code class="function">kdFerror</code>)
+        and stores one of the error codes listed below into
+        the error indicator returned by
+        <code class="function">kdGetError</code>.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2760838"></a>Error codes</h4></div></div></div><p>
+        Refer to <code class="function">kdPutc</code>.
+      </p></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2760853"></a>Rationale</h4></div></div></div><p>
+        <code class="function">kdFprintfKHR</code>
+        and <code class="function">kdVfprintfKHR</code> have an API specification based
+        on C89 <code class="function">fprintf<a class="indexterm" name="id2760878"></a></code> and <code class="function">vfprintf<a class="indexterm" name="id2760888"></a></code>.
+      </p><p>
+        See the rationale for <code class="function">kdSnprintfKHR</code>
+        for a discussion of the format conversions.
+      </p></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdLogMessagefKHR"></a>6.3.&#160;kdLogMessagefKHR</h3></div></div></div><a class="indexterm" name="id2760916"></a><p>Formatted output to the platform&#8217;s debug logging
+        facility.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2760926"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdLogMessagefKHR</b>(</code></td><td>const KDchar *&#160;</td><td><var class="pdparam">format</var>, </td></tr><tr><td>&#160;</td><td>&#160;</td><td><var class="pdparam">...</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2760960"></a>Description</h4></div></div></div><p>
+        This function writes a formatted string based on the
+        null-terminated string <em class="parameter"><code>format</code></em>, with certain
+        sequences substituted by values of further arguments,
+        to the same place as
+        <code class="function">kdLogMessage</code>.
+        Unlike that function, it does not automatically append a newline
+        character.
+      </p><p>
+        Formatting occurs in the same way as in
+        <code class="function">kdSnprintfKHR</code>.
+      </p><p>
+        If
+        <em class="parameter"><code>format</code></em> is not a readable null-terminated
+        string, then undefined behavior results.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2761005"></a>Return value</h4></div></div></div><p>
+        The function returns the number of characters
+        written (excluding the null termination).
+        It cannot fail, and specifically cannot run out of memory.
+      </p></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2761018"></a>Rationale</h4></div></div></div><p>
+        <code class="function">kdLogMessagefKHR</code> allows a developer to add a convenient
+        single line to a program to aid in its debugging by logging some
+        variable values and so on. Although
+        <code class="function">kdLogMessage</code>
+        could be used for this, it is inconvenient to use when number
+        values need to be output.
+      </p><p>
+        See the rationale for <code class="function">kdSnprintfKHR</code>
+        for a discussion of the format conversions.
+      </p></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdSscanfKHR"></a>6.4.&#160;kdSscanfKHR, kdVsscanfKHR</h3></div></div></div><a class="indexterm" name="id2761064"></a><a class="indexterm" name="id2761069"></a><p>Read formatted input from a buffer.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2761079"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdSscanfKHR</b>(</code></td><td>const KDchar *&#160;</td><td><var class="pdparam">str</var>, </td></tr><tr><td>&#160;</td><td>const KDchar *&#160;</td><td><var class="pdparam">format</var>, </td></tr><tr><td>&#160;</td><td>&#160;</td><td><var class="pdparam">...</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdVsscanfKHR</b>(</code></td><td>const KDchar *&#160;</td><td><var class="pdparam">str</var>, </td></tr><tr><td>&#160;</td><td>const KDchar *&#160;</td><td><var class="pdparam">format</var>, </td></tr><tr><td>&#160;</td><td>KDVaListKHR &#160;</td><td><var class="pdparam">ap</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2761152"></a>Description</h4></div></div></div><p>
+        These functions scan the null-terminated string
+		pointed to by <em class="parameter"><code>str</code></em>
+        as directed by the null-terminated format string
+        <em class="parameter"><code>format</code></em>, with certain sequences in the format
+        string causing part of the input to be converted and the result
+        stored in a location pointed to by one of the further arguments.
+      </p><p>
+        <code class="function">kdSscanfKHR</code> takes the further arguments
+        as a variable argument list.
+        <code class="function">kdVsscanfKHR</code> takes the further arguments
+        as a single
+        <span class="type">KDVaListKHR</span> value, from which the arguments are retrieved.
+        The function does not call <span class="type">KD_VA_END_KHR</span> before returning.
+      </p><p>
+        If <em class="parameter"><code>buf</code></em> does not point to readable memory
+        long enough to read as directed by the format string (a readable
+        null-terminated string always satisfies this criterion),
+        or if
+        <em class="parameter"><code>format</code></em> is not a readable null-terminated
+        string, then undefined behavior results.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2761219"></a>Return value</h4></div></div></div><p>
+        The functions return the number of input items successfully
+        matched and assigned before the end (the null termination)
+        of the format string is reached, or before a matching failure occurs.
+		If the end of the input string <em class="parameter"><code>str</code></em> is reached,
+		then this is an input failure
+		and the function returns <code class="literal">KD_EOF</code>.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2761245"></a>The format string</h4></div></div></div><p>
+        The null-terminated format string consists of zero or more directives.
+        If processing of a directive fails, then the functions return
+        without reading any further input.
+      </p><p>
+        A directive is one of:
+      </p><div class="itemizedlist"><ul type="disc"><li><p>
+            a sequence of one or more whitespace characters (each character
+            is space, newline, form-feed, carriage return, horizontal tab
+            or vertical tab), which matches the maximal sequence of zero
+            or more whitespace characters in the input;
+        </p></li><li><p>
+            a character other than whitespace or <code class="literal">%</code>,
+            which matches that exact character in the input;
+        </p></li><li><p>
+            a <code class="literal">%%</code> sequence, which matches one
+            <code class="literal">%</code> character in the input;
+        </p></li><li><p>
+            a conversion specification, starting with a <code class="literal">%</code>
+            character, which causes a sequence of characters to be read and
+            converted according to the specification, and the result placed
+            in the location pointed to by the next of the further arguments.
+            If the next input item does not match the conversion specification,
+            the conversion fails and the functions stop reading input and
+            return.
+        </p></li></ul></div><p>
+        A percent sign followed by characters not forming a valid
+        conversion specification causes undefined behavior.
+      </p><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><p class="descriptive">
+        If the conversion specifier is invalid, allowing undefined
+        behavior, an implementation is recommended to terminate the
+        application in some way, rather than reading and converting nothing or
+        something and appearing to succeed. This reduces the danger
+        of the application programmer accidentally relying on non-portable
+        behavior of the format string.
+      </p></div><div class="sect4" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="id2761336"></a>Conversion specification</h5></div></div></div><p>
+            A conversion specification consists, in this order, of:
+        </p><div class="itemizedlist"><ul type="disc"><li><p>
+            the initial <code class="literal">%</code> character;
+          </p></li><li><p>
+            an optional <code class="literal">*</code> character to suppress
+            assignment;
+          </p></li><li><p>
+            an optional field width specifier;
+          </p></li><li><p>
+            an optional length modifier character;
+          </p></li><li><p>
+            the conversion specifier.
+          </p></li></ul></div><p>
+            Except where otherwise specified, initial whitespace is
+            skipped before starting a conversion.
+        </p></div><div class="sect4" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="id2761392"></a>Suppress assignment</h5></div></div></div><p>
+            The optional <code class="literal">*</code> character in the conversion
+            specification causes
+            assignment to be suppressed: once the conversion has been
+            performed, the result is discarded without using the next
+            of the further arguments and without incrementing the count
+            of items successfully matched and assigned.
+        </p></div><div class="sect4" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="id2761413"></a>Field width</h5></div></div></div><p>
+            The field width is optionally specified by a strictly
+            positive decimal integer. After scanning any initial whitespace
+            where applicable, the field width is the maximum number
+            of characters that will be considered part of the field and
+            used in the conversion.
+        </p></div><div class="sect4" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="id2761428"></a>Length modifier</h5></div></div></div><p>
+            The length modifier is an optional character sequence that
+            modifies the size of the type of the location (pointed to by the
+            next of the further arguments) that receives the converted value.
+            The length modifier is one of:
+        </p><div class="itemizedlist"><ul type="disc"><li><p>
+            <code class="literal">h</code> specifies that a conversion specifier of
+            <code class="literal">d</code>, <code class="literal">i</code>, <code class="literal">o</code>,
+            <code class="literal">u</code>, <code class="literal">x</code>, <code class="literal">X</code>
+            or <code class="literal">n</code>
+            stores a <span class="type">KDint16</span> or <span class="type">KDuint16</span>.
+          </p></li><li><p>
+            <code class="literal">l</code> (lower-case L) is accepted and ignored for
+            a conversion specifier of
+            <code class="literal">d</code>, <code class="literal">i</code>, <code class="literal">o</code>,
+            <code class="literal">u</code>, <code class="literal">x</code>, <code class="literal">X</code>
+            or <code class="literal">n</code>.
+          </p></li><li><p>
+            <code class="literal">ll</code> (double lower-case L) specifies that
+            a conversion specifier of
+            <code class="literal">d</code>, <code class="literal">i</code>, <code class="literal">o</code>,
+            <code class="literal">u</code>, <code class="literal">x</code>, <code class="literal">X</code>
+            or <code class="literal">n</code>
+            stores a <span class="type">KDint64</span> or <span class="type">KDuint64</span>.
+          </p></li></ul></div></div><div class="sect4" lang="en"><div class="titlepage"><div><div><h5 class="title"><a name="id2761600"></a>Conversion specifier</h5></div></div></div><p>
+            The conversion specifier is one of:
+        </p><div class="itemizedlist"><ul type="disc"><li><p>
+            <code class="literal">d</code> reads an optionally signed decimal
+            integer. The value is stored as a <span class="type">KDint</span>
+            (unless there is a length modifier).
+          </p></li><li><p>
+            <code class="literal">i</code> reads an optionally signed decimal,
+            octal (starts with <code class="literal">0</code>0 or
+            hexadecimal (prefixed with <code class="literal">0x</code> or
+            <code class="literal">0X</code>)
+            integer. The value is stored as a <span class="type">KDint</span>
+            (unless there is a length modifier).
+          </p></li><li><p>
+            <code class="literal">o</code> reads an optionally signed octal
+            integer. The value is stored as a <span class="type">KDuint</span>
+            (unless there is a length modifier).
+          </p></li><li><p>
+            <code class="literal">x</code> reads an optionally signed and
+            optionally <code class="literal">0x</code> or <code class="literal">0X</code>
+            prefixed hexadecimal
+            integer. The value is stored as a <span class="type">KDuint</span>
+            (unless there is a length modifier).
+          </p></li><li><p>
+                <code class="literal">e</code>,
+                <code class="literal">f</code> or
+                <code class="literal">g</code>
+                reads a floating point number, as if by
+                <code class="function">kdStrtof</code>.
+                The value is stored as a <span class="type">KDfloat32</span>.
+            </p><p>
+                The specification of <code class="function">kdStrtof</code>
+                regarding infinity, not-a-number and hexadecimal
+                floating point was tightened in
+                OpenKODE Core 1.0.1, so the exact semantics depend on the
+                version of OpenKODE.
+            </p></li><li><p>
+            <code class="literal">c</code> reads exactly the number of characters
+            specified in the field width (1 if not specified), and
+            copies them without null termination into the <span class="type">KDchar</span>
+            array pointed to by the argument. For this conversion
+            specifier, the usual skipping of initial whitespace is
+            suppressed.
+          </p></li><li><p>
+            <code class="literal">s</code> reads a sequence of non-whitespace
+            characters, and copies them with an additional null termination
+            into the <span class="type">KDchar</span>
+            array pointed to by the argument.
+          </p></li><li><p>
+            A conversion specifier consisting of <code class="literal">[</code>
+            followed by one or more characters other than
+            <code class="literal">]</code> (the <em class="firstterm">scanset</em>)
+            (the first character in the scanset can be <code class="literal">[</code>,
+            but cannot be <code class="literal">^</code>),
+            then a final <code class="literal">]</code> matches one or more
+            characters in the input where each is in the scanset.
+            The matching character sequence is copied with an additional
+            null termination into the <span class="type">KDchar</span> array pointed
+            to by the argument.
+          </p></li><li><p>
+            A conversion specifier consisting of <code class="literal">[^</code>
+            followed by one or more characters other than
+            <code class="literal">]</code> (the <em class="firstterm">scanset</em>)
+            (the first character in the scanset can be <code class="literal">[</code>),
+            then a final <code class="literal">]</code> matches one or more
+            characters in the input where each is not in the scanset.
+            The matching character sequence is copied with an additional
+            null termination into the <span class="type">KDchar</span> array pointed
+            to by the argument.
+          </p></li><li><p>
+            <code class="literal">p</code> reads a pointer value in an
+            implementation-defined format which includes the format
+            used by <code class="literal">%p</code> in
+            <a class="link" href="#kdSnprintfKHR" title="6.1.&#160;kdSnprintfKHR, kdVsnprintfKHR, kdSprintfKHR, kdVsprintfKHR"><code class="function">kdSnprintfKHR</code></a>.
+            The value is stored as a <span class="type">void *</span>.
+          </p></li><li><p>
+            <code class="literal">n</code> does not read any input (not even initial
+            whitespace), and stores the current count of bytes consumed
+            as a <span class="type">KDint</span>.
+            This conversion specifier thus consumes an argument,
+            but does not itself increment the count of items successfully
+            matched and assigned.
+          </p></li></ul></div><p>
+            If an argument is not of the pointer type expected by the
+            conversion specification (i.e. the argument is not of type
+            pointer to the type that the conversion specification stores,
+            other than a change of signedness), or the location pointed
+            to by the argument is not writable and big enough for the
+            value being stored, then undefined behavior results.
+        </p></div></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2761930"></a>Rationale</h4></div></div></div><p>
+        <code class="function">kdSscanfKHR</code> and <code class="function">kdVsscanfKHR</code>
+        are based on
+        on C89 <code class="function">sscanf<a class="indexterm" name="id2761954"></a></code>, with the addition
+        of C99's <code class="literal">ll</code> length modifier.
+      </p><p>
+        There are some differences from C standards in the argument types.
+        OpenKODE Core uses
+        <span class="type">KDint16 *</span> or <span class="type">KDuint16 *</span>
+        instead of <span class="type">short *</span> or <span class="type">unsigned short *</span>,
+        and
+        <span class="type">KDint *</span> or <span class="type">KDuint *</span>
+        instead of <span class="type">int *</span> or <span class="type">unsigned int *</span>,
+        and (for the C99-like <code class="literal">ll</code> length modifier)
+        <span class="type">KDint64 *</span> or <span class="type">KDuint64 *</span>
+        instead of <span class="type">long long *</span> or <span class="type">unsigned long long *</span>.
+      </p></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdFscanfKHR"></a>6.5.&#160;kdFscanfKHR, kdVfscanfKHR</h3></div></div></div><a class="indexterm" name="id2762029"></a><a class="indexterm" name="id2762034"></a><p>Read formatted input from a file.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2762044"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdFscanfKHR</b>(</code></td><td>KDFile *&#160;</td><td><var class="pdparam">file</var>, </td></tr><tr><td>&#160;</td><td>const KDchar *&#160;</td><td><var class="pdparam">format</var>, </td></tr><tr><td>&#160;</td><td>&#160;</td><td><var class="pdparam">...</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdVfscanfKHR</b>(</code></td><td>KDFile *&#160;</td><td><var class="pdparam">file</var>, </td></tr><tr><td>&#160;</td><td>const KDchar *&#160;</td><td><var class="pdparam">format</var>, </td></tr><tr><td>&#160;</td><td>KDVaListKHR &#160;</td><td><var class="pdparam">ap</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2762118"></a>Description</h4></div></div></div><p>
+        These functions read the open <em class="parameter"><code>file</code></em>
+        as directed by the null-terminated format string
+        <em class="parameter"><code>format</code></em>, with certain sequences in the format
+        string causing part of the input to be converted and the result
+        stored in a location pointed to by one of the further arguments.
+      </p><p>
+        <code class="function">kdFscanfKHR</code> takes the further arguments
+        as a variable argument list.
+        <code class="function">kdVfscanfKHR</code> takes the further arguments
+        as a single
+        <span class="type">KDVaListKHR</span> value, from which the arguments are retrieved.
+        The function does not call <span class="type">KD_VA_END_KHR</span> before returning.
+      </p><p>
+        <em class="parameter"><code>format</code></em> directs the reading and conversion
+        of the data in the same way as in
+        <a class="link" href="#kdSscanfKHR" title="6.4.&#160;kdSscanfKHR, kdVsscanfKHR"><code class="function">kdSscanfKHR</code></a>.
+      </p><p>
+        If <em class="parameter"><code>file</code></em> is not an open file,
+        or if
+        <em class="parameter"><code>format</code></em> is not a readable null-terminated
+        string, then undefined behavior results.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2762200"></a>Return value</h4></div></div></div><p>
+        The functions return the number of input items successfully
+        matched and assigned before the end (the null termination)
+        of the format string is reached, or a matching failure occurs.
+		If end-of-file is reached, the function sets
+		the file&#8217;s end-of-file indicator (as returned by
+		<code class="function">kdFEOF</code>)
+		and returns <code class="literal">KD_EOF</code>.
+		If an error occurs reading the file, the function sets the 
+		file&#8217;s error indicator (as returned by
+		<code class="function">kdFerror</code>)
+		and stores one of the error codes listed below into
+		the error indicator returned by
+		<code class="function">kdGetError</code>.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2762244"></a>Error codes</h4></div></div></div><p>
+		Refer to <code class="function">kdGetc</code>.
+      </p></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2762259"></a>Rationale</h4></div></div></div><p>
+        <code class="function">kdFscanfKHR</code>
+        and <code class="function">kdVfscanfKHR</code>
+        are based on C89
+        <code class="function">fscanf<a class="indexterm" name="id2762284"></a></code> and <code class="function">vfscanf<a class="indexterm" name="id2762294"></a></code>.
+      </p><p>
+        See the rationale for <code class="function">kdSscanfKHR</code>
+        for a discussion of the format conversions.
+      </p></div></div></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2762319"></a>7.&#160;Revision history</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2762324"></a>7.1.&#160;Version 10, 2009-04-02</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Corrected kdSscanfKHR %n conversion to store the number of bytes
+        consumed, not the number of conversions performed, in line with
+        C and POSIX standards.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2762342"></a>7.2.&#160;Version 9, 2008-06-20</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Changed back to being based on OpenKODE Core 1.0 specification.
+      </p></li><li><p>
+        Rephrased kdSnprintfKHR treatment of floating-point infinity
+        or not-a-number to be the same as kdFtostr, and noted that
+        this changed in OpenKODE 1.0.1.
+      </p></li><li><p>
+        Noted that the kdStrtof treatment of infinity, not-a-number and
+        hexadecimal floating point changed in OpenKODE 1.0.1, so this
+        affects the semantics of kdSscanfKHR.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2762372"></a>7.3.&#160;Version 8, 2008-03-31</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Now based on OpenKODE Core 1.0.1 specification.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2762386"></a>7.4.&#160;Version 7, 2008-02-01</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Reduced accuracy of KDfloat64KHR output to one out in 17th digit.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2762401"></a>7.5.&#160;Version 6, 2008-01-24</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Fixed incorrect function names.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2762416"></a>7.6.&#160;Version 5, 2008-01-14</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Clarified that a precision of 0 in an integer conversion
+        with a value of 0 prints no digits at all.
+        Specified that an integer conversion has a default precision of 1.
+        Allowed for three digit exponent.
+        Stated that the 0 flag, when combined with a precision, is ignored for
+        integer conversions, and causes undefined behavior for floating point
+        conversions.
+        Fixed typos.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2762437"></a>7.7.&#160;Version 4, 2007-11-12</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Fixed a minor typo.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2762452"></a>7.8.&#160;Version 3, 2007-10-19</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+	  	Allowed for *scanf functions returning KF_EOF.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2762467"></a>7.9.&#160;Version 2, 2007-10-15</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Added KD_VA_ARG_*_KHR macros for extracting variable arguments one
+        at a time.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2762482"></a>7.10.&#160;Version 1, 2007-10-08</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Initial version of official Khronos extension.
+      </p></li></ul></div></div></div></div></body></html>

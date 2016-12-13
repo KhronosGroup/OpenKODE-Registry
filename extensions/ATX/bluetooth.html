@@ -1,0 +1,825 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=us-ascii"><title>OpenKODE Core extension: KD_ATX_bluetooth</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="article" lang="en"><div class="titlepage"><div><div><h2 class="title"><a name="id2477139"></a>OpenKODE Core extension: KD_ATX_bluetooth</h2></div></div><hr></div><div class="informaltable"><table border="1"><colgroup><col><col></colgroup><tbody><tr><td>Name</td><td>ATX_bluetooth</td></tr><tr><td>Name strings</td><td>KD_ATX_bluetooth</td></tr><tr><td>Contributors</td><td>Tim Renouf</td></tr><tr><td>Contacts</td><td>Antix Labs</td></tr><tr><td>Status</td><td>Implemented by Antix Labs</td></tr><tr><td>Version</td><td>6</td></tr><tr><td>Number</td><td>9</td></tr><tr><td>Dependencies</td><td>
+          Requires OpenKODE Core 1.0 and the ATX_socktype extension.
+          This extension is written based on the wording of the
+          OpenKODE Core 1.0 specification and version 2 of the ATX_socktype
+          extension.
+        </td></tr></tbody></table></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2520066"></a>1.&#160;Overview</h2></div></div></div><p>
+    This OpenKODE Core extension provides a new socket type and
+    address family for Bluetooth communications, together with functions
+    and events to perform device and service discovery.
+  </p><p>
+    Only SDP (Service Discovery Protocol) and RFCOMM are supported in this
+    extension. It would be straightforward
+    to draft a further extension to add L2CAP.
+  </p><p>
+    It is possible for an implementation to conform to this extension
+    specification without actually implementing Bluetooth communications,
+    as long as the constants and types are present and each function returns
+    the applicable &#8220;not implemented&#8221; error code as specified.
+  </p><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2520098"></a>1.1.&#160;General issues</h3></div></div></div><p>
+        ISSUE:
+        Might we want a function to get the local device's device class?
+    </p><p>
+        ISSUE:
+        Do we want a function for doing service discovery over all visible
+        devices? JSR-82 lets you do this, and I'm told Windows does for
+        some stacks, but I don't think all stacks let you do it. The options
+        seem to be (1) we don't support it, (2) we support it but make it
+        optional so the function returns an error if the underlying stack
+        doesn't support it, or (3) we support it and fake it up if the
+        underlying stack doesn't do it. (3) seems a bit heavyweight to me.
+        I suggest going for (1) for now.
+    </p></div></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2492957"></a>2.&#160;Header file</h2></div></div></div><p>
+      When this extension is present, its facilities are accessed by
+      including its header file:
+  </p><pre class="synopsis">#include &lt;KD/ATX_bluetooth.h&gt;</pre></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2520127"></a>3.&#160;New socket type: 20.4. Bluetooth</h2></div></div></div><p>
+    This new section is added after 20.3 TCP and UDP in the Network sockets
+    chapter as modified by the ATX_socktype extension.
+  </p><p>
+    An OpenKODE Core implementation may optionally support
+    Bluetooth RFCOMM sockets.
+  </p><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2520143"></a>3.1.&#160;20.4.1. KDUuidATX</h3></div></div></div><p>
+        The type <span class="type">KDUuidATX</span> represents an up to 128-bit universally
+        unique identifier (UUID), as used in Bluetooth, most notably as a
+        service ID.
+    </p><pre class="synopsis">typedef struct KDUuidATX {
+    KDuint32 i1, i2, i3, i4;
+} KDUuidATX;</pre><p>
+        The declaration is such that it
+        can be initialized with a list of four 32-bit integers all
+        enclosed in braces, for example:
+    </p><pre class="synopsis">KDUuidATX uuid = { 0, 0, 0, 0xabcd }; /* UUID of 0xabcd */</pre><p>
+        The first integer is the most significant. The correspondence
+        between the fields here, the fields in a Windows GUID and the
+        fields in the canonical text representation of a UUID is as
+        follows:
+    </p><div class="informaltable"><table border="1"><colgroup><col><col><col></colgroup><thead><tr><th>KDUuidATX field</th><th>Windows GUID field</th><th>Canonical UUID field</th></tr></thead><tbody><tr><td>KDuint32 i1</td><td>Data1</td><td>first_field</td></tr><tr><td>KDuint32 i2</td><td>(Data2 &lt;&lt; 16) | Data3</td><td>(second_field &lt;&lt; 16) | third_field</td></tr><tr><td>KDuint32 i3</td><td>(Data4[0] &lt;&lt; 24) | (Data4[1] &lt;&lt; 16)
+                | (Data4[2] &lt;&lt; 8) | Data4[3]</td><td>fourth_field &gt;&gt; 32</td></tr><tr><td>KDuint32 i4</td><td>(Data4[4] &lt;&lt; 24) | (Data4[5] &lt;&lt; 16)
+                | (Data4[6] &lt;&lt; 8) | Data4[7]</td><td>fourth_field &amp; 0xffffffff</td></tr></tbody></table></div><p>
+        Thus, for example, a UUID of 12345678-9abc-def0-fedc-ba9876543210,
+        which would be created in a Java UUID initializer as follows:
+    </p><pre class="synopsis">UUID u = new UUID(0x123456789abcdef0L, 0xfedcba9876543210L);
+</pre><p>
+        or in a Windows GUID initializer as follows:
+    </p><pre class="synopsis">GUID u = { 0x12345678, 0x9abc, 0xdef0, "\xfe\xdc\xba\x98\x76\x54\x32\x10" };
+</pre><p>
+        is initialized in an OpenKODE UUID as follows:
+    </p><pre class="synopsis">KDUuidATX u = { 0x12345678, 0x9abcdef0, 0xfedcba98, 0x76543210 };
+</pre><p>
+        The layout of the bytes in memory in an OpenKODE KDUuidATX depends
+        on the endianness of the target platform, and in either case is
+        different to the layout used by Windows.
+    </p><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><p class="descriptive">
+        ISSUE: Is this right? It needs checking.
+    </p></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><p class="descriptive">
+        ISSUE: Is this how we want to represent a UUID? We could instead
+        use the Java way (two 64-bit ints) or the Linux libuuid way (16
+        8-bit ints) or the Windows way. The representation in memory does
+        not matter that much as long as it is properly specified; I think
+        what matters is how the programmer initializes a UUID.
+    </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2477315"></a>3.2.&#160;20.4.2. Bluetooth socket type and address</h3></div></div></div><p>
+        The socket type constants for use
+        in <code class="function">kdSocketCreate</code> are:
+    </p><pre class="synopsis">#define KD_SOCK_RFCOMM_ATX 169
+</pre><p>
+        An RFCOMM socket is connection based, reliable and stream oriented.
+    </p><p>
+        RFCOMM has an address family of
+        <code class="literal">KD_AF_BLUETOOTH_ATX</code>:
+    </p><pre class="synopsis">#define KD_AF_BLUETOOTH_ATX 170
+</pre><p>
+        It contributes
+        the <em class="structfield"><code>sbtrcATX</code></em> field
+        (of type <span class="type">KDSockaddrAfBtrcATX</span>) to the
+        <span class="type">KDSockaddr</span> data union:
+    </p><pre class="synopsis">typedef struct KDBdAddrATX {
+    KDuint8 b[6];
+} KDBdAddrATX;
+</pre><pre class="synopsis">typedef struct KDSockaddrAfBtrcATX {
+    KDBdAddrATX bdaddr;
+    KDuint8 channel;
+} KDSockaddrAfBtrcATX;
+</pre><p>
+        For a <span class="type">KDSockaddr</span> <code class="literal">addr</code> where
+        <code class="literal">addr.family</code> is
+        <code class="literal">KD_AF_BLUETOOTH_ATX</code> and a RFCOMM address is
+        required,
+        the fields are set as follows:
+    </p><div class="variablelist"><dl><dt><span class="term"><code class="literal">addr.data.sbtrcATX.bdaddr</code></span></dt><dd><p>Bluetooth device address</p></dd><dt><span class="term"><code class="literal">addr.data.sbtrcATX.channel</code></span></dt><dd><p>RFCOMM channel number</p></dd></dl></div><p>
+        Once a Bluetooth RFCOMM socket is bound, the Bluetooth device
+        address of the local Bluetooth device it uses can be
+        retrieved using <code class="function">kdSocketGetName</code>.
+    </p><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><p class="descriptive">
+        ISSUE:
+        Recall we defined <span class="type">KDSockaddr</span> to have
+        a union instead of the POSIX-style multiple structs where the
+        first element is always the address family. The trouble with
+        that is that a new socket type needs to add a new struct
+        member to the union in <code class="literal">&lt;KD/kd.h&gt;</code>,
+        breaking the model that an extension has everything in its
+        own header file. In this case that probably doesn't matter;
+        I don't see how a third party can add a new socket type to
+        an existing OpenKODE implementation.
+    </p></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2481417"></a>WG note</h4></div></div></div><p>
+        BlueZ (the Bluetooth API on Linux) has the slightly odd feature that
+        there are two Bluetooth socket types for RFCOMM and L2CAP, but only
+        one address family. In IP this works, since TCP, UDP and IP all use
+        the same address format (IP address and port), but RFCOMM and L2CAP
+        have slightly different address formats (RFCOMM is bdaddr and channel,
+        L2CAP is bdaddr and psm) and hence different sockaddr struct types.
+        I have copied that here.
+      </p></div></div></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2481439"></a>3.3.&#160;20.4.3. Overview of using Bluetooth sockets</h3></div></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2481447"></a>Connecting to an RFCOMM service on a remote device</h4></div></div></div><p>
+        The steps to setting up communication with a service on a remote device
+        are typically as follows:
+      </p><div class="itemizedlist"><ul type="disc"><li><p>
+            Use <code class="function">kdBtInquireDevicesATX</code> to start an inquiry
+            to find nearby devices. This inquiry is asynchronous; the
+            function returns immediately and then
+            each device found is returned in a
+            <code class="literal">KD_EVENT_BT_DEVICE_DISCOVERED_ATX</code> event, which
+            gives the Bluetooth device address (<span class="type">KDBdAddrATX</span>)
+            of the remote device, plus the device class (computer, phone,
+            printer, etc).
+          </p><p>
+            The inquiry can be cancelled using
+            <code class="function">kdBtCancelInquireDevicesATX</code>.
+          </p></li><li><p>
+            To determine the user-friendly name of a particular remote
+            Bluetooth device for presenting to the user, use
+            <code class="function">kdBtGetFriendlyName</code>. This initiates an
+            asynchronous query to the remote device; the function returns
+            immediately and the result is returned in a
+            <code class="literal">KD_EVENT_BT_DEVICE_NAME_ATX</code> event, which gives
+            either a failure indication or the name.
+          </p><p>
+            The query can be cancelled using
+            <code class="function">kdBtCancelGetFriendlyName</code>.
+          </p></li><li><p>
+            Use <code class="function">kdBtSearchServicesATX</code> to initiate a
+            request to a particular remote device to return information on all
+            services it has matching any of an array of service IDs.
+            This function is asynchronous; it returns immediately
+            and any matching service found is returned in a
+            <code class="literal">KD_EVENT_BT_SERVICE_DISCOVERED_ATX</code> event, which
+            gives the values of all the requested attributes in a
+            <span class="type">KDBtServiceRecordATX</span> struct.
+          </p><p>
+            The search can be cancelled using
+            <code class="function">kdBtCancelSearchServicesATX</code>.
+          </p></li><li><p>
+            Set up a <span class="type">KDSockaddr</span> struct with the address
+            information of the remote end in the data union&#8217;s
+            <em class="structfield"><code>sbtrcATX</code></em> member.
+            <em class="structfield"><code>bdaddr</code></em> is the remote Bluetooth
+            device address, as given in the
+            <code class="literal">KD_EVENT_BT_DEVICE_DISCOVERED_ATX</code> event.
+            <em class="structfield"><code>channel</code></em> is the service&#8217;s
+            channel number,
+            retrieved from the <span class="type">KDBtServiceRecordATX *</span>
+            service record
+            using <code class="function">kdBtServiceRecordGetRfcommChannelATX</code>.
+            Note that the <span class="type">KDBtServiceRecordATX *</span>
+            service record handle has the same lifetime as the event it
+            arrived in, that is until the event callback returns or the
+            next time the thread calls <code class="function">kdWaitEvent</code>.
+          </p></li><li><p>
+            Use <code class="function">kdSocketCreate</code> to create the socket
+            with socket type <code class="literal">KD_SOCK_RFCOMM_ATX</code>.
+          </p></li><li><p>
+            Use <code class="function">kdBtSetSockOptATX</code> to specify that
+            the client wants authentication and/or encryption.
+          </p></li><li><p>
+            Connect to the service on the remote device using
+            <code class="function">kdSocketConnect</code>,
+            using the <span class="type">KDSockaddr</span> set up above. As with TCP,
+            the function initiates an asynchronous
+            connect attempt and returns immediately. The result of the connect
+            attempt arrives in a
+            <code class="function">KD_EVENT_SOCKET_CONNECT_COMPLETE<a class="indexterm" name="id2477526"></a></code> event.
+          </p></li><li><p>
+            Send and receive data using the same events and functions as for
+            a TCP socket, and close the socket in the same way.
+          </p></li></ul></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2477548"></a>Providing an RFCOMM service</h4></div></div></div><p>
+        The steps to providing a service for remote devices to connect to
+        are typically as follows:
+      </p><div class="itemizedlist"><ul type="disc"><li><p>
+            Create the socket using <code class="function">kdSocketCreate</code>
+            with a socket type of <code class="literal">KD_SOCK_RFCOMM_ATX</code>.
+          </p></li><li><p>
+            Use <code class="function">kdBtSetSockOptATX</code> to specify that
+            the server requires authentication, encryption and/or
+            authorization.
+          </p></li><li><p>
+            Bind the socket to any channel on a local Bluetooth adapter
+            using <code class="function">kdSocketBind</code>, using a
+            <span class="type">KDSockaddr</span> struct typically set up with a
+            Bluetooth address of &#8220;any&#8221; and a channel number
+            of &#8220;any&#8221;.
+          </p></li><li><p>
+            Use <code class="function">kdSocketGetName</code> to get the local
+            Bluetooth device address and channel number of the socket
+            that <code class="function">kdSocketBind</code> set.
+          </p></li><li><p>
+            Register the service.
+          </p><div class="itemizedlist"><ul type="circle"><li><p>
+                Create a <span class="type">KDBtServiceRecordATX</span> for the
+                RFCOMM service using
+                <code class="function">kdBtServiceRecordCreateRfcommATX</code>.
+                As well as setting the service ID and the channel number,
+                it also allows the setting of whether
+                authentication, encryption or authorization
+                is required.
+              </p><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><p class="descriptive">
+                ISSUE: This API does not provide a way to modify the
+                service record (adding more attributes) before registering
+                it, or to create a new empty one.
+                I don't believe we have a use case for doing that.
+                Functions to do this could be added here, or in a future
+                extension.
+              </p></div></li><li><p>
+                Register the service record using
+                <code class="function">kdBtRegisterServiceATX</code>.
+              </p></li><li><p>
+                Free the service record using
+                <code class="function">kdBtServiceRecordFreeATX</code>.
+              </p></li></ul></div></li><li><p>
+            Use <code class="function">kdSocketListen</code> to start listening for
+            remote connections to this service. This can return an error
+            if the socket was set up for
+            authentication, encryption or authorization
+            but the platform
+            cannot fulfill that, either because it does not implement it, or
+            for example a user preference has disabled it globally.
+          </p></li><li><p>
+            As usual for a listening socket, when a
+            <code class="literal">KD_EVENT_SOCKET_INCOMING</code> event arrives,
+            use <code class="function">kdSocketAccept</code> to create a new
+            socket for the connection to the remote device.
+          </p></li><li><p>
+            Send and receive data using the same events and functions as for
+            a TCP socket, and close the socket in the same way.
+          </p></li></ul></div></div></div></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2477760"></a>4.&#160;New functions in section 20 Network sockets</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdBtInquireDevicesATX"></a>4.1.&#160;kdBtInquireDevicesATX</h3></div></div></div><a class="indexterm" name="id2477775"></a><p>Start an inquiry for remote Bluetooth devices.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2477786"></a>Synopsis</h4></div></div></div><pre class="synopsis">typedef struct KDBtLocalDeviceATX KDBtLocalDeviceATX;
+</pre><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdBtInquireDevicesATX</b>(</code></td><td>KDBtLocalDeviceATX *&#160;</td><td><var class="pdparam">localdevice</var>, </td></tr><tr><td>&#160;</td><td>KDint &#160;</td><td><var class="pdparam">access</var>, </td></tr><tr><td>&#160;</td><td>void *&#160;</td><td><var class="pdparam">eventuserptr</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2529959"></a>Description</h4></div></div></div><p>
+        This function retrieves local contactable Bluetooth devices,
+        giving an event for each one,
+        either by performing an inquiry, or by reading the platform&#8217;s
+        list of cached remote devices or &#8220;pre-known&#8221; devices.
+      </p><p>
+        <em class="parameter"><code>localdevice</code></em> specifies the local Bluetooth
+        device to use. <code class="literal">KD_NULL</code> means the default
+        local device; this is currently the only valid setting.
+      </p><p>
+        <em class="parameter"><code>access</code></em> determines how the list of Bluetooth
+        devices is determined. Currently only one value is supported:
+      </p><div class="variablelist"><dl><dt><span class="term"><code class="literal">KD_BT_GIAC_ATX</code></span></dt><dd><pre class="synopsis">#define KD_BT_GIAC_ATX 0x9e8b33</pre><p>
+                Perform a general/unlimited inquiry for remote Bluetooth
+                devices.
+            </p></dd></dl></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><p class="descriptive">
+        ISSUE:
+        KD_BT_LIAC_ATX has been removed as it looks like it is not
+        supported on Windows. Is there any call for having it as an
+        optional feature?
+      </p></div><p>
+        The inquiry is asynchronous; the function returns immediately
+        and, after a successful return, each device found and a terminating
+        record (or an error
+        indication) are notified in a
+        <code class="literal">KD_EVENT_BT_DEVICE_DISCOVERED_ATX</code> event.
+        The event user
+        pointer in that event will be the value of this function&#8217;s
+        <em class="parameter"><code>eventuserptr</code></em> parameter.
+      </p><p>
+        Once successfully initiated, the inquiry can be cancelled using
+        <code class="function">kdBtCancelInquireDevicesATX</code>.
+      </p><p>
+        If <em class="parameter"><code>localdevice</code></em> is not <code class="literal">KD_NULL</code>,
+        undefined behavior results.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2530084"></a>Return value</h4></div></div></div><p>
+        On immediate failure, the function returns -1
+        and stores one of the error codes below into the error indicator
+        returned by <code class="function">kdGetError</code>.
+        In particular, if the implementation does not support Bluetooth at
+        all, the function fails with error <code class="literal">KD_ENOSYS</code>.
+        Otherwise, the function returns 0 to indicate that it has
+        successfully initiated the inquiry.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2530111"></a>Error codes</h4></div></div></div><div class="variablelist"><dl><dt><span class="term"><code class="literal">KD_EBUSY</code></span></dt><dd><p>
+            The inquiry cannot be started due to other Bluetooth operations
+            being performed.
+          </p></dd><dt><span class="term"><code class="literal">KD_EINVAL</code></span></dt><dd><p><em class="parameter"><code>access</code></em> has an unrecognized value</p></dd><dt><span class="term"><code class="literal">KD_EIO</code></span></dt><dd><p>
+            General I/O error.
+          </p></dd><dt><span class="term"><code class="literal">KD_ENOMEM</code></span></dt><dd><p>Not enough space.</p></dd><dt><span class="term"><code class="literal">KD_ENOSYS</code></span></dt><dd><p>Bluetooth not supported at all.</p></dd></dl></div></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2530204"></a>Rationale</h4></div></div></div><p>
+        The <code class="literal">KD_BT_GIAC_ATX</code>
+        value is set by the Bluetooth standard.
+        The Bluetooth standard also has
+        <code class="literal">KD_BT_LIAC_ATX</code>,
+        which is not included here as it is not universally supported
+        by Bluetooth stacks.
+        Other values in the range
+        <code class="literal">0x9e8b00</code> to <code class="literal">0x9e8b3f</code>
+        may be allocated to access codes in future Bluetooth standards.
+      </p><p>
+        ISSUE:
+        I was considering adding the functionality of JSR-82's
+        <code class="function">retrieveDevices<a class="indexterm" name="id2530249"></a></code> into this function
+        by defining two extra values <em class="parameter"><code>access</code></em> to
+        get the locally cached devices and to get the pre-known devices.
+        However, I am told that the Broadcom Bluetooth stack on Windows
+        cannot do either of these.
+      </p><p>
+        ISSUE:
+        It has been suggested that we allow DIAC. I'm not yet quite sure
+        what that does.
+      </p></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdBtCancelInquireDevicesATX"></a>4.2.&#160;kdBtCancelInquireDevicesATX</h3></div></div></div><a class="indexterm" name="id2530283"></a><p>Selectively cancel ongoing kdBtInquireDevicesATX
+        operations.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2530294"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">void <b class="fsfunc">kdBtCancelInquireDevicesATX</b>(</code></td><td>void *&#160;</td><td><var class="pdparam">eventuserptr</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2530321"></a>Description</h4></div></div></div><p>This function cancels any outstanding device inquiry operations
+        initiated by calls in this same thread to
+        <code class="function">kdBtInquireDevicesATX</code> whose
+        <em class="structfield"><code>eventuserptr</code></em> values match the
+        <em class="parameter"><code>eventuserptr</code></em> supplied to this function. If this
+        function&#8217;s <em class="parameter"><code>eventuserptr</code></em> is
+        <code class="literal">KD_NULL</code>, then all outstanding device inquiry
+        operations initiated by calls in this same thread are
+        cancelled.
+        Cancelling a <code class="function">kdBtInquireDevicesATX</code>
+        includes removing any pending events it generated.
+      </p><p>
+        The function does nothing and succeeds if
+        <em class="parameter"><code>eventuserptr</code></em> does not match any outstanding
+        lookup operation.
+      </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdBtGetFriendlyNameATX"></a>4.3.&#160;kdBtGetFriendlyNameATX</h3></div></div></div><a class="indexterm" name="id2530388"></a><p>Get the user-friendly name of a Bluetooth device.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2530398"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdBtGetFriendlyNameATX</b>(</code></td><td>KDBtLocalDeviceATX *&#160;</td><td><var class="pdparam">localdevice</var>, </td></tr><tr><td>&#160;</td><td>const KDBdAddrATX *&#160;</td><td><var class="pdparam">bdaddr</var>, </td></tr><tr><td>&#160;</td><td>void *&#160;</td><td><var class="pdparam">eventuserptr</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2530441"></a>Description</h4></div></div></div><p>
+        This function gets the user-friendly name of a Bluetooth device,
+        either a local one or a remote one.
+      </p><p>
+        <em class="parameter"><code>localdevice</code></em> specifies the local Bluetooth
+        device to use. <code class="literal">KD_NULL</code> means the default
+        local device; this is currently the only valid setting.
+      </p><p>
+        To get the name of the local Bluetooth device specified by
+        <em class="parameter"><code>localdevice</code></em>, set <em class="parameter"><code>bdaddr</code></em>
+        to <code class="literal">KD_NULL</code>. To get the name of a remote
+        Bluetooth device, set <em class="parameter"><code>bdaddr</code></em> to point
+        to a <span class="type">KDBdAddrATX</span> struct giving its Bluetooth device
+        address, as
+        given in a <code class="literal">KD_EVENT_BT_DEVICE_DISCOVERED_ATX</code>
+        event.
+      </p><p>
+        The query is asynchronous, even for a local Bluetooth device;
+        the function returns immediately
+        and, after a successful return, the name is returned in a
+        <code class="literal">KD_EVENT_BT_NAME_ATX</code> event.
+        The event user
+        pointer in that event will be the value of this function&#8217;s
+        <em class="parameter"><code>eventuserptr</code></em> parameter.
+      </p><p>
+        Once successfully initiated, the operation can be cancelled using
+        <code class="function">kdBtCancelGetFriendlyNameATX</code>.
+      </p><p>
+        If <em class="parameter"><code>localdevice</code></em> is not <code class="literal">KD_NULL</code>,
+        or <em class="parameter"><code>bdaddr</code></em> is not <code class="literal">KD_NULL</code>
+        and does not point to a readable <span class="type">KDBdAddrATX</span> struct,
+        then undefined behavior results.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2530564"></a>Return value</h4></div></div></div><p>
+        On immediate failure, the function returns -1
+        and stores one of the error codes below into the error indicator
+        returned by <code class="function">kdGetError</code>.
+        In particular, if the implementation does not support Bluetooth at
+        all, the function fails with error <code class="literal">KD_ENOSYS</code>.
+        Otherwise, the function returns 0 to indicate that it has
+        successfully initiated the query.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2530591"></a>Error codes</h4></div></div></div><div class="variablelist"><dl><dt><span class="term"><code class="literal">KD_EBUSY</code></span></dt><dd><p>
+            The query cannot be started due to other Bluetooth operations
+            being performed. This error never occurs when
+            <em class="parameter"><code>bdaddr</code></em> is <code class="literal">KD_NULL</code>
+            (for a local name query).
+          </p></dd><dt><span class="term"><code class="literal">KD_EIO</code></span></dt><dd><p>
+            General I/O error.
+          </p></dd><dt><span class="term"><code class="literal">KD_ENOMEM</code></span></dt><dd><p>Not enough space.</p></dd><dt><span class="term"><code class="literal">KD_ENOSYS</code></span></dt><dd><p>Bluetooth not supported at all.</p></dd></dl></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdBtCancelGetFriendlyNameATX"></a>4.4.&#160;kdBtCancelGetFriendlyNameATX</h3></div></div></div><a class="indexterm" name="id2530688"></a><p>Selectively cancel ongoing kdBtGetFriendlyNameATX
+        operations.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2530700"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">void <b class="fsfunc">kdBtCancelGetFriendlyNameATX</b>(</code></td><td>void *&#160;</td><td><var class="pdparam">eventuserptr</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2530728"></a>Description</h4></div></div></div><p>This function cancels any outstanding friendly name retrieving
+        operations
+        initiated by calls in this same thread to
+        <code class="function">kdBtGetFriendlyNameATX</code> whose
+        <em class="structfield"><code>eventuserptr</code></em> values match the
+        <em class="parameter"><code>eventuserptr</code></em> supplied to this function. If this
+        function&#8217;s <em class="parameter"><code>eventuserptr</code></em> is
+        <code class="literal">KD_NULL</code>, then all outstanding friendly name
+        retrieving operations initiated by calls in this same thread are
+        cancelled.
+        Cancelling a <code class="function">kdBtGetFriendlyNameATX</code>
+        includes removing any pending events it generated.
+      </p><p>
+        The function does nothing and succeeds if
+        <em class="parameter"><code>eventuserptr</code></em> does not match any outstanding
+        friendly name retrieving operation.
+      </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdBtSearchServicesATX"></a>4.5.&#160;kdBtSearchServicesATX</h3></div></div></div><a class="indexterm" name="id2530796"></a><p>Search services on a remote Bluetooth device.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2530806"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdBtSearchServicesATX</b>(</code></td><td>KDBtLocalDeviceATX *&#160;</td><td><var class="pdparam">localdevice</var>, </td></tr><tr><td>&#160;</td><td>const KDBdAddrATX *&#160;</td><td><var class="pdparam">bdaddr</var>, </td></tr><tr><td>&#160;</td><td>const KDint32 *&#160;</td><td><var class="pdparam">attrset</var>, </td></tr><tr><td>&#160;</td><td>const KDUuidATX *&#160;</td><td><var class="pdparam">uuidset</var>, </td></tr><tr><td>&#160;</td><td>void *&#160;</td><td><var class="pdparam">eventuserptr</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2530863"></a>Description</h4></div></div></div><p>
+        This function searches for services matching any of a set of
+        service UUIDs on a particular remote Bluetooth device.
+      </p><p>
+        <em class="parameter"><code>localdevice</code></em> specifies the local Bluetooth
+        device to use. <code class="literal">KD_NULL</code> means the default
+        local device; this is currently the only valid setting.
+      </p><p>
+        <em class="parameter"><code>bdaddr</code></em> points to a
+        <span class="type">KDBdAddrATX</span> struct giving the Bluetooth device
+        address of the remote device to search, as
+        given in a <code class="literal">KD_EVENT_BT_DEVICE_DISCOVERED_ATX</code>
+        event.
+      </p><p>
+        <em class="parameter"><code>attrset</code></em> is a placeholder for a possible
+        future extension to allow the caller to specify the set of attributes
+        to return with each found service. Currently,
+        <em class="parameter"><code>attrset</code></em> must be <code class="literal">KD_NULL</code>.
+      </p><p>
+        <em class="parameter"><code>uuidset</code></em> points to an array of
+        UUIDs (each of type <span class="type">KDUuidATX</span>), terminated by zero,
+        giving the list of service IDs to search for.
+      </p><p>
+        The search is asynchronous; the function returns immediately
+        and, after a successful return, each service found and a terminating
+        record (or an error indication) are notified in a
+        <code class="literal">KD_EVENT_BT_SERVICE_DISCOVERED_ATX</code> event.
+        The event user
+        pointer in that event will be the value of this function&#8217;s
+        <em class="parameter"><code>eventuserptr</code></em> parameter.
+      </p><p>
+        Once successfully initiated, the inquiry can be cancelled using
+        <code class="function">kdBtCancelSearchServicesATX</code>.
+      </p><p>
+        If <em class="parameter"><code>localdevice</code></em> is not <code class="literal">KD_NULL</code>,
+        or <em class="parameter"><code>bdaddr</code></em>
+        does not point to a readable <span class="type">KDBdAddrATX</span> struct,
+        or <em class="parameter"><code>attrset</code></em> is not <code class="literal">KD_NULL</code>,
+        or <em class="parameter"><code>uuidset</code></em> does not point to a readable
+        array of type <span class="type">KDUuidATX</span> terminated by zero,
+        then undefined behavior results.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2531022"></a>Return value</h4></div></div></div><p>
+        On immediate failure, the function returns -1
+        and stores one of the error codes below into the error indicator
+        returned by <code class="function">kdGetError</code>.
+        In particular, if the implementation does not support Bluetooth at
+        all, the function fails with error <code class="literal">KD_ENOSYS</code>.
+        Otherwise, the function returns 0 to indicate that it has
+        successfully initiated the query.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2531049"></a>Error codes</h4></div></div></div><div class="variablelist"><dl><dt><span class="term"><code class="literal">KD_EBUSY</code></span></dt><dd><p>
+            The query cannot be started due to other Bluetooth operations
+            being performed.
+          </p></dd><dt><span class="term"><code class="literal">KD_EIO</code></span></dt><dd><p>
+            General I/O error.
+          </p></dd><dt><span class="term"><code class="literal">KD_ENOMEM</code></span></dt><dd><p>Not enough space.</p></dd><dt><span class="term"><code class="literal">KD_ENOSYS</code></span></dt><dd><p>Bluetooth not supported at all.</p></dd></dl></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdBtCancelSearchServicesATX"></a>4.6.&#160;kdBtCancelSearchServicesATX</h3></div></div></div><a class="indexterm" name="id2531130"></a><p>Cancel an outstanding Bluetooth service search.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2531141"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">void <b class="fsfunc">kdBtCancelSearchServicesATX</b>(</code></td><td>void *&#160;</td><td><var class="pdparam">eventuserptr</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2531168"></a>Description</h4></div></div></div><p>This function cancels any outstanding service search operations
+        initiated by calls in this same thread to
+        <code class="function">kdBtSearchServicesATX</code> whose
+        <em class="structfield"><code>eventuserptr</code></em> values match the
+        <em class="parameter"><code>eventuserptr</code></em> supplied to this function. If this
+        function&#8217;s <em class="parameter"><code>eventuserptr</code></em> is
+        <code class="literal">KD_NULL</code>, then all outstanding service search
+        operations initiated by calls in this same thread are
+        cancelled.
+        Cancelling a <code class="function">kdBtSearchServicesATX</code>
+        includes removing any pending events it generated.
+      </p><p>
+        The function does nothing and succeeds if
+        <em class="parameter"><code>eventuserptr</code></em> does not match any outstanding
+        search operation.
+      </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdBtServiceRecordGetRfcommChannelATX"></a>4.7.&#160;kdBtServiceRecordGetRfcommChannelATX</h3></div></div></div><a class="indexterm" name="id2531238"></a><p>
+        Get the RFCOMM channel from a Bluetooth service record.
+      </p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2531249"></a>Synopsis</h4></div></div></div><pre class="synopsis">typedef struct KDBtServiceRecordATX KDBtServiceRecordATX;</pre><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdBtServiceRecordGetRfcommChannelATX</b>(</code></td><td>KDBtServiceRecordATX *&#160;</td><td><var class="pdparam">servicerecord</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2531286"></a>Description</h4></div></div></div><p>
+        Given a <span class="type">KDBtServiceRecordATX *</span> service record handle
+        (created with a service record creation function or obtained
+        from a <code class="literal">KD_EVENT_BT_SERVICE_DISCOVERED_ATX</code>
+        event),
+        this function retrieves the RFCOMM channel number if any.
+      </p><p>
+        If <em class="parameter"><code>servicerecord</code></em> is not a valid
+        <span class="type">KDBtServiceRecordATX *</span> service record handle, then
+        undefined behavior results.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2531321"></a>Return value</h4></div></div></div><p>
+        On success, the function returns the RFCOMM channel number,
+        an integer in the range 0..31.
+        On failure it returns <code class="literal">-1</code> and stores
+        one of the error codes below into the error indicator returned by
+        <code class="function">kdGetError</code>.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2531345"></a>Error codes</h4></div></div></div><div class="variablelist"><dl><dt><span class="term"><code class="literal">KD_ENOENT</code></span></dt><dd><p>
+            The service record is for a service that is not exposed
+            over RFCOMM.
+          </p></dd></dl></div></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2531369"></a>Rationale</h4></div></div></div><p>
+        ISSUE:
+        This extension provides only this function, and no general way
+        of retrieving attributes from the service record. Is that required?
+      </p></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdBtServiceRecordFreeATX"></a>4.8.&#160;kdBtServiceRecordFreeATX</h3></div></div></div><a class="indexterm" name="id2531393"></a><p>
+        Free a Bluetooth service record.
+      </p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2531404"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">void <b class="fsfunc">kdBtServiceRecordFreeATX</b>(</code></td><td>KDBtServiceRecordATX *&#160;</td><td><var class="pdparam">servicerecord</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2531431"></a>Description</h4></div></div></div><p>
+        This function frees the <span class="type">KDBtServiceRecordATX *</span>
+        Bluetooth service record handle
+        <em class="parameter"><code>servicerecord</code></em> that was created by
+        a service record creation function.
+        <em class="parameter"><code>servicerecord</code></em> ceases to be a valid service
+        record handle.
+      </p><p>
+        If <em class="parameter"><code>servicerecord</code></em> is not a valid service
+        record handle created by a service record creation function,
+        then undefined behavior results.
+      </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdBtServiceRecordCreateRfcommATX"></a>4.9.&#160;kdBtServiceRecordCreateRfcommATX</h3></div></div></div><a class="indexterm" name="id2531481"></a><p>
+        Create a Bluetooth service record for an RFCOMM service.
+      </p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2531492"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDBtServiceRecordATX *<b class="fsfunc">kdBtServiceRecordCreateRfcommATX</b>(</code></td><td>const KDUuidATX *&#160;</td><td><var class="pdparam">uuid</var>, </td></tr><tr><td>&#160;</td><td>KDint &#160;</td><td><var class="pdparam">channel</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2531528"></a>Description</h4></div></div></div><p>
+        This function creates and returns a <span class="type">KDBtServiceRecordATX *</span>
+        service record handle representing an RFCOMM service whose ID
+        is the UUID pointed to by <em class="parameter"><code>uuid</code></em> and
+        whose channel number is <em class="parameter"><code>channel</code></em>.
+      </p><p>
+        If <em class="parameter"><code>uuid</code></em> does not point to a readable
+        <span class="type">KDUuidATX</span> location, then undefined behavior results.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2531568"></a>Return value</h4></div></div></div><p>
+        On success, the function returns the created
+        <span class="type">KDBtServiceRecordATX *</span> service record handle.
+        On failure, it returns <code class="literal">KD_NULL</code>
+        and stores one of the error codes below into the error indicator
+        returned by <code class="function">kdGetError</code>.
+        In particular, if the implementation does not support Bluetooth at
+        all, the function fails with error <code class="literal">KD_ENOSYS</code>.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2531601"></a>Error codes</h4></div></div></div><div class="variablelist"><dl><dt><span class="term"><code class="literal">KD_EINVAL</code></span></dt><dd><p>The channel number is not valid.</p></dd><dt><span class="term"><code class="literal">KD_ENOMEM</code></span></dt><dd><p>Not enough space.</p></dd><dt><span class="term"><code class="literal">KD_ENOSYS</code></span></dt><dd><p>Bluetooth not supported at all.</p></dd></dl></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdBtRegisterServiceATX"></a>4.10.&#160;kdBtRegisterServiceATX</h3></div></div></div><a class="indexterm" name="id2531671"></a><p>
+        Register a Bluetooth service.
+      </p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2531681"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdBtRegisterServiceATX</b>(</code></td><td>KDBtLocalDeviceATX *&#160;</td><td><var class="pdparam">localdevice</var>, </td></tr><tr><td>&#160;</td><td>KDBtServiceRecordATX *&#160;</td><td><var class="pdparam">servicerecord</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2531716"></a>Description</h4></div></div></div><p>
+        This function registers the service described by
+        <em class="parameter"><code>servicerecord</code></em>.
+      </p><p>
+        <em class="parameter"><code>localdevice</code></em> specifies the local Bluetooth
+        device to use. <code class="literal">KD_NULL</code> means the default
+        local device; this is currently the only valid setting.
+      </p><p>
+        If <em class="parameter"><code>localdevice</code></em> is not <code class="literal">KD_NULL</code>,
+        or <em class="parameter"><code>servicerecord</code></em> is not a valid
+        <span class="type">KDBtServiceRecordATX *</span> service record handle, then
+        undefined behavior results.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2531770"></a>Return value</h4></div></div></div><p>
+        On success, the function returns 0.
+        On failure, it returns -1
+        and stores one of the error codes below into the error indicator
+        returned by <code class="function">kdGetError</code>.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2531788"></a>Error codes</h4></div></div></div><div class="variablelist"><dl><dt><span class="term"><code class="literal">KD_ENOMEM</code></span></dt><dd><p>Not enough space.</p></dd></dl></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdBtSocketSetFlagsATX"></a>4.11.&#160;kdBtSocketSetFlagsATX</h3></div></div></div><a class="indexterm" name="id2531824"></a><p>
+        Set Bluetooth socket flags for authentication, encryption and/or
+        authorization.
+      </p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2531836"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdBtSocketSetFlagsATX</b>(</code></td><td>KDSocket *&#160;</td><td><var class="pdparam">socket</var>, </td></tr><tr><td>&#160;</td><td>KDuint &#160;</td><td><var class="pdparam">flags</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2531870"></a>Description</h4></div></div></div><p>
+        This function sets the value of the flags word for a Bluetooth
+        socket. The flag bits indicate whether the caller requires
+        authentication, encryption and/or authorization on the connection.
+      </p><p>
+        <em class="parameter"><code>flags</code></em> is 0 or more of the following values
+        bitwise ORed together.
+      </p><pre class="synopsis">#define KD_BTFLAG_AUTHENTICATE 1
+#define KD_BTFLAG_ENCRYPT 2
+#define KD_BTFLAG_AUTHORIZE 4
+</pre><div class="itemizedlist"><ul type="disc"><li><p>
+            <code class="literal">KD_BTFLAG_AUTHENTICATE</code>: the remote
+            device will be authenticated.
+            Setting this bit to 0 does not necessarily force
+            authentication to be disabled; it may be enabled anyway
+            because one of the two bits below is set, or because some
+            other application has a connection to the same remote
+            device and has demanded authentication.
+        </p></li><li><p>
+            <code class="literal">KD_BTFLAG_ENCRYPT</code>: the connection will
+            be encrypted (which forces authentication, even if disabled
+            in this bitmap).
+            Setting this bit to 0 does not necessarily force encryption
+            to be disabled; it may be enabled anyway because some other
+            application has a connection to the same remote device and
+            has demanded encryption.
+        </p></li><li><p>
+            <code class="literal">KD_BTFLAG_AUTHORIZE</code>: the connection
+            requires authorization (which forces authentication, even
+            if disabled in this bitmap). This flag is used only in a
+            server socket; it is ignored in a client socket.
+        </p></li></ul></div><p>
+        If any other bit in <em class="parameter"><code>flags</code></em>
+        is set, then it is undefined whether the function succeeds
+        or fails or appears to succeed in a way that further operations on the
+        socket do not work as expected.
+        If <em class="parameter"><code>socket</code></em> is not a valid Bluetooth socket
+        handle, then undefined behavior results.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2531970"></a>Return value</h4></div></div></div><p>
+        On success, the function returns 0.
+        On failure, it returns -1
+        and stores one of the error codes below into the error indicator
+        returned by <code class="function">kdGetError</code>.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2531988"></a>Error codes</h4></div></div></div><div class="variablelist"><dl><dt><span class="term"><code class="literal">KD_EIO</code></span></dt><dd><p>
+            General I/O error.
+          </p></dd><dt><span class="term"><code class="literal">KD_ENOMEM</code></span></dt><dd><p>Not enough space.</p></dd></dl></div></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2532028"></a>Rationale</h4></div></div></div><p>
+        ISSUE:
+        I decided not to introduce a general kdSetSockOptATX, since we
+        don't have any use cases outside these Bluetooth flags.
+      </p><p>
+        ISSUE:
+        There is no flag to force switch to master mode. Do we need it?
+      </p></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdBtSetDiscoverableATX"></a>4.12.&#160;kdBtSetDiscoverableATX</h3></div></div></div><a class="indexterm" name="id2532057"></a><p>
+        Set the discoverable mode of the device.
+      </p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2532068"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDint <b class="fsfunc">kdBtSetDiscoverableATX</b>(</code></td><td>KDBtLocalDeviceATX *&#160;</td><td><var class="pdparam">localdevice</var>, </td></tr><tr><td>&#160;</td><td>KDuint &#160;</td><td><var class="pdparam">mode</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2532102"></a>Description</h4></div></div></div><p>
+        This function sets the discoverable mode of the local Bluetooth
+        device <em class="parameter"><code>localdevice</code></em>. Setting
+        <em class="parameter"><code>localdevice</code></em>
+        to <code class="literal">KD_NULL</code> means the default
+        local device; this is currently the only valid setting.
+      </p><p>
+        <em class="parameter"><code>mode</code></em> is the discovery mode to set the local
+        device to, one of:
+      </p><div class="variablelist"><dl><dt><span class="term"><code class="literal">KD_BT_GIAC_ATX</code></span></dt><dd><p>
+                General discoverable mode.
+            </p></dd><dt><span class="term"><code class="literal">KD_BT_NOT_DISCOVERABLE_ATX</code></span></dt><dd><pre class="synopsis">#define KD_BT_NOT_DISCOVERABLE_ATX 0
+            </pre><p>
+                Non-discoverable mode.
+            </p></dd></dl></div><p>
+        If <em class="parameter"><code>localdevice</code></em> is not <code class="literal">KD_NULL</code>,
+        then undefined behavior results.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2532200"></a>Return value</h4></div></div></div><p>
+        On success, the function returns 0.
+        On failure, it returns -1
+        and stores one of the error codes below into the error indicator
+        returned by <code class="function">kdGetError</code>.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2532218"></a>Error codes</h4></div></div></div><div class="variablelist"><dl><dt><span class="term"><code class="literal">KD_EINVAL</code></span></dt><dd><p><em class="parameter"><code>mode</code></em> has an unrecognized value.</p></dd><dt><span class="term"><code class="literal">KD_EIO</code></span></dt><dd><p>
+            General I/O error.
+          </p></dd><dt><span class="term"><code class="literal">KD_ENOMEM</code></span></dt><dd><p>Not enough space.</p></dd><dt><span class="term"><code class="literal">KD_ENOSYS</code></span></dt><dd><p>Bluetooth not supported at all.</p></dd></dl></div></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2532295"></a>Rationale</h4></div></div></div><p>
+        The Bluetooth standard also has
+        <code class="literal">KD_BT_LIAC_ATX</code>
+        for "limited discoverable mode". It is not included in this
+        OpenKODE extension as it is not universally supported.
+      </p><p>
+        ISSUE:
+        Should we have it as an optional feature?
+      </p></div></div></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2532325"></a>5.&#160;New events</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="KD_EVENT_BT_DEVICE_DISCOVERED_ATX"></a>5.1.&#160;KD_EVENT_BT_DEVICE_DISCOVERED_ATX</h3></div></div></div><a class="indexterm" name="id2532341"></a><p>
+        <code class="function">kdBtInquireDevicesATX</code> has found a
+        device or has completed event.
+      </p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2532357"></a>Synopsis</h4></div></div></div><pre class="synopsis">#define KD_EVENT_BT_DEVICE_DISCOVERED_ATX 171</pre></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2532372"></a>Description</h4></div></div></div><p>
+        This event is generated when an inquiry initiated by a call to
+        <code class="function">kdBtInquireDevicesATX</code> is complete, either
+        successfully or with an error, or has found a device.
+        An inquiry generates zero or more events
+        each with a single remote device, then a final event indicating
+        that the inquiry has completed or that an error
+        occurred.
+      </p><p>
+        The event&#8217;s <em class="structfield"><code>userptr</code></em> field is set to
+        the value supplied in the <em class="parameter"><code>eventuserptr</code></em>
+        parameter to <code class="function">kdBtInquireDevicesATX</code>.
+        The event is sent to the queue for the thread that initiated the
+        inquiry by calling that function.
+      </p><p>
+        The event data (below) has a <em class="structfield"><code>result</code></em> field
+        that points to a <span class="type">KDBtRemoteDeviceInfoATX</span> struct,
+        defined as follows:
+      </p><pre class="synopsis">typedef struct KDBtRemoteDeviceInfoATX {
+    KDBdAddrATX bdaddr;
+    KDuint8 deviceclass[3];
+} KDBtRemoteDeviceInfoATX;</pre><p>
+        In this struct, <em class="structfield"><code>bdaddr</code></em> is the Bluetooth
+        device address of the remote device, and
+        <em class="structfield"><code>deviceclass</code></em> gives the device class.
+      </p><p>
+        ISSUE: deviceclass is supposed to be the same as the analogous field
+        in BlueZ, but I haven't worked out what its definition is yet.
+      </p><p>
+        The event data is in the
+        <code class="literal">event-&gt;data.btdeviceATX</code> element of the event&#8217;s
+        data union, which has the following type:
+      </p><pre class="synopsis">typedef struct KDEventBtDeviceATX {
+    KDint32 error;
+    const struct KDBtRemoteDeviceInfoATX *result;
+} KDEventBtDeviceATX;</pre><p>
+        For an event containing a discovered device,
+        <em class="structfield"><code>error</code></em> is 0 and
+        <em class="structfield"><code>result</code></em> points to a
+        <span class="type">KDBtRemoteDeviceInfoATX</span> struct as defined above. The
+        lifetime of the struct is the same as the lifetime of the event
+        struct,
+        that is until the event callback returns or the thread next calls
+        <code class="function">kdWaitEvent</code>.
+      </p><p>
+        A final event with
+        <em class="structfield"><code>error</code></em> 0 and
+        <em class="structfield"><code>result</code></em> <code class="literal">KD_NULL</code>
+        indicates that the inquiry has completed.
+      </p><p>
+        If an error occurs, the final event has
+        <em class="structfield"><code>result</code></em> <code class="literal">KD_NULL</code>
+        and <em class="structfield"><code>error</code></em> set to one of the error
+        codes listed in <code class="function">kdBtInquireDevicesATX</code>.
+      </p></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2532536"></a>Rationale</h4></div></div></div><p>
+        <code class="function">kdNameLookup</code> delivering possibly multiple
+        <code class="literal">KD_EVENT_NAME_LOOKUP_COMPLETE</code> events and
+        <code class="function">kdBtInquireDevicesATX</code> delivering possibly
+        multiple
+        <code class="literal">KD_EVENT_BT_DEVICE_DISCOVERED_ATX</code> events
+        have slightly different semantics in the way the events are
+        delivered.
+        For <code class="literal">KD_EVENT_NAME_LOOKUP_COMPLETE</code>, each
+        address found for the name is delivered in an event, and the
+        final one is specially marked.
+        In contract, for <code class="literal">KD_EVENT_BT_DEVICE_DISCOVERED_ATX</code>,
+        each device discovered is delivered in an event, and then there
+        is a final terminating event with no device. This difference is
+        needed because a Bluetooth device inquiry can find no devices
+        without there being an error.
+      </p></div></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2532592"></a>Issues</h4></div></div></div><p>
+        ISSUE:
+        Like KDSockaddr, the event struct has the problem that adding a new
+        event data struct in an extension requires a change to KD/kd.h.
+        Thus a third party extension (which only has control over its own
+        extension header file) cannot add a new event data struct. That
+        is not an issue for this Bluetooth extension, as a third party
+        extension cannot add a new socket type anyway.
+      </p></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="KD_EVENT_BT_NAME_ATX"></a>5.2.&#160;KD_EVENT_BT_NAME_ATX</h3></div></div></div><a class="indexterm" name="id2532622"></a><p><code class="function">kdBtGetFriendlyNameATX</code> complete
+        event.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2532636"></a>Synopsis</h4></div></div></div><pre class="synopsis">#define KD_EVENT_BT_NAME_ATX 172</pre></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2532650"></a>Description</h4></div></div></div><p>
+        This event is generated when a name query initiated by a successful
+        call to <code class="function">kdBtGetFriendlyNameATX</code> completes,
+        either successfully or with an error.
+      </p><p>
+        The event&#8217;s <em class="structfield"><code>userptr</code></em> field is set to
+        the value supplied in the <em class="parameter"><code>eventuserptr</code></em>
+        parameter to <code class="function">kdBtGetFriendlyNameATX</code>.
+      </p><p>
+        The event data is in the
+        <code class="literal">event-&gt;data.btnameATX</code> element of the event&#8217;s
+        data union, which has the following type:
+      </p><pre class="synopsis">typedef struct KDEventBtNameATX {
+    KDint32 error;
+    const KDchar *result;
+} KDEventBtNameATX;</pre><p>
+        For an event indicating successful completion,
+        <em class="structfield"><code>error</code></em> is 0 and
+        <em class="structfield"><code>result</code></em> points to a null-terminated string
+        giving the requested friendly name. The lifetime of the string is
+        the same as the lifetime of the event,
+        that is until the event callback returns or the thread next calls
+        <code class="function">kdWaitEvent</code>.
+      </p><p>
+        If an error occurs, the final event has
+        <em class="structfield"><code>result</code></em> <code class="literal">KD_NULL</code>
+        and <em class="structfield"><code>error</code></em> set to one of the error
+        codes listed in <code class="function">kdBtGetFriendlyNameATX</code>.
+      </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="KD_EVENT_BT_SERVICE_DISCOVERED_ATX"></a>5.3.&#160;KD_EVENT_BT_SERVICE_DISCOVERED_ATX</h3></div></div></div><a class="indexterm" name="id2532763"></a><p>
+        <code class="function">kdBtSearchServicesATX</code> has found a service or
+        has completed event.
+      </p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2532779"></a>Synopsis</h4></div></div></div><pre class="synopsis">#define KD_EVENT_BT_SERVICE_DISCOVERED_ATX 173</pre></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2532794"></a>Description</h4></div></div></div><p>
+        This event is generated when a service search initiated by a call to
+        <code class="function">kdBtSearchServicesATX</code> is complete, either
+        successfully or with an error, or has found a service.
+        A search generates zero or more events
+        each with a single service record, then a final event indicating
+        that the search has completed or that an error
+        occurred.
+      </p><p>
+        The event&#8217;s <em class="structfield"><code>userptr</code></em> field is set to
+        the value supplied in the <em class="parameter"><code>eventuserptr</code></em>
+        parameter to <code class="function">kdBtSearchServicesATX</code>.
+        The event is sent to the queue for the thread that initiated the
+        search by calling that function.
+      </p><p>
+        The event data is in the
+        <code class="literal">event-&gt;data.btserviceATX</code> element of the event&#8217;s
+        data union, which has the following type:
+      </p><pre class="synopsis">typedef struct KDEventBtServiceATX {
+    KDint32 error;
+    struct KDBtServiceRecordATX *result;
+} KDEventBtServiceATX;</pre><p>
+        For an event containing a discovered service,
+        <em class="structfield"><code>error</code></em> is 0 and
+        <em class="structfield"><code>result</code></em> is a
+        <span class="type">KDBtServiceRecordATX *</span> handle. The
+        lifetime of the handle is the same as the lifetime of the event
+        struct,
+        that is until the event callback returns or the thread next calls
+        <code class="function">kdWaitEvent</code>.
+      </p><p>
+        A final event with
+        <em class="structfield"><code>error</code></em> 0 and
+        <em class="structfield"><code>result</code></em> <code class="literal">KD_NULL</code>
+        indicates that the search has completed.
+      </p><p>
+        If an error occurs, the final event has
+        <em class="structfield"><code>result</code></em> <code class="literal">KD_NULL</code>
+        and <em class="structfield"><code>error</code></em> set to one of the error
+        codes listed in <code class="function">kdBtSearchServicesATX</code>.
+      </p></div></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2532926"></a>6.&#160;Revision history</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2532931"></a>6.1.&#160;Version 6, 2009-02-04</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Added kdBtCancelGetFriendlyNameATX. Added missing 'L' on constant
+        in example of Java UUID initialization.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2532947"></a>6.2.&#160;Version 5, 2009-01-22</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Made kdBtInquireDevicesATX consistently plural.
+      </p></li><li><p>
+        Fixed a couple of typos in type/constant names.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2532966"></a>6.3.&#160;Version 4, 2008-11-17</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Various fixes to sample header file:
+        Added missing KDBdAddrATX declaration.
+        Moved KDBtServiceRecordATX declaration before its first use.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2532983"></a>6.4.&#160;Version 3, 2008-11-12</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Removed KD_BT_LIAC_ATX, and added issues on whether we want to
+        support it as an optional feature.
+      </p></li><li><p>
+        Added Java UUID example.
+      </p></li><li><p>
+        Removed flags parameter from kdBtServiceRecordCreateRfcommATX.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2533010"></a>6.5.&#160;Version 2, 2008-10-27</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Explained how a UUID is represented. Added an issue on whether we want
+        to do it like that, and an issue that the explanation needs checking.
+      </p></li><li><p>
+        Changed class field of KDBtRemoteDeviceInfoATX to deviceclass. Noted
+        that it is meant to be the same as the analogous field in BlueZ, but I
+        haven't worked out what that is yet.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2533035"></a>6.6.&#160;Version 1, 2008-10-16</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        First draft.
+      </p></li></ul></div></div></div></div></body></html>

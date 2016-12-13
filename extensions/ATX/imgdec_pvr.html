@@ -1,0 +1,122 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=us-ascii"><title>OpenKODE Core extension: KD_ATX_imgdec_pvr</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="article" lang="en"><div class="titlepage"><div><div><h2 class="title"><a name="id2425492"></a>OpenKODE Core extension: KD_ATX_imgdec_pvr</h2></div></div><hr></div><div class="informaltable"><table border="1"><colgroup><col><col></colgroup><tbody><tr><td>Name</td><td>ATX_imgdec_pvr</td></tr><tr><td>Name strings</td><td>KD_ATX_imgdec_pvr</td></tr><tr><td>Contributors</td><td>Russell Wood, Phil Huxley, Elizabeth Wootten, Tim Renouf</td></tr><tr><td>Contacts</td><td>Antix Labs Limited</td></tr><tr><td>Status</td><td>Implemented by Antix Labs</td></tr><tr><td>Version</td><td>Version 5, 2009-02-04</td></tr><tr><td>Number</td><td>13</td></tr><tr><td>Dependencies</td><td>
+            Requires OpenKODE Core 1.0 and the ATX_imgdec extension.
+            This extension is written based on the wording of the
+            OpenKODE Core 1.0 specification and version 4 of the ATX_imgdec
+            extension.
+          </td></tr></tbody></table></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2478045"></a>1.&#160;Overview</h2></div></div></div><p>
+        This OpenKODE Core extension adds to the ATX_imgdec extension
+        the ability to decode Imagination Technologies PVR files
+        containing PVRTC and DXT compressed images, as well as a
+        subset of the uncompressed formats supported by PVR files.
+        The ATX_imgdec extension provides the
+        functions to decode the image, and the definitions of what
+        output formats are available. The present ATX_imgdec_pvr extension
+        defines which output formats are available for the PVR decoder.
+    </p></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2490772"></a>2.&#160;Header file</h2></div></div></div><p>
+        When this extension is present, its facilities are accessed by
+        including its header file:
+    </p><pre class="synopsis">#include &lt;KD/ATX_imgdec_pvr.h&gt;</pre><p>
+        This also includes <code class="literal">KD/ATX_imgdec.h</code> if that has
+        not already been done.
+    </p></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2478077"></a>3.&#160;Changes to functions in the ATX_imgdec extension</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2478083"></a>3.1.&#160;kdGetImageATX, kdGetImageFromStreamATX</h3></div></div></div><p>
+        Add new output formats:
+    </p><div class="variablelist"><dl><dt><span class="term"><code class="literal">KD_IMAGE_FORMAT_DXT1_ATX </code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_FORMAT_DXT1_ATX 123</pre><p>
+            This compressed format stores RGB data and optionally 1-bit
+            alpha in S3TC DXT1 format.
+          </p><p>
+            Alignment of buffers for all levels is 4 byte.
+            For this output format, the
+            <code class="literal"> KD_IMAGE_FLAG_FLIP_X_ATX</code> and
+            <code class="literal"> KD_IMAGE_FLAG_FLIP_Y_ATX</code>
+            flags are ignored.
+          </p></dd><dt><span class="term"><code class="literal">KD_IMAGE_FORMAT_DXT3_ATX </code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_FORMAT_DXT3_ATX 124</pre><p>
+            This compressed format stores RGBA data in S3TC DXT3 format.
+          </p><p>
+            Alignment of buffers for all levels is 4 byte.
+            For this output format, the
+            <code class="literal"> KD_IMAGE_FLAG_FLIP_X_ATX</code> and
+            <code class="literal"> KD_IMAGE_FLAG_FLIP_Y_ATX</code>
+            flags are ignored.
+          </p></dd><dt><span class="term"><code class="literal">KD_IMAGE_FORMAT_DXT5_ATX </code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_FORMAT_DXT5_ATX 125</pre><p>
+            This compressed format stores RGBA data in S3TC DXT5 format.
+          </p><p>
+            Alignment of buffers for all levels is 4 byte.
+            For this output format, the
+            <code class="literal"> KD_IMAGE_FLAG_FLIP_X_ATX</code> and
+            <code class="literal"> KD_IMAGE_FLAG_FLIP_Y_ATX</code>
+            flags are ignored.
+          </p></dd><dt><span class="term"><code class="literal">KD_IMAGE_FORMAT_PVRTC2_ATX </code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_FORMAT_PVRTC2_ATX 126</pre><p>
+            This compressed format stores RGBA data in PVRTC 2-bit format.
+          </p><p>
+            Alignment of buffers for all levels is 4 byte.
+            For this output format, the
+            <code class="literal"> KD_IMAGE_FLAG_FLIP_X_ATX</code> and
+            <code class="literal"> KD_IMAGE_FLAG_FLIP_Y_ATX</code>
+            flags are ignored.
+          </p></dd><dt><span class="term"><code class="literal">KD_IMAGE_FORMAT_PVRTC4_ATX </code></span></dt><dd><pre class="synopsis">#define KD_IMAGE_FORMAT_PVRTC4_ATX 127</pre><p>
+            This compressed format stores RGBA data in PVRTC 4-bit format.
+          </p><p>
+            Alignment of buffers for all levels is 4 byte.
+            For this output format, the
+            <code class="literal"> KD_IMAGE_FLAG_FLIP_X_ATX</code> and
+            <code class="literal"> KD_IMAGE_FLAG_FLIP_Y_ATX</code>
+            flags are ignored.
+          </p></dd></dl></div></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2478316"></a>4.&#160;New image file formats</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2478322"></a>4.1.&#160;Imagination Technologies PVR file</h3></div></div></div><p>
+        This decoder supports decoding of PVR files
+        as defined in [<a class="xref" href="#PVR" title="PVRTexTool Reference Manual, Imagination Technologies.">PVR</a>].
+        It supports PVR files
+        containing PVRTC or DXT compressed images, and a subset of
+        the uncompressed formats supported by PVR files.
+        The OpenGL extensions GL_IMG_texture_compression_pvrtc and
+        GL_EXT_texture_compression_s3tc describe the PVRTC and DXT data
+        formats.
+    </p><p>
+        The associated file extension, where applicable, is
+        <code class="literal">.pvr</code>.
+    </p><p>
+        Not all PVR formats are supported, and, for each supported format,
+        only certain image output formats may be specified to
+        <code class="function">kdGetImageATX</code> or
+        <code class="function">kdGetImageFromStreamATX</code>.
+    </p><p>
+        If the PVR file contains a compressed image,
+        any of the uncompressed output formats may be specified.
+        <code class="literal">KD_IMAGE_FORMAT_COMPRESSED_ATX</code>
+        may be used, resulting in one of the output formats
+        <code class="literal">KD_IMAGE_FORMAT_DXT1_ATX</code>,
+        <code class="literal">KD_IMAGE_FORMAT_DXT3_ATX</code>,
+        <code class="literal">KD_IMAGE_FORMAT_DXT5_ATX</code>,
+        <code class="literal">KD_IMAGE_FORMAT_PVRTC2_ATX</code> or
+        <code class="literal">KD_IMAGE_FORMAT_PVRTC4_ATX</code>.
+    </p><p>
+        Supported PVR formats, together with the supported image output
+        formats for each, are listed here. In addition, the first mentioned
+        supported image output format is the value that the
+        <code class="literal">KD_IMAGE_FORMAT_ATX</code> attribute takes when an
+        informational image object is created by
+        <code class="function">kdGetImageInfoATX</code> or
+        <code class="function">kdGetImageInfoFromStreamATX</code>.
+    </p><div class="informaltable"><table border="1"><colgroup><col><col></colgroup><thead><tr><th>PVR format code</th><th>supported image output formats</th></tr></thead><tbody><tr><td>ARGB_8888 (0x5)</td><td>
+                KD_IMAGE_FORMAT_BGRA8888_ATX,
+                KD_IMAGE_FORMAT_RGBA8888_ATX
+            </td></tr><tr><td>OGL_RGBA_8888 (0x12)</td><td>
+                KD_IMAGE_FORMAT_RGBA8888_ATX,
+                KD_IMAGE_FORMAT_BGRA8888_ATX
+            </td></tr><tr><td>RGB_888 (0x4)</td><td>KD_IMAGE_FORMAT_RGB888_ATX</td></tr><tr><td>OGL_RGB_888 (0x15)</td><td>KD_IMAGE_FORMAT_RGB888_ATX</td></tr><tr><td>RGB_565 (0x2)</td><td>KD_IMAGE_FORMAT_RGB565_ATX</td></tr><tr><td>OGL_RGB565 (0x13)</td><td>KD_IMAGE_FORMAT_RGB565_ATX</td></tr><tr><td>ARGB_1555 (0x1)</td><td>KD_IMAGE_FORMAT_RGBA5551_ATX</td></tr><tr><td>OGL_RGBA_5551 (0x11)</td><td>KD_IMAGE_FORMAT_RGBA5551_ATX</td></tr><tr><td>ARGB_4444 (0x0)</td><td>KD_IMAGE_FORMAT_RGBA4444_ATX</td></tr><tr><td>OGL_RGBA_4444 (0x10)</td><td>KD_IMAGE_FORMAT_RGBA4444_ATX</td></tr><tr><td>I_8 (0x7)</td><td>KD_IMAGE_FORMAT_LUM8_ATX</td></tr><tr><td>OGL_I_8 (0x16)</td><td>KD_IMAGE_FORMAT_LUM8_ATX</td></tr><tr><td>AI_88 (0x8)</td><td>KD_IMAGE_FORMAT_LUMALPHA88_ATX</td></tr><tr><td>OGL_AI_88 (0x17)</td><td>KD_IMAGE_FORMAT_LUMALPHA88_ATX</td></tr><tr><td>PVRTC2 (0xc)</td><td>KD_IMAGE_FORMAT_PVRTC2_ATX, plus all uncompressed formats</td></tr><tr><td>OGL_PVRTC2 (0x18)</td><td>KD_IMAGE_FORMAT_PVRTC2_ATX, plus all uncompressed formats</td></tr><tr><td>PVRTC4 (0xd)</td><td>KD_IMAGE_FORMAT_PVRTC4_ATX, plus all uncompressed formats</td></tr><tr><td>OGL_PVRTC4 (0x19)</td><td>KD_IMAGE_FORMAT_PVRTC4_ATX, plus all uncompressed formats</td></tr><tr><td>D3D_DXT1 (0x20)</td><td>KD_IMAGE_FORMAT_DXT1_ATX, plus all uncompressed formats</td></tr><tr><td>D3D_DXT3 (0x22)</td><td>KD_IMAGE_FORMAT_DXT3_ATX, plus all uncompressed formats</td></tr><tr><td>D3D_DXT5 (0x24)</td><td>KD_IMAGE_FORMAT_DXT5_ATX, plus all uncompressed formats</td></tr></tbody></table></div><p>
+        Note that for OGL_* PVR formats the images are stored vertically
+        flipped.
+    </p><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2477488"></a>Rationale: compressed output formats</h4></div></div></div><p>
+        Some of the compressed output formats specified above correspond
+        to formats in the GL_IMG_texture_compression_pvrtc extension:
+      </p><div class="informaltable"><table border="1"><colgroup><col><col></colgroup><tbody><tr><td>KD_ATX_imgdec_pvr format</td><td>GL_IMG_texture_compression_pvrtc format</td></tr><tr><td>KD_IMAGE_FORMAT_PVRTC2_ATX</td><td>GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG, GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG</td></tr><tr><td>KD_IMAGE_FORMAT_PVRTC4_ATX</td><td>GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG, GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG</td></tr></tbody></table></div><p>
+        The rest of the compressed output formats specified above correspond
+        to formats in the GL_EXT_texture_compression_s3tc extension:
+      </p><div class="informaltable"><table border="1"><colgroup><col><col></colgroup><tbody><tr><td>KD_ATX_imgdec_pvr format</td><td>GL_EXT_texture_compression_s3tc format</td></tr><tr><td>KD_IMAGE_FORMAT_DXT1_ATX</td><td>GL_COMPRESSED_RGB_S3TC_DXT1_EXT, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT</td></tr><tr><td>KD_IMAGE_FORMAT_DXT3_ATX</td><td>GL_COMPRESSED_RGBA_S3TC_DXT3_EXT</td></tr><tr><td>KD_IMAGE_FORMAT_DXT5_ATX</td><td>GL_COMPRESSED_RGBA_S3TC_DXT5_EXT</td></tr></tbody></table></div></div></div></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2477608"></a>5.&#160;Revision history</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2477614"></a>5.1.&#160;Version 5, 2009-02-04</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Allocated extension number 13.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2477629"></a>5.2.&#160;Version 4, 2008-09-16</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Allocated extension number 11.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2477644"></a>5.3.&#160;Version 3, 2008-06-20</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Draft of version prepared to release to OpenKODE WG.
+      </p></li></ul></div></div></div><div class="bibliography"><div class="titlepage"><div><div><h2 class="title"><a name="id2477660"></a>Bibliography</h2></div></div></div><div class="biblioentry"><a name="PVR"></a><p>[PVR] <span class="title"><i>
+        PVRTexTool Reference Manual, Imagination Technologies.
+    </i>. </span></p></div></div></div></body></html>

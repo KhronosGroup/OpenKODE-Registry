@@ -1,0 +1,37 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=us-ascii"><title>OpenKODE Core extension: KD_ATX_imgdec_png</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="article" lang="en"><div class="titlepage"><div><div><h2 class="title"><a name="id2425492"></a>OpenKODE Core extension: KD_ATX_imgdec_png</h2></div></div><hr></div><div class="informaltable"><table border="1"><colgroup><col><col></colgroup><tbody><tr><td>Name</td><td>ATX_imgdec_png</td></tr><tr><td>Name strings</td><td>KD_ATX_imgdec_png</td></tr><tr><td>Contributors</td><td>Russell Wood, Phil Huxley, Elizabeth Wootten, Tim Renouf</td></tr><tr><td>Contacts</td><td>Antix Labs Limited</td></tr><tr><td>Status</td><td>Implemented by Antix Labs</td></tr><tr><td>Version</td><td>Version 5, 2009-02-04</td></tr><tr><td>Number</td><td>11</td></tr><tr><td>Dependencies</td><td>
+            Requires OpenKODE Core 1.0 and the ATX_imgdec extension.
+            This extension is written based on the wording of the
+            OpenKODE Core 1.0 specification and version 4 of the ATX_imgdec
+            extension.
+          </td></tr></tbody></table></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2477916"></a>1.&#160;Overview</h2></div></div></div><p>
+        This OpenKODE Core extension adds the ability to decode
+        Portable Network Graphics (PNG) images to the
+        ATX_imgdec extension. The ATX_imgdec extension provides the
+        functions to decode the image, and the definitions of what
+        output formats are available. The present ATX_imgdec_png extension
+        defines which output formats are available for the PNG decoder.
+    </p></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2477934"></a>2.&#160;Header file</h2></div></div></div><p>
+        When this extension is present, its facilities are accessed by
+        including its header file:
+    </p><pre class="synopsis">#include &lt;KD/ATX_imgdec_png.h&gt;</pre><p>
+        This also includes <code class="literal">KD/ATX_imgdec.h</code> if that has
+        not already been done.
+    </p></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2477960"></a>3.&#160;New image file formats</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2477965"></a>3.1.&#160;Portable Network Graphics</h3></div></div></div><p>
+        This decoder supports decoding of images in Portable Network
+        Graphics format, as defined in [<a class="xref" href="#PNG" title="Portable Network Graphics (PNG) Specification, version 1.2">PNG</a>].
+        The associated file extension, where applicable, is
+        <code class="literal">.png</code>.
+    </p><p>
+        For an input image of this format, any of the uncompressed output
+        formats may be specified.
+        In particular,
+        <code class="literal">KD_IMAGE_FORMAT_COMPRESSED_ATX</code> may not be used.
+    </p></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2478088"></a>4.&#160;Revision history</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2478093"></a>4.1.&#160;Version 5, 2009-02-04</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Allocated extension number 11.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2478108"></a>4.2.&#160;Version 4, 2008-09-16</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Allocated extension number 9.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2478123"></a>4.3.&#160;Version 3, 2008-06-20</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Draft of version prepared to release to OpenKODE WG.
+      </p></li></ul></div></div></div><div class="bibliography"><div class="titlepage"><div><div><h2 class="title"><a name="id2478139"></a>Bibliography</h2></div></div></div><div class="biblioentry"><a name="PNG"></a><p>[PNG] <span class="title"><i>
+      Portable Network Graphics (PNG) Specification, version 1.2
+    </i>. </span></p></div></div></div></body></html>

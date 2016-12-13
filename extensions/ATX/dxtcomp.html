@@ -1,0 +1,131 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=us-ascii"><title>OpenKODE Core extension: KD_ATX_dxtcomp</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="article" lang="en"><div class="titlepage"><div><div><h2 class="title"><a name="id2477139"></a>OpenKODE Core extension: KD_ATX_dxtcomp</h2></div></div><hr></div><div class="informaltable"><table border="1"><colgroup><col><col></colgroup><tbody><tr><td>Name</td><td>ATX_dxtcomp</td></tr><tr><td>Name strings</td><td>KD_ATX_dxtcomp</td></tr><tr><td>Contributors</td><td>Russell Wood, Phil Huxley, Elizabeth Wootten, Tim Renouf</td></tr><tr><td>Contacts</td><td>Antix Labs Limited</td></tr><tr><td>Status</td><td>Implemented by Antix Labs</td></tr><tr><td>Version</td><td>Version 5, 2009-02-04</td></tr><tr><td>Number</td><td>14</td></tr><tr><td>Dependencies</td><td>
+            Requires OpenKODE Core 1.0, the ATX_imgdec extension
+            and the ATX_imgdec_pvr extension.
+            This extension is written based on the wording of the
+            OpenKODE Core 1.0 specification, version 4 of the ATX_imgdec
+            extension, and version 4 of the ATX_imgdec_pvr
+            extension.
+          </td></tr></tbody></table></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2520069"></a>1.&#160;Overview</h2></div></div></div><p>
+        This OpenKODE Core extension provides functions for compressing RGBA
+        image data to a DXT format. It extends the functionality of the image
+        decoder extensions KD_ATX_imgdec and KD_ATX_imgdec_pvr.
+    </p><p>
+        This extension can assist in lowering the asset sizes needed to be
+        packaged with a game by allowing graphics to be supplied using PVRTC
+        compression. On platforms that provide DXT support this can be decoded
+        as RGBA data and recompressed as DXT. For platforms that support
+        neither compression format, images can be decompressed to an
+        OpenGL-compatible RGB(A) type.
+    </p><p>
+        There are quality issues associated with texture compression, and where
+        the resulting texture quality is not acceptable this extension should
+        not be used.
+    </p><p>
+        The documentation for the GL_EXT_texture_compression_s3tc OpenGL
+        extension describes the DXT data formats.
+    </p><p>
+        Implementations of this extension are expected to provide fast
+        compression such that image assets can be converted by an application
+        at run-time. Encoding accuracy can be sacrificed for real-time
+        performance. If the highest quality compression is required then
+        off-line compression of assets should be used in place of this
+        extension.
+    </p><p>
+        Suitable algorithms are described in the paper Real-Time DXT
+        Compression by J.M.P. van Wavern, Id Software Inc.
+    </p></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2520122"></a>2.&#160;Header file</h2></div></div></div><p>
+        When this extension is present, its facilities are accessed by
+        including its header file:
+    </p><pre class="synopsis">#include &lt;KD/ATX_dxtcomp.h&gt;</pre><p>
+        This also includes <code class="literal">KD/ATX_imgdec_pvr.h</code> (and thus
+        <code class="literal">KD/ATX_imgdec.h</code>) if that has
+        not already been done.
+    </p></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2520153"></a>3.&#160;New functions</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdDXTCompressImageATX"></a>3.1.&#160;
+        kdDXTCompressImageATX,
+        kdDXTCompressBufferATX
+      </h3></div></div></div><a class="indexterm" name="id2525341"></a><a class="indexterm" name="id2506786"></a><p>
+        Compresses an image into a DXT format.
+      </p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2520171"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDImageATX <b class="fsfunc">kdDXTCompressImageATX</b>(</code></td><td>KDImageATX&#160;</td><td><var class="pdparam">image</var>, </td></tr><tr><td>&#160;</td><td>KDint32 &#160;</td><td><var class="pdparam">comptype</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDImageATX <b class="fsfunc">kdDXTCompressBufferATX</b>(</code></td><td>const void *&#160;</td><td><var class="pdparam">buffer</var>, </td></tr><tr><td>&#160;</td><td>KDint32 &#160;</td><td><var class="pdparam">width</var>, </td></tr><tr><td>&#160;</td><td>KDint32 &#160;</td><td><var class="pdparam">height</var>, </td></tr><tr><td>&#160;</td><td>KDint32 &#160;</td><td><var class="pdparam">compType</var>, </td></tr><tr><td>&#160;</td><td>KDint32 &#160;</td><td><var class="pdparam">levels</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2477342"></a>Description</h4></div></div></div><p>
+        These functions read an image and compress it to one of the DXT
+        compressed image format. The compressed image is returned in
+        a <span class="type">KDImageATX</span> object.
+      </p><p>
+        For <code class="function">kdDXTCompressImageATX</code>,
+        <em class="parameter"><code>image</code></em> is the input image as a
+        <span class="type">KDImageATX</span> image object (a decoded image object, not an
+        informational image object). It must have a format of
+        <code class="literal">KD_IMAGE_FORMAT_RGBA8888_ATX</code>, and its width and
+        height must both be powers of two.
+      </p><p>
+        For <code class="function">kdDXTCompressBufferATX</code>,
+        <em class="parameter"><code>buffer</code></em> is a 4-aligned buffer containing
+        the input image bitmap. It must be in the same format as would be
+        found in the
+        image data in an image object of format
+        <code class="literal">KD_IMAGE_FORMAT_RGBA8888_ATX</code>.
+        On entry <em class="parameter"><code>width</code></em> and <em class="parameter"><code>height</code></em>
+        are the image width and height in pixels, and each must be a power
+        of two.
+        <em class="parameter"><code>levels</code></em> is the number of extra mipmap
+        levels beyond the main level to be compressed, thus <code class="literal">0</code>
+        means compress just the main image.
+        If mipmaps are included they should follow the top-level image in
+        memory and be tightly packed.
+      </p><p>
+        For both functions, <em class="parameter"><code>comptype</code></em> specifies
+        the output format for the compressed image, one of:
+      </p><div class="variablelist"><dl><dt><span class="term"><code class="literal">KD_DXTCOMP_TYPE_DXT1_ATX</code></span></dt><dd><pre class="synopsis">#define KD_DXTCOMP_TYPE_DXT1_ATX 144</pre><p>
+                DXT1 compression is used without encoding the alpha channel of
+                the input data.
+            </p><p>
+                The resulting image format is KD_IMAGE_FORMAT_DXT1.
+            </p></dd><dt><span class="term"><code class="literal">KD_DXTCOMP_TYPE_DXT1A_ATX</code></span></dt><dd><pre class="synopsis">#define KD_DXTCOMP_TYPE_DXT1A_ATX 145</pre><p>
+                DXT1 compression is used and the alpha channel of the input
+                data is encoded.
+            </p><p>
+                The resulting image format is KD_IMAGE_FORMAT_DXT1.
+            </p></dd><dt><span class="term"><code class="literal">KD_DXTCOMP_TYPE_DXT3_ATX</code></span></dt><dd><pre class="synopsis">#define KD_DXTCOMP_TYPE_DXT3_ATX 146</pre><p>
+                DXT3 compression is used and encodes the alpha and color
+                components of the input data.
+            </p><p>
+                The resulting image format is KD_IMAGE_FORMAT_DXT3.
+            </p></dd><dt><span class="term"><code class="literal">KD_DXTCOMP_TYPE_DXT5_ATX</code></span></dt><dd><pre class="synopsis">#define KD_DXTCOMP_TYPE_DXT5_ATX 147</pre><p>
+                DXT5 compression is used and encodes the alpha and color
+                components of the input data.
+            </p><p>
+                The resulting image format is KD_IMAGE_FORMAT_DXT5.
+            </p></dd></dl></div><p>
+        For <code class="function">kdDXTCompressImageATX</code>, if
+        <em class="parameter"><code>image</code></em> is not a valid <span class="type">KDImageATX</span>
+        object, then undefined behavior results.
+        For <code class="function">kdDXTCompressBufferATX</code>, if
+        <em class="parameter"><code>buffer</code></em> does not point to a 4-aligned readable
+        buffer of at least enough size for the specified image size
+        and number of mipmap levels, then undefined behavior results.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2481539"></a>Return Value</h4></div></div></div><p>
+        On success, the functions return the <span class="type">KDImageATX</span> handle
+        to a new image object (a decoded image object, that is, one with
+        image data attached).
+        The image object can be queried using
+        <code class="function">kdGetImagePointerATX()</code>,
+        <code class="function">kdGetImageIntATX()</code> or
+        <code class="function">kdGetImageLevelIntATX()</code>, and freed using
+        <code class="function">kdFreeImageATX()</code>.
+      </p><p>
+        On failure, the functions return <code class="literal">KD_NULL</code> and store
+        one of the error codes below into the error indicator returned by
+        <code class="function">kdGetError</code>.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2481598"></a>Error codes</h4></div></div></div><div class="variablelist"><dl><dt><span class="term"><code class="literal">KD_EINVAL</code></span></dt><dd><p>
+                The image object does not have any image data attached,
+                or the format is not
+                <code class="literal">KD_IMAGE_FORMAT_RGBA8888_ATX</code>,
+                or the width or height is not a power of two, or the
+                requested compression format is not recognized.
+            </p></dd><dt><span class="term"><code class="literal">KD_ENOMEM</code></span></dt><dd><p>The operation failed due to insufficient
+            memory.</p></dd></dl></div></div></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2481656"></a>4.&#160;Revision history</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2481662"></a>4.1.&#160;Version 5, 2009-02-04</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Allocated extension number 14.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2477518"></a>4.2.&#160;Version 4, 2008-09-16</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Allocated extension number 12.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2477532"></a>4.3.&#160;Version 3, 2008-06-20</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Draft of version prepared to release to OpenKODE WG.
+      </p></li></ul></div></div></div></div></body></html>

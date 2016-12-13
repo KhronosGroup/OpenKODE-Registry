@@ -1,0 +1,74 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=us-ascii"><title>OpenKODE Core extension: KD_KHR_thread_storage</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="article" lang="en"><div class="titlepage"><div><div><h2 class="title"><a name="id2546019"></a>OpenKODE Core extension: KD_KHR_thread_storage</h2></div></div><hr></div><div class="informaltable"><table border="1"><colgroup><col><col></colgroup><tbody><tr><td>Name</td><td>KHR_thread_storage</td></tr><tr><td>Name strings</td><td>KD_KHR_thread_storage</td></tr><tr><td>Contributors</td><td>Mikko Strandborg</td></tr><tr><td>Contacts</td><td>The OpenKODE Working Group, Khronos</td></tr><tr><td>Status</td><td>Approved by OpenKODE working group February 2008</td></tr><tr><td>Version</td><td>Version 5, 2008-06-20</td></tr><tr><td>Number</td><td>6</td></tr><tr><td>Dependencies</td><td>
+            Requires OpenKODE Core 1.0.
+            This extension is written based on the wording of the
+            OpenKODE Core 1.0 specification.
+          </td></tr></tbody></table></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2506212"></a>1.&#160;Overview</h2></div></div></div><p>
+        This OpenKODE Core extension provides thread-local storage based on unique identifier.
+		The OpenKODE Core 1.0 specification does not provide facilities to declare a
+		variable to be thread-local. Some compilers have a declaration for that (on Windows:
+		__declspec(thread)) but not all compilers have such a feature. kdGet/SetTLS(),
+		on other hand, should be reserved to be used by the application. This extension
+		provides a way for a middleware or any other library to store thread-local data without
+		interfering with other parts of the application potentially using kdGet/SetTLS().
+    </p><p>
+	The thread storage data slots are identified by user-defined arbitrary pointers.
+	For example, the application may choose to use the address of the function
+	calling kdMapThreadStorageKHR(), or an address of either globally or statically defined
+	const KDchar string.
+	</p><p>
+	In order to improve performance, the system uses two-phase key retrieval. In the first
+	phase, the application maps an arbitrary pointer to a KDThreadStorageKeyKHR type by calling
+	kdMapThreadStorageKHR(). The complexity of this call is O(n) where n is the number of
+	unique keys mapped during the lifetime of the application. The mapping is guaranteed to be
+	globally invariant for the duration of the application's lifetime.
+	In the second phase, the application can store and retrieve the thread-local data by calling
+	kdSetThreadStorageKHR() and kdGetThreadStorageKHR(). The complexity of these calls is O(1).
+	</p><p>
+	If the OpenKODE Core implementation supports writable static data, the key can be stored to a global
+	variable to improve the performance of data store/retrieval operations.	On platforms where
+	writable static data is not available, the application would have to call kdMapThreadStorageKHR each
+	time it wants to access the stored data. On single-threaded platforms not supporing writable
+	static data this extension can be used to simulate writable global data.
+	</p></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2548936"></a>2.&#160;Header file</h2></div></div></div><p>
+        When this extension is present, its facilities are accessed by
+        including its header file:
+    </p><pre class="synopsis">#include &lt;KD/KHR_thread_storage.h&gt;</pre></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2506265"></a>3.&#160;New types</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2506276"></a>3.1.&#160;KDThreadStorageKeyKHR</h3></div></div></div><a class="indexterm" name="id2506279"></a><p>The representation of a thread storage key.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2506288"></a>Synopsis</h4></div></div></div><pre class="synopsis">typedef KDuint32 KDThreadStorageKeyKHR;</pre></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2506300"></a>Description</h4></div></div></div><p>
+	  The type represents the global key that can be used to access
+	  thread-local data.
+	  </p></div></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2506314"></a>4.&#160;New functions</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdMapThreadStorageKHR"></a>4.1.&#160;kdMapThreadStorageKHR</h3></div></div></div><a class="indexterm" name="id2506430"></a><p>Maps an arbitrary pointer to a global thread storage key.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2506441"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDThreadStorageKeyKHR KD_APIENTRY <b class="fsfunc">kdMapThreadStorageKHR</b>(</code></td><td>const void * &#160;</td><td><var class="pdparam">id</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2506470"></a>Description</h4></div></div></div><p>
+	  This function maps an arbitrary pointer to a globally valid thread storage key. Multiple calls
+	  to kdMapThreadStorageKHR with identical id's are guaranteed to return identical keys during the
+	  application's lifetime. 
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2506484"></a>Return value</h4></div></div></div><p>
+        On success, returns a new globally valid thread storage key. On error returns 0 and sets OpenKODE
+		error code. Currently the only defined error code is KD_ENOMEM if the system runs out of memory
+		or other resources.
+      </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdSetThreadStorageKHR"></a>4.2.&#160;kdSetThreadStorageKHR</h3></div></div></div><a class="indexterm" name="id2506509"></a><p>Stores thread-local data.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2506519"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDint KD_APIENTRY <b class="fsfunc">kdSetThreadStorageKHR</b>(</code></td><td>KDThreadStorageKeyKHR &#160;</td><td><var class="pdparam">key</var>, </td></tr><tr><td>&#160;</td><td>void * &#160;</td><td><var class="pdparam">data</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2506556"></a>Description</h4></div></div></div><p>
+		Stores a data pointer within the current thread's context. If key is not
+		a valid storage key returned from a previous call to kdMapThreadStorageKHR(),
+		undefined behavior results.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2506569"></a>Return value</h4></div></div></div><p>
+        0 on success. On error returns nonzero and sets OpenKODE error code. Currently
+		the only defined error code is KD_ENOMEM if the system runs out of memory
+		or other resources.
+      </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdGetThreadStorageKHR"></a>4.3.&#160;kdGetThreadStorageKHR</h3></div></div></div><a class="indexterm" name="id2506592"></a><p>Retrieves previously stored thread-local data.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2506603"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">void * KD_APIENTRY <b class="fsfunc">kdGetThreadStorageKHR</b>(</code></td><td>KDThreadStorageKeyKHR &#160;</td><td><var class="pdparam">key</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2506632"></a>Description</h4></div></div></div><p>
+		Retrieves a data pointer from the current thread's context. If key is not
+		a valid storage key returned from a previous call to kdMapThreadStorageKHR(),
+		undefined behavior results. The initial value of the data pointer for a valid key
+		is KD_NULL.
+      </p></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2505360"></a>Return value</h4></div></div></div><p>
+        The data previously stored by a call to kdSetThreadStorageKHR within the current
+		thread's context, or KD_NULL if	kdSetThreadStorageKHR has not been succesfully
+		called with the given key within the current thread's context. 
+      </p></div></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2505376"></a>5.&#160;Revision history</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2505382"></a>5.1.&#160;Version 5, 2008-06-20</h3></div></div></div><p>
+        Changed back to being based on OpenKODE Core 1.0 specification.
+    </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2505393"></a>5.2.&#160;Version 4, 2008-03-31</h3></div></div></div><p>
+        Now based on OpenKODE Core 1.0.1 specification.
+    </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2505402"></a>5.3.&#160;Version 3, 2007-10-19</h3></div></div></div><p>
+        Rewritten based on feedback from the group.Introduced the concept of TLS key
+		to speed up data retrieval/storage system.
+    </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2505414"></a>5.4.&#160;Version 2, 2007-10-15</h3></div></div></div><p>
+        Added rationale in the Overview-section.
+    </p></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2505425"></a>5.5.&#160;Version 1, 2007-10-15</h3></div></div></div><p>
+        Initial version.
+    </p></div></div></div></body></html>

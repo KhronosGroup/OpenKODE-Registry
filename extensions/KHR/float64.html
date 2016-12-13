@@ -1,0 +1,210 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=us-ascii"><title>OpenKODE Core extension: KD_KHR_float64</title><meta name="generator" content="DocBook XSL Stylesheets V1.73.2"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="article" lang="en"><div class="titlepage"><div><div><h2 class="title"><a name="id2517889"></a>OpenKODE Core extension: KD_KHR_float64</h2></div></div><hr></div><div class="informaltable"><table border="1"><colgroup><col><col></colgroup><tbody><tr><td>Name</td><td>KHR_float64</td></tr><tr><td>Name strings</td><td>KD_KHR_float64</td></tr><tr><td>Contributors</td><td>Tim Renouf</td></tr><tr><td>Contacts</td><td>Khronos OpenKODE working group</td></tr><tr><td>Status</td><td>Approved by OpenKODE working group February 2008</td></tr><tr><td>Version</td><td>Version 7, 2008-09-12</td></tr><tr><td>Number</td><td>4</td></tr><tr><td>Dependencies</td><td>
+            Requires OpenKODE Core 1.0.
+            This extension is written based on the wording of the
+            OpenKODE Core 1.0 specification.
+          </td></tr></tbody></table></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2477200"></a>1.&#160;Overview</h2></div></div></div><p>
+        This OpenKODE Core extension provides a 64-bit floating point data
+        type and associated functions.
+    </p></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2477212"></a>2.&#160;Rationale</h2></div></div></div><p>
+        OpenKODE Core provides only a 32-bit floating point type,
+        <span class="type">KDfloat32</span>. It has been found that many applications,
+        particularly ones being ported from the PC/console world down
+        to mobile, use <span class="type">double</span> as a 64-bit floating point
+        type. This extension brings this type and the functions that
+        use it into the OpenKODE Core specification.
+	</p></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2477237"></a>3.&#160;Header file</h2></div></div></div><p>
+        When this extension is present, its facilities are accessed by
+        including its header file:
+    </p><pre class="synopsis">#include &lt;KD/KHR_float64.h&gt;</pre></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2477255"></a>4.&#160;New types</h2></div></div></div><p>
+        This extension defines a type, which is intrinsic (i.e.
+        it participates in C&#8217;s casting and promotion rules):
+    </p><div class="informaltable"><table border="1"><colgroup><col><col></colgroup><thead><tr><th>type</th><th>description</th></tr></thead><tbody><tr><td><a class="indexterm" name="id2477304"></a><code class="literal">KDfloat64KHR</code></td><td><p>
+                64-bit floating point value with [<a class="xref" href="#IEEE754" title="IEEE Standard for Binary Floating-Point Arithmetic (ANSI/IEEE Std 754-1985)">IEEE 754</a>]
+                behavior, and with a format which is either [<a class="xref" href="#IEEE754" title="IEEE Standard for Binary Floating-Point Arithmetic (ANSI/IEEE Std 754-1985)">IEEE 754</a>]
+                or [<a class="xref" href="#IEEE754" title="IEEE Standard for Binary Floating-Point Arithmetic (ANSI/IEEE Std 754-1985)">IEEE 754</a>] with the halves swapped. It is
+                implementation defined which format is used.
+              </p>
+              
+            </td></tr></tbody></table></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2477327"></a>4.1.&#160;Rationale: &#8220;middle-endian&#8221; doubles</h3></div></div></div><p>
+        There are some ARM platforms with so-called &#8220;middle-endian&#8221; doubles:
+        the platform is little endian, but a double is stored with its high word
+        before its low word. The above definition of the format of a KDfloat64KHR
+        allows for such platforms.
+      </p></div></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2477341"></a>5.&#160;New constants</h2></div></div></div><div class="variablelist"><dl><dt><a name="KD_E_KHR"></a><span class="term"><a class="indexterm" name="id2477729"></a>
+          <code class="literal">KD_E_KHR</code>
+        </span></dt><dd><pre class="synopsis">#define KD_E_KHR 2.718281828459045235</pre><p>The constant e. </p></dd><dt><a name="KD_PI_KHR"></a><span class="term"><a class="indexterm" name="id2477764"></a>
+          <code class="literal">KD_PI_KHR</code>
+        </span></dt><dd><pre class="synopsis">#define KD_PI_KHR 3.141592653589793239</pre><p>The constant pi. </p></dd><dt><a name="KD_PI_2_KHR"></a><span class="term"><a class="indexterm" name="id2477800"></a>
+          <code class="literal">KD_PI_2_KHR</code>
+        </span></dt><dd><pre class="synopsis">#define KD_PI_2_KHR 1.570796326794896619</pre><p>pi/2 </p></dd><dt><a name="KD_2PI_KHR"></a><span class="term"><a class="indexterm" name="id2477836"></a>
+          <code class="literal">KD_2PI_KHR</code>
+        </span></dt><dd><pre class="synopsis">#define KD_2PI_KHR 6.283185307179586477</pre><p>2 times pi </p></dd><dt><a name="KD_LOG2E_KHR"></a><span class="term"><a class="indexterm" name="id2477872"></a>
+          <code class="literal">KD_LOG2E_KHR</code>
+        </span></dt><dd><pre class="synopsis">#define KD_LOG2E_KHR 1.442695040888963407</pre><p>Value of log2e. </p></dd><dt><a name="KD_LOG10E_KHR"></a><span class="term"><a class="indexterm" name="id2477908"></a>
+          <code class="literal">KD_LOG10E_KHR</code>
+        </span></dt><dd><pre class="synopsis">#define KD_LOG10E_KHR 0.4342944819032518276</pre><p>Value of log10e. </p></dd><dt><a name="KD_LN2_KHR"></a><span class="term"><a class="indexterm" name="id2479029"></a>
+          <code class="literal">KD_LN2_F_KHR</code>
+        </span></dt><dd><pre class="synopsis">#define KD_LN2_KHR 0.6931471805599453094</pre><p>Value of loge2. </p></dd><dt><a name="KD_LN10_KHR"></a><span class="term"><a class="indexterm" name="id2479065"></a>
+          <code class="literal">KD_LN10_KHR</code>
+        </span></dt><dd><pre class="synopsis">#define KD_LN10_KHR 2.302585092994045684</pre><p>Value of loge10. </p></dd><dt><a name="KD_PI_4_KHR"></a><span class="term"><a class="indexterm" name="id2479101"></a>
+          <code class="literal">KD_PI_4_KHR</code>
+        </span></dt><dd><pre class="synopsis">#define KD_PI_4_KHR 0.7853981633974483096</pre><p>Value of PI/4. </p></dd><dt><a name="KD_1_PI_KHR"></a><span class="term"><a class="indexterm" name="id2479137"></a>
+          <code class="literal">KD_1_PI_KHR</code>
+        </span></dt><dd><pre class="synopsis">#define KD_1_PI_KHR 0.3183098861837906715</pre><p>Value of 1/PI. </p></dd><dt><a name="KD_2_PI_KHR"></a><span class="term"><a class="indexterm" name="id2479173"></a>
+          <code class="literal">KD_2_PI_KHR</code>
+        </span></dt><dd><pre class="synopsis">#define KD_2_PI_KHR 0.6366197723675813431</pre><p>Value of 2/PI. </p></dd><dt><a name="KD_2_SQRTPI_KHR"></a><span class="term"><a class="indexterm" name="id2479209"></a>
+          <code class="literal">KD_2_SQRTPI_KHR</code>
+        </span></dt><dd><pre class="synopsis">#define KD_2_SQRTPI_KHR 1.128379167095512574</pre><p>Value of 2/sqrt(PI). </p></dd><dt><a name="KD_SQRT2_KHR"></a><span class="term"><a class="indexterm" name="id2479246"></a>
+          <code class="literal">KD_SQRT2_KHR</code>
+        </span></dt><dd><pre class="synopsis">#define KD_SQRT2_KHR 1.414213562373095049</pre><p>Value of sqrt(2). </p></dd><dt><a name="KD_SQRT1_2_KHR"></a><span class="term"><a class="indexterm" name="id2479282"></a>
+          <code class="literal">KD_SQRT1_2_KHR</code>
+        </span></dt><dd><pre class="synopsis">#define KD_SQRT1_2_KHR 0.7071067811865475244</pre><p>Value of sqrt(1/2). </p></dd><dt><a name="KD_DBL_EPSILON_KHR"></a><span class="term"><a class="indexterm" name="id2479319"></a>
+          <code class="literal">KD_DBL_EPSILON_KHR</code>
+        </span></dt><dd><pre class="synopsis">#define KD_DBL_EPSILON_KHR 2.2204460492503131e-16</pre><p>Difference between 1 and the smallest <span class="type">KDfloat64</span>
+            greater than 1. </p></dd><dt><a name="KD_DBL_MAX_KHR"></a><span class="term"><a class="indexterm" name="id2479359"></a>
+          <code class="literal">KD_DBL_MAX_KHR</code>
+        </span></dt><dd><pre class="synopsis">#define KD_DBL_MAX_KHR 1.7976931348623157e+308</pre><p>The largest possible finite <span class="type">KDfloat64</span>. </p></dd><dt><a name="KD_DBL_MIN_KHR"></a><span class="term"><a class="indexterm" name="id2479399"></a>
+          <code class="literal">KD_DBL_MIN_KHR</code>
+        </span></dt><dd><pre class="synopsis">#define KD_DBL_MIN_KHR 2.2250738585072014e-308</pre><p>The smallest possible positive normalized
+            <span class="type">KDfloat64</span>. </p></dd><dt><a name="KD_HUGE_VAL_KHR"></a><span class="term"><a class="indexterm" name="id2527633"></a>
+          <code class="literal">KD_HUGE_VAL_KHR</code>
+        </span></dt><dd><pre class="synopsis">#define KD_HUGE_VAL_KHR (1.0/0.0)</pre><p>Used as an error value by certain functions; equivalent
+            to <code class="literal">KD_INFINITY_KHR</code>.</p></dd><dt><a name="KD_DEG_TO_RAD_KHR"></a><span class="term"><a class="indexterm" name="id2527671"></a>
+          <code class="literal">KD_DEG_TO_RAD_KHR</code>
+        </span></dt><dd><pre class="synopsis">#define KD_DEG_TO_RAD_KHR 0.01745329251994329577</pre><p>Multiply by this number to convert degrees to radians. </p></dd><dt><a name="KD_RAD_TO_DEG_KHR"></a><span class="term"><a class="indexterm" name="id2527705"></a>
+          <code class="literal">KD_RAD_TO_DEG_KHR</code>
+        </span></dt><dd><pre class="synopsis">#define KD_RAD_TO_DEG_KHR 57.29577951308232088</pre><p>Multiply by this number to convert radians to degrees. </p></dd></dl></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2527736"></a>5.1.&#160;Rationale</h3></div></div></div><p>
+        The constants above appear in [<a class="xref" href="#C99" title="ISO/IEC 9899:TC2 &#8220;Programming Language C&#8221;">C99</a>] (without the <code class="literal">KD_</code>
+        prefix and <code class="literal">_KHR</code> suffix, except for
+        <code class="literal">KD_2PI_KHR</code>, <code class="literal">KD_DEG_TO_RAD_KHR</code>
+        and <code class="literal">KD_RAD_TO_DEG_KHR</code>.
+      </p></div></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2527779"></a>6.&#160;New macros</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="KD_VA_ARG_FLOAT64_KHR"></a>6.1.&#160;KD_VA_ARG_FLOAT64_KHR</h3></div></div></div><a class="indexterm" name="id2527794"></a><p>Get the next argument from a variable argument list.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2527805"></a>Synopsis</h4></div></div></div><pre class="synopsis">KD_VA_ARG_FLOAT64_KHR(<em class="parameter"><code>ap</code></em>)</pre></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2527822"></a>Description</h4></div></div></div><p>
+        This macro is provided by this extension only if the
+        KD_KHR_formatted extension is also present.
+        It is analogous to the other
+        <code class="literal">KD_VA_ARG_*_KHR</code> macros in that extension,
+        for the case when the argument is of type <span class="type">KDfloat64</span>.
+      </p></div></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2527846"></a>7.&#160;New math functions</h2></div></div></div><p>
+        This extension provides <span class="type">KDfloat64KHR</span> versions of all of
+        the OpenKODE Core <span class="type">KDfloat32</span> math functions. Each has
+        the same name with the final 'f' dropped and with an 'KHR' suffix
+        added, and each has the same semantics except for the parameter
+        and return types becoming <span class="type">KDfloat64KHR</span>. Where the existing
+        <span class="type">KDfloat32</span> function indicates a range error by returning
+        <code class="literal">KD_HUGE_VALF</code>, the equivalent here returns
+        <code class="literal">KD_HUGE_VAL_KHR</code>.
+    </p><p>
+        The OpenKODE Core 1.0.1 specification contains clarifications over
+        OpenKODE Core 1.0 about the results of
+        <code class="literal">kdLogf(-0.0)</code> and
+        <code class="literal">kdAtan2f(&#177;0.0,&#177;0.0)</code>.
+        The same clarifications apply to
+        <code class="function">kdLog</code> and <code class="function">kdAtan2</code> here
+        when this extension is used with OpenKODE Core 1.0.1.
+    </p><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDfloat64KHR <b class="fsfunc">kdAcosKHR</b>(</code></td><td>KDfloat64KHR &#160;</td><td><var class="pdparam">x</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDfloat64KHR <b class="fsfunc">kdAsinKHR</b>(</code></td><td>KDfloat64KHR &#160;</td><td><var class="pdparam">x</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDfloat64KHR <b class="fsfunc">kdAtanKHR</b>(</code></td><td>KDfloat64KHR &#160;</td><td><var class="pdparam">x</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDfloat64KHR <b class="fsfunc">kdAtan2KHR</b>(</code></td><td>KDfloat64KHR &#160;</td><td><var class="pdparam">y</var>, </td></tr><tr><td>&#160;</td><td>KDfloat64KHR &#160;</td><td><var class="pdparam">x</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDfloat64KHR <b class="fsfunc">kdCosKHR</b>(</code></td><td>KDfloat64KHR &#160;</td><td><var class="pdparam">x</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDfloat64KHR <b class="fsfunc">kdSinKHR</b>(</code></td><td>KDfloat64KHR &#160;</td><td><var class="pdparam">x</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDfloat64KHR <b class="fsfunc">kdTanKHR</b>(</code></td><td>KDfloat64KHR &#160;</td><td><var class="pdparam">x</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDfloat64KHR <b class="fsfunc">kdExpKHR</b>(</code></td><td>KDfloat64KHR &#160;</td><td><var class="pdparam">x</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDfloat64KHR <b class="fsfunc">kdLogKHR</b>(</code></td><td>KDfloat64KHR &#160;</td><td><var class="pdparam">x</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDfloat64KHR <b class="fsfunc">kdFabsKHR</b>(</code></td><td>KDfloat64KHR &#160;</td><td><var class="pdparam">x</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDfloat64KHR <b class="fsfunc">kdPowKHR</b>(</code></td><td>KDfloat64KHR &#160;</td><td><var class="pdparam">x</var>, </td></tr><tr><td>&#160;</td><td>KDfloat64KHR &#160;</td><td><var class="pdparam">y</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDfloat64KHR <b class="fsfunc">kdSqrtKHR</b>(</code></td><td>KDfloat64KHR &#160;</td><td><var class="pdparam">x</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDfloat64KHR <b class="fsfunc">kdCeilKHR</b>(</code></td><td>KDfloat64KHR &#160;</td><td><var class="pdparam">x</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDfloat64KHR <b class="fsfunc">kdFloorKHR</b>(</code></td><td>KDfloat64KHR &#160;</td><td><var class="pdparam">x</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDfloat64KHR <b class="fsfunc">kdRoundKHR</b>(</code></td><td>KDfloat64KHR &#160;</td><td><var class="pdparam">x</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0" style="padding-bottom: 1em"><tr><td><code class="funcdef">KDfloat64KHR <b class="fsfunc">kdInvsqrtKHR</b>(</code></td><td>KDfloat64KHR &#160;</td><td><var class="pdparam">x</var><code>)</code>;</td></tr></table><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDfloat64KHR <b class="fsfunc">kdFmodKHR</b>(</code></td><td>KDfloat64KHR &#160;</td><td><var class="pdparam">x</var>, </td></tr><tr><td>&#160;</td><td>KDfloat64KHR &#160;</td><td><var class="pdparam">y</var><code>)</code>;</td></tr></table></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2528242"></a>8.&#160;New utility library functions</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdStrtodKHR"></a>8.1.&#160;kdStrtodKHR</h3></div></div></div><a class="indexterm" name="id2528257"></a><p>Convert a string to a 64-bit floating point number.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2528267"></a>Synopsis</h4></div></div></div><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDfloat64KHR <b class="fsfunc">kdStrtodKHR</b>(</code></td><td>const KDchar *&#160;</td><td><var class="pdparam">s</var>, </td></tr><tr><td>&#160;</td><td>KDchar **&#160;</td><td><var class="pdparam">endptr</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2528302"></a>Description</h4></div></div></div><p>
+            This function has the same semantics as
+            <code class="function">kdStrtof</code>, except that it results in
+            a <span class="type">KDfloat64KHR</span> value, and can therefore read a
+            value with the range and accuracy of that type.
+        </p><p>
+            The OpenKODE Core 1.0.1 specification contains changes over
+            OpenKODE Core 1.0 about <code class="function">kdStrtof</code>, in that
+            the forms it accepts for infinity and NaN are stricter, and
+            it is defined not to accept hexadecimal floating point.
+            The same changes apply to
+            <code class="function">kdStrtodKHR</code> here
+            when this extension is used with OpenKODE Core 1.0.1.
+        </p><p>
+            The OpenKODE Core 1.0.2 specification contains a change over
+            OpenKODE Core 1.0.1 about <code class="function">kdStrtof</code>, in that
+            it is undefined whether a number that could be represented as
+            a denormal in the return type causes underflow or not. The
+            analogous change applies to
+            <code class="function">kdStrtodKHR</code> here
+            when this extension is used with OpenKODE Core 1.0.2.
+        </p></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="kdDtostrKHR"></a>8.2.&#160;kdDtostrKHR</h3></div></div></div><a class="indexterm" name="id2528375"></a><p>Convert a 64-bit float to a string.</p><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2528384"></a>Synopsis</h4></div></div></div><pre class="synopsis">#define KD_DTOSTR_MAXLEN_KHR 25</pre><div class="funcsynopsis"><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0"><tr><td><code class="funcdef">KDssize <b class="fsfunc">kdDtostrKHR</b>(</code></td><td>KDchar *&#160;</td><td><var class="pdparam">buffer</var>, </td></tr><tr><td>&#160;</td><td>KDsize &#160;</td><td><var class="pdparam">buflen</var>, </td></tr><tr><td>&#160;</td><td>KDfloat64KHR &#160;</td><td><var class="pdparam">number</var><code>)</code>;</td></tr></table></div></div><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2528433"></a>Description</h4></div></div></div><p>
+            This function has the same semantics as
+            <code class="function">kdFtostr</code>, except that
+            the number to convert is a <span class="type">KDfloat64</span>,
+            17 significant digits are used, and the exponent is rendered
+            (where applicable) with three digits as long as the first
+            digit is not <code class="literal">0</code>.
+        </p><p>
+            The maximum length of the result, including its null
+            termination character, is <code class="literal">KD_DTOSTR_MAXLEN_KHR</code>.
+        </p><p>
+            For a non-zero finite number, the &#8220;correct&#8221; value of
+            the seventeen significant mantissa digits is determined by successively
+            multiplying or dividing the number by 10 until (ignoring the sign)
+            it is in the range [1e16,1e17), and then obtaining an integer
+            by rounding to nearest, with tiebreak case rounded to even.
+            However it is permitted for the output of the function to have
+            mantissa digits one out from this &#8220;correct&#8221;
+            value.
+        </p><p>
+            The OpenKODE Core 1.0.1 specification contains changes over
+            OpenKODE Core 1.0 about <code class="function">kdFtostr</code>, in that
+            the results for infinity and NaN are more tightly specified.
+            The same changes apply to
+            <code class="function">kdDtostrKHR</code> here
+            when this extension is used with OpenKODE Core 1.0.1.
+        </p></div><div style="background-color: #FFFFC0;                 border-width: 0.25pt;                 border-style: solid;                 border-color: red;                 padding: 2pt"><div class="sect3" lang="en"><div class="titlepage"><div><div><h4 class="title"><a name="id2528511"></a>Rationale</h4></div></div></div><p>
+            <code class="function">kdDtostrKHR</code>
+            is intended to provide a
+            subset of <code class="function">snprintf<a class="indexterm" name="id2528531"></a></code>&#8217;s functionality
+            regarding double conversion (assuming C locale).
+            The conversion rules above are
+            intended to be equivalent to the <code class="function">snprintf<a class="indexterm" name="id2528547"></a></code>
+            format <code class="literal">"%.17g"</code>.
+            Note the difference in return
+            value when the buffer is not large enough; [<a class="xref" href="#C99" title="ISO/IEC 9899:TC2 &#8220;Programming Language C&#8221;">C99</a>]
+            <code class="function">snprintf<a class="indexterm" name="id2528569"></a></code> returns the length the string
+            would have been if the buffer had been long enough, whereas
+            <code class="function">kdDtostrKHR</code>
+            returns -1.
+        </p><p>
+            Seventeen significant digits are specified because this is the minimum
+            that guarantees that the original value can be recovered by
+            a conversion with <code class="function">kdStrtodKHR</code>.
+        </p></div></div></div></div><div class="sect1" lang="en"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="id2528604"></a>9.&#160;Revision history</h2></div></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2528609"></a>9.1.&#160;Version 7, 2008-09-12</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        OpenKODE Core 1.0.2 has a clarification
+        that it is undefined whether kdStrtof reports underflow or not
+        for a number that could be represented as a denormal.
+        This version of the KHR_float64 extension specification points
+        out that this change applies analogously to kdStrtodKHR.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2528628"></a>9.2.&#160;Version 6, 2008-06-20</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Fixed leftover &#8220;19&#8221; missed when number of significant
+        digits of kdDtostrKHR was changed from 19 to 17, and fixed its
+        description of how to obtain the &#8220;correct&#8221; result.
+      </p></li><li><p>
+        Changed back to be based on OpenKODE Core 1.0 specification,
+        and pointed out cases where changes in OpenKODE Core 1.0.1
+        implicitly change the semantics of functions in this extension.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2528657"></a>9.3.&#160;Version 5, 2008-03-31</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Allowed KDfloat64KHR representation to have its halves swapped.
+      </p></li><li><p>
+        Clarified accuracy of kdDtostrKHR.
+        Now based on OpenKODE Core 1.0.1 specification.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2528679"></a>9.4.&#160;Version 4, 2008-02-01</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Changed kdDtostrKHR to give 17 digits rather than 19.
+      </p></li><li><p>
+        Clarified accuracy of kdDtostrKHR.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2528699"></a>9.5.&#160;Version 3, 2008-01-24</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Fixed incorrect function name occurrences in kdDtostrKHR.
+      </p></li><li><p>
+        Clarified accuracy of kdDtostrKHR.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2528719"></a>9.6.&#160;Version 2, 2007-10-15</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Added KD_VA_ARG_FLOAT64_KHR macro.
+      </p></li></ul></div></div><div class="sect2" lang="en"><div class="titlepage"><div><div><h3 class="title"><a name="id2528734"></a>9.7.&#160;Version 1, 2007-10-08</h3></div></div></div><div class="itemizedlist"><ul type="disc"><li><p>
+        Initial version of official Khronos extension.
+      </p></li></ul></div></div></div><div class="bibliography"><div class="titlepage"><div><div><h2 class="title"><a name="id2528749"></a>Bibliography</h2></div></div></div><div class="biblioentry"><a name="C89"></a><p>[C89] <span class="title"><i>
+        ANSI X3.159-1989 &#8220;Programming Language C&#8221;
+      </i>. </span></p></div><div class="biblioentry"><a name="C99"></a><p>[C99] <span class="title"><i>
+        ISO/IEC 9899:TC2 &#8220;Programming Language C&#8221;
+      </i>. </span></p></div><div class="biblioentry"><a name="IEEE754"></a><p>[IEEE 754] <span class="title"><i>
+        IEEE Standard for Binary Floating-Point Arithmetic (ANSI/IEEE Std
+        754-1985)
+      </i>. </span></p></div><div class="biblioentry"><a name="POSIX"></a><p>[POSIX] <span class="title"><i>
+        IEEE Std 1003.1, 2004 Edition
+        (&#8220;Single Unix Specification version 3&#8221;)
+      </i>. </span></p></div></div></div></body></html>
