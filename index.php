@@ -1,17 +1,8 @@
 <?php
 $static_title = 'Khronos OpenKODE Registry';
-$static_breadcrumb = array(
-    '/registry/' => 'Registry',
-    'NOLINK' => 'OpenKODE Registry'
-);
+
 include_once("../../assets/static_pages/khr_page_top.php");
 ?>
-
-<h1 class="pagetitle">Khronos OpenKODE Registry</h1>
-<div id="mainformat">
-
-
-<h1 style="text-align:center"> Khronos OpenKODE Registry </h1>
 
 <p> The OpenKODE Registry contains specifications of the core API and
     headers, optional OpenKODE extensions and headers, points to other
