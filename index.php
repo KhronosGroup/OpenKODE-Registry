@@ -206,11 +206,16 @@ include_once("../../assets/static_pages/khr_page_top.php");
     href="https://github.com/KhronosGroup/OpenKODE-Registry/issues">
     OpenKODE-Registry </a> Github project. </p>
 
+<p> Since OpenKODE is no longer actively developed by Khronos, we no longer
+    provide a way to file reports on the API itself. </p>
+
+<!--
 <p> For the OpenKODE API, extensions, and headers, file a bug on the <a
     href="http://www.khronos.org/bugzilla/"> Khronos Bugzilla </a>. Make
     sure to fill in the &quot;Product&quot; field in the bug entry form as
     &quot;OpenKODE&quot;, and pick appropriate values for the Component and
     other fields. </p>
+-->
 
 
 <?php include_once("../../assets/static_pages/khr_page_bottom.php"); ?>
