@@ -31,7 +31,7 @@ Interesting files in this repository include:
 ## Adding Extension Specifications
 
 Extension specification documents can be added by proposing a pull request
-to master, adding the specification .html file under
+adding the specification .html file under
 extensions/<vendor>/filename.html . If there are corresponding header files
 and/or Docbook source markup files, place them in the same directory. You
 must also:
